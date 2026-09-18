@@ -10,11 +10,11 @@
 |------|------|--------------|
 | `openvpp-common` | 统一返回、枚举常量（资源类型/场景），零业务依赖 | 第 01-04 篇 |
 | `openvpp-resource` | 资源档案、物模型、设备影子、台账 | 第 04、07、11 篇 |
-| `openvpp-assessment` | 能力评估算法（44260 七指标）、评估策略 | 第 02、12、13 篇 |
+| `openvpp-assessment` | 能力评估算法（44260 七指标）、评估策略、GBDT 预测训推链 | 第 02、12、13 篇；交付栏第 47 篇 |
 | `openvpp-aggregator` | VPP 单元、聚合引擎、准入门槛（47241 四指标） | 第 03、14 篇 |
 | `openvpp-gateway` | MQTT/CoAP 协议接入 | 第 06 篇 |
-| `openvpp-iot` | 设备认证、断网续传 | 第 09、10 篇 |
-| `openvpp-dispatch` | 指令链路、策略引擎 | 第 15、16 篇 |
+| `openvpp-iot` | 设备认证、断网续传、多协议接入地图 | 第 09、10 篇；交付栏第 48 篇 |
+| `openvpp-dispatch` | 指令链路、策略引擎、MPC、目标分解与调度闭环 | 第 15、16 篇；算法栏第 33 篇；交付栏第 46 篇 |
 | `openvpp-settlement` | 基线核算、结算分摊 | 第 17、21 篇 |
 | `openvpp-market` | 申报、竞价（简化演示） | 第 19、20 篇 |
 | `openvpp-edge` | 边缘侧缓存补传 demo | 第 09 篇 |
@@ -48,6 +48,7 @@ curl http://127.0.0.1:8080/api/v1/system/ping
 - 网关默认**本地模拟模式**（`openvpp.gateway.mode=local`）：`java -jar` 启动不连接任何外部消息服务，断网可跑；真实 MQTT/CoAP 协议接入须显式设置 `openvpp.gateway.mode=remote` 并配置 `openvpp.mqtt.broker`（工程不提供任何默认外部地址）。
 - 三路径现状：`NORMAL`（正常）、`DEGRADED`（降级报缺口）、`DISPUTED`（争议计量补正）均已实现；另有结算后争议更正的**独立入口** `POST /api/v1/demo/dispute`。结算采用四量口径：补偿毛额 → 考核扣款（落账 `PENALTY`，从应收补贴中扣除）→ 平台净实收（落账 `SETTLE`，即可分配金额）→ 分摊；争议更正按更正计量重算四量，非零差额**全额传导**为下一账期版本（`bill_version`）的服务费与分摊重算，五件套更正账单（SETTLE/PENALTY/PLATFORM_CUT/SHARE/CORRECTION）独立留档，原始账单（V1）永不删除，支持同一任务多轮更正（口径与示例数值见 `openvpp-app/PARK-DEMO.md`）。
 - 算法番外（第 33-35 篇）已**纳入代码工程并配模块级单测**（`openvpp-dispatch` 的 MPC 调度、`openvpp-settlement` 的区域结算等）；但主应用编排当前只调用**评估 → 聚合 → 指令 → 结算**主线，MPC 与区域结算模块**尚未接入编排链路**。
+- 交付栏实战番外（第 46-48 篇）配套代码同样为**纳入主代码工程、未接编排链路**的模块级实现：`openvpp-dispatch` 的目标分解与评估闭环（`com.openvpp.dispatch.decompose` / `evalloop`，16 项单测）、`openvpp-assessment` 的 GBDT 训推链（`com.openvpp.assessment.predict`，10 项单测，Python 零依赖演示 `tools/ai/gbdt_demo.py`，`--selfcheck` 可自检跨语言公式契约）、`openvpp-iot` 的多协议接入地图（`com.openvpp.iot.protocol`，8 项单测）。全仓回归 188 项 / 实际执行 186 项（2 项 live 默认跳过）。
 
 ```bash
 mvn -s settings-openvpp.xml -pl openvpp-app -am -DskipTests package
@@ -96,6 +97,7 @@ mvn -s settings-openvpp.xml -pl openvpp-gateway -am test
 | `part1-cognition` | 历史快照（第一轮，已冻结） | 首个完整主干快照：11 模块 + `openvpp-app` 业务闭环 + 算法番外模块代码。**不含**上述第二轮修复（考核扣款未入实收、争议更正不传导分摊、回滚残留预占、防重放/遥测边界缺陷），仅作历史留档，不再作为获取入口 |
 
 > 说明：专栏文章统一引用 `part1-cognition-r2` 作为工程获取入口（文末获取方式已同步）。
+> 交付栏第 46-48 篇的配套代码（目标分解/评估闭环、GBDT 训推、协议地图）在 **master 分支**，暂未随 `part1-cognition-r2` 发布——该标签为第一轮冻结快照，新模块待下一轮里程碑 tag 一并冻结。
 > 后续里程碑将新增 tag 并在此表同步；历史 tag 一经发布不再移动。
 
 ## 示例说明
