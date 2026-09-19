@@ -32,4 +32,9 @@ public class NoopIdempotencyGuard implements IdempotencyGuard {
     public void release(String key) {
         // 无缓存介质，直通
     }
+
+    @Override
+    public void clearNamespace(String prefix) {
+        // 无缓存介质，直通
+    }
 }

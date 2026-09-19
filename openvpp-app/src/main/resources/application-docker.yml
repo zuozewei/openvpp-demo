@@ -18,6 +18,9 @@ spring:
   redis:
     host: ${REDIS_HOST:redis}
     port: ${REDIS_PORT:6379}
+    # 故障退化边界：Redis 挂起时守卫在超时内按退化语义放行数据库路径，不长时间滞留请求
+    connect-timeout: 2000ms
+    timeout: 2000ms
 
 openvpp:
   idempotency:

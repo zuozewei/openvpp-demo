@@ -23,7 +23,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -73,11 +76,20 @@ import java.util.regex.Pattern;
  *   重复出账与容量台账 CME）：幂等正确性由数据库承担——
  *   ① 事务内原子认领：run 入口 INSERT dr_task，response_id 唯一主键即认领锁；
  *     同键并发的后到者在唯一索引上阻塞，持有方提交后其收到重复键 → 读终态转幂等重放；
- *     持有方回滚则该行消失，后到者自然接管重新认领（回滚不留残状态）。
+ *     持有方回滚则行消失，后到者自然接管重新认领（回滚不留残状态）。
  *   ② Redis 前置幂等缓存（仅 docker 交付启用）：已完成结果的快速重放不落库；
  *     本地教学/测试为 Noop 直通。Redis 只做加速，不是正确性来源。
  *   ③ 容量预占台账全方法互斥（消灭 occupiedIn 并发遍历 CME）；
  *     原子认领保证同一任务同一时刻只有一个执行实例，补偿按任务标识释放不会误删他任务预占。
+ *
+ * Redis 缓存时序与故障口径（第 4 轮复审修复）：
+ *   ① 缓存写入挂到数据库事务提交之后（事务同步 afterCommit）——提交阶段失败
+ *     只会释放在途标记，绝不留下「缓存成功、数据库回滚」的虚假成功结果；
+ *   ② GAP（不可行）结果不缓存、在途标记立即释放，保留同键重跑语义；
+ *   ③ 演示重置（resetRuntimeState）同步清空幂等缓存命名空间——否则重置后同键
+ *     请求在 TTL 窗口内命中旧结果、不重新落库，与「重置后可再次运行」承诺冲突；
+ *   ④ Redis 不可用的退化语义在守卫实现内部消化（读取未命中/登记放行/写清静默），
+ *     业务层不感知连接故障。
  *
  * 争议更正（结算后独立入口 dispute()；run 的 path=DISPUTED 在任务已结算时
  *   等价转入同一流程）：计量补到数据（教学模拟第 2 时段实测修正，默认 400→380 kW，
@@ -95,7 +107,11 @@ import java.util.regex.Pattern;
  *     在事务层串行，「读最新版本 → 分配下一版本 → 写账单」整体原子；
  *   ③ 审计账单 INSERT-only：更正版本全部走 insertBill，主键冲突即抛错，杜绝 MERGE
  *     原地覆盖历史版本；
- *   ④ 最新版本解析按版本号数值降序（先比长度再比字典序），不再依赖同毫秒 created_ms。
+ *   ④ 最新版本解析按版本号数值降序（先比长度再比字典序），不再依赖同毫秒 created_ms；
+ *   ⑤ 事务隔离显式 READ_COMMITTED（第 4 轮容器实测修复）：MySQL 默认 REPEATABLE READ
+ *     下，FOR UPDATE 等锁结束后同事务的普通读仍走加锁前的旧快照，读到过期版本号、
+ *     并发更正撞账单主键 500（真实 MySQL 上 12 路只出 3 版）；H2 默认即为
+ *     READ_COMMITTED，故教学库测试未暴露。显式声明后锁下读均为最新已提交数据。
  *
  * 预占生命周期：指令分解登记容量预占（内存台账，按 responseId 标识）；
  *   任务正常完成后释放、取消/失败按任务标识释放、演示重置（resetRuntimeState）
@@ -132,12 +148,14 @@ public class ParkResponseOrchestrator {
     /** 纠偏请求幂等键约束：4-64 位（落在 dispute_correction.correction_request_id VARCHAR(64) 内） */
     public static final Pattern CORRECTION_REQUEST_ID_PATTERN = Pattern.compile("^[A-Za-z0-9_-]{4,64}$");
 
-    /**
-     * 同键认领竞争的重试上限：覆盖两类场景——持有方未提交（状态不可见，短暂自旋等待）、
+    /** 同键认领竞争的重试上限：覆盖两类场景——持有方未提交（状态不可见，短暂自旋等待）、
      * GAP 终态重跑 / 无实收 DISPATCHED 残留的接管（清行后重试）。
      */
     private static final int CLAIM_ATTEMPTS = 20;
     private static final long CLAIM_RETRY_INTERVAL_MS = 50;
+
+    /** Redis 幂等缓存键前缀（结果缓存 + 在途标记共用；演示重置按此前缀清空命名空间） */
+    public static final String RUN_GUARD_KEY_PREFIX = "openvpp:idempotency:run:";
 
     private final ResponseRepository repo;
     private final InstructionService instructionService;
@@ -172,7 +190,7 @@ public class ParkResponseOrchestrator {
      * @param declaredKwh  申报响应电量
      * @param targetKw     调度目标功率（下调）
      */
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public DemoRunResult run(String responseId, String path,
                              BigDecimal declaredKwh, BigDecimal targetKw) {
         validateRunInput(responseId, path, declaredKwh, targetKw);
@@ -184,7 +202,8 @@ public class ParkResponseOrchestrator {
 
         // ⓪ Redis 前置幂等缓存（仅 docker 交付启用；本地教学/测试为 Noop 直通）：
         // 已完成结果命中缓存直接重放、不落库。DISPUTED 是更正请求不是重放，不缓存。
-        String guardKey = "openvpp:idempotency:run:" + responseId;
+        // 守卫内部消化 Redis 故障（读取失败=未命中、登记失败=放行），业务层无感。
+        String guardKey = RUN_GUARD_KEY_PREFIX + responseId;
         boolean guardEngaged = idempotencyGuard.isEnabled() && !"DISPUTED".equals(path);
         if (guardEngaged) {
             DemoRunResult cachedReplay = replayFromCache(idempotencyGuard.cachedResult(guardKey), responseId);
@@ -193,6 +212,7 @@ public class ParkResponseOrchestrator {
             }
         }
         boolean guardHolding = guardEngaged && idempotencyGuard.tryBegin(guardKey);
+        boolean guardSyncRegistered = false;
 
         // ① 数据库原子认领（唯一键 + 事务内 INSERT）——幂等正确性的最终保证，不依赖 Redis：
         // 同键并发后到者在唯一索引上阻塞，持有方提交后其收到重复键 → 读终态转重放；
@@ -255,14 +275,22 @@ public class ParkResponseOrchestrator {
             executeClosedLoop(responseId, path, declaredKwh, targetKw, nowMs, recovery, result, trace);
         } catch (RuntimeException e) {
             // 数据库事务回滚后，进程内运行态必须同步回退（详见方法注释）
-            if (guardHolding) {
+            if (guardHolding && !guardSyncRegistered) {
                 idempotencyGuard.release(guardKey);
             }
             compensateMemoryState(responseId, e);
             throw e;
         }
         if (guardHolding) {
-            completeGuardCache(guardKey, result);
+            if ("SETTLED".equals(repo.taskState(responseId))) {
+                // 缓存写入挂到事务提交后（第 4 轮复审修复）：提交失败只释放在途标记，
+                // 绝不出现「缓存成功、数据库回滚」的虚假成功结果
+                registerAfterCommitCacheWrite(guardKey, result);
+                guardSyncRegistered = true;
+            } else {
+                // GAP（不可行）：不缓存成功结果，立即释放在途标记，保留同键重跑语义
+                idempotencyGuard.release(guardKey);
+            }
         }
         return result;
     }
@@ -280,7 +308,7 @@ public class ParkResponseOrchestrator {
         return dispute(responseId, correctedActualKw, null);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public DemoRunResult dispute(String responseId, BigDecimal correctedActualKw, String correctionRequestId) {
         if (responseId == null || !RESPONSE_ID_PATTERN.matcher(responseId).matches()) {
             throw new IllegalArgumentException(
@@ -743,6 +771,32 @@ public class ParkResponseOrchestrator {
         }
     }
 
+    /**
+     * 结果缓存写入挂到数据库事务提交之后（第 4 轮复审修复）：此前在事务方法返回前写缓存，
+     * 提交阶段失败会留下「缓存成功、数据库回滚」的虚假成功结果，后续同键请求命中脏缓存。
+     * 现通过事务同步注册：afterCommit 写缓存；afterCompletion 仅在回滚时释放在途标记。
+     * 非事务上下文（理论不可达，兜底）退化为立即写。
+     */
+    private void registerAfterCommitCacheWrite(String guardKey, DemoRunResult result) {
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+            completeGuardCache(guardKey, result);
+            return;
+        }
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                completeGuardCache(guardKey, result);
+            }
+
+            @Override
+            public void afterCompletion(int status) {
+                if (status == TransactionSynchronization.STATUS_ROLLED_BACK) {
+                    idempotencyGuard.release(guardKey);
+                }
+            }
+        });
+    }
+
     /** 执行成功后写结果缓存（仅 Redis 守卫启用时；写失败只告警，正确性由数据库认领兜底） */
     private void completeGuardCache(String guardKey, DemoRunResult result) {
         try {
@@ -769,13 +823,21 @@ public class ParkResponseOrchestrator {
 
     /**
      * 重置演示运行状态：库表数据已由控制器 deleteAll 清理，这里清空内存运行态——
-     * 容量预占台账 + 内存指令仓库。修复历史缺陷：重置只清库不清内存，旧预占残留
-     * 挤占剩余能力，重置后再运行正常案例被误报缺口（700+ kW）。
+     * 容量预占台账 + 内存指令仓库 + 幂等缓存命名空间（第 4 轮复审修复：不清缓存则
+     * 重置后同键请求在 TTL 窗口内命中旧结果、不重新落库）。
+     * 清缓存失败不阻断重置（演示自愈通道；守卫实现内部亦会消化故障，残留键由 TTL 兜底）。
+     * 修复历史缺陷：重置只清库不清内存，旧预占残留挤占剩余能力，
+     * 重置后再运行正常案例被误报缺口（700+ kW）。
      */
     public void resetRuntimeState() {
         reservationLedger.clear();
         instructionRepository.clear();
-        log.info("演示运行状态已重置：容量预占台账 + 内存指令仓库已清空");
+        try {
+            idempotencyGuard.clearNamespace(RUN_GUARD_KEY_PREFIX);
+        } catch (Exception e) {
+            log.warn("幂等缓存命名空间清空失败（残留键由 TTL 到期失效）: {}", e.getMessage());
+        }
+        log.info("演示运行状态已重置：容量预占台账 + 内存指令仓库 + 幂等缓存命名空间已清空");
     }
 
     /**

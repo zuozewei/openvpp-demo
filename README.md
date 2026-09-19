@@ -48,7 +48,7 @@ curl http://127.0.0.1:8080/api/v1/system/ping
 - 网关默认**本地模拟模式**（`openvpp.gateway.mode=local`）：`java -jar` 启动不连接任何外部消息服务，断网可跑；真实 MQTT/CoAP 协议接入须显式设置 `openvpp.gateway.mode=remote` 并配置 `openvpp.mqtt.broker`（工程不提供任何默认外部地址）。
 - 三路径现状：`NORMAL`（正常）、`DEGRADED`（降级报缺口）、`DISPUTED`（争议计量补正）均已实现；另有结算后争议更正的**独立入口** `POST /api/v1/demo/dispute`。结算采用四量口径：补偿毛额 → 考核扣款（落账 `PENALTY`，从应收补贴中扣除）→ 平台净实收（落账 `SETTLE`，即可分配金额）→ 分摊；争议更正按更正计量重算四量，非零差额**全额传导**为下一账期版本（`bill_version`）的服务费与分摊重算，五件套更正账单（SETTLE/PENALTY/PLATFORM_CUT/SHARE/CORRECTION）独立留档，原始账单（V1）永不删除，支持同一任务多轮更正（口径与示例数值见 `openvpp-app/PARK-DEMO.md`）。
 - 算法番外（第 33-35 篇）已**纳入代码工程并配模块级单测**（`openvpp-dispatch` 的 MPC 调度、`openvpp-settlement` 的区域结算等）；但主应用编排当前只调用**评估 → 聚合 → 指令 → 结算**主线，MPC 与区域结算模块**尚未接入编排链路**。
-- 交付栏实战番外（第 46-48 篇）配套代码同样为**纳入主代码工程、未接编排链路**的模块级实现：`openvpp-dispatch` 的目标分解与评估闭环（`com.openvpp.dispatch.decompose` / `evalloop`，16 项单测）、`openvpp-assessment` 的 GBDT 训推链（`com.openvpp.assessment.predict`，10 项单测，Python 零依赖演示 `tools/ai/gbdt_demo.py`，`--selfcheck` 可自检跨语言公式契约）、`openvpp-iot` 的多协议接入地图（`com.openvpp.iot.protocol`，8 项单测）。全仓回归 194 项 / 实际执行 192 项（2 项 live 默认跳过）。
+- 交付栏实战番外（第 46-48 篇）配套代码同样为**纳入主代码工程、未接编排链路**的模块级实现：`openvpp-dispatch` 的目标分解与评估闭环（`com.openvpp.dispatch.decompose` / `evalloop`，16 项单测）、`openvpp-assessment` 的 GBDT 训推链（`com.openvpp.assessment.predict`，10 项单测，Python 零依赖演示 `tools/ai/gbdt_demo.py`，`--selfcheck` 可自检跨语言公式契约）、`openvpp-iot` 的多协议接入地图（`com.openvpp.iot.protocol`，8 项单测）。全仓回归 200 项 / 实际执行 198 项（2 项 live 默认跳过）；另有真实 MySQL + Redis 集成回归 `MySqlComposeIT`（4 项，需 compose 服务在位，见下节，不计入常规口径）。
 
 ```bash
 mvn -s settings-openvpp.xml -pl openvpp-app -am -DskipTests package
@@ -78,6 +78,8 @@ curl -X POST "http://localhost:8080/api/v1/demo/reset"
 
 **并发幂等口径（第 5 轮整改，正确性由数据库承担）**：`run` 入口以事务内 `INSERT`（`response_id` 唯一主键即认领锁）原子认领任务——同键并发后到者在唯一索引上阻塞，持有方提交后其收到重复键并读取终态转幂等重放（实测 50 路并发恰好 1 路完整执行、49 路重放、任务/指令/账单各一份）；持有方回滚则后到者自动接管，回滚不留残状态。争议更正以 `correctionRequestId`（dispute_correction 留档表唯一键）拦截同键重复提交，`SELECT .. FOR UPDATE` 锁任务行串行化版本分配，更正账单一律 `INSERT`（禁止 MERGE 覆盖历史版本）——实测 12 个并发不同请求生成 12 个连续版本（V2..V13）互不覆盖。容量预占台账全方法互斥（消灭并发遍历 CME）。
 
+**Redis 缓存时序与故障口径（第 6 轮复审修复）**：结果缓存经事务同步在**数据库提交后**写入（提交失败只释放在途标记，绝不留下「缓存成功、数据库回滚」的脏结果）；GAP 结果不缓存、同键可重跑；演示重置同步 `SCAN` 清空幂等缓存命名空间（重置后同键重新落库）；Redis 不可用在**守卫内部**按退化语义消化——读取失败=未命中、登记失败=放行进入数据库认领、写/清失败=静默告警（连接/命令超时 2 秒兜底，不再向业务 500）。事务隔离显式 `READ_COMMITTED`：MySQL 默认 REPEATABLE READ 曾使锁下快照读拿到过期版本号（容器实测 12 路并发纠偏只出 3 版），H2 默认 READ_COMMITTED 故教学库未暴露。
+
 > 升级说明：`dispute_correction`（纠偏请求留档表）为新增结构。若存在旧版本演示库文件，
 > 请先删除 `~/.openvpp/openvpp-db*` 再启动（教学库不做迁移）。
 
@@ -93,10 +95,16 @@ docker compose up --build
 | 中间件 | 业务落点 |
 |--------|----------|
 | MySQL | 任务/指令/基线/账单持久化（`application-docker.yml` 数据源；`schema.sql` 两库同构，仓库层按数据源 URL 自适应方言：H2 用 `MERGE INTO .. KEY`，MySQL 用 `INSERT .. ON DUPLICATE KEY UPDATE`） |
-| Redis | 已完成结果的幂等快速重放（`IdempotencyGuard`，`openvpp.idempotency.redis-enabled=true` 启用；在途标记 TTL 120s、结果缓存 TTL 30min）。**正确性始终由数据库唯一约束 + 事务内原子认领兜底**，Redis 不可用自动退化为纯数据库路径 |
+| Redis | 已完成结果的幂等快速重放（`IdempotencyGuard`，`openvpp.idempotency.redis-enabled=true` 启用；在途标记 TTL 120s、结果缓存 TTL 30min）。**正确性始终由数据库唯一约束 + 事务内原子认领兜底**，Redis 不可用时守卫内部自动退化为纯数据库路径（故障退化有单测覆盖） |
 | EMQX | `openvpp.gateway.mode=remote` 的 MQTT 协议接入（订阅 `openvpp/+/telemetry|event|ack`，教学消费者打 `[INGRESS-MOCK]` 日志） |
 
 依赖就绪采用 `depends_on` + `service_healthy` 健康检查（mysqladmin / redis-cli / emqx ctl），应用不再"起了但连不上"。业务闭环的遥测/计量仍为编排层内置模拟源（口径见上节），与单体 jar 形态一致。
+
+**真实环境回归（MySqlComposeIT，4 项）**：`docker compose up -d mysql redis` 后显式运行
+`mvn -s settings-openvpp.xml -pl openvpp-app test -Dtest=MySqlComposeIT -DfailIfNoTests=false`，
+覆盖真实 MySQL 建表、提交后 Redis 缓存写入、同键 12 路并发认领与并发纠偏版本连续性、
+重置清缓存后重新落库。宿主机 6379 被占用时以 `-Dopenvpp.it.redis-port=端口` 指定。
+若宿主机无法直连 Docker Hub，可经镜像源拉取后重打标准 tag（如 `docker.m.daocloud.io/library/mysql:8.0` → `mysql:8.0`）。
 
 ## 网关回环测试（第 06 篇）
 
