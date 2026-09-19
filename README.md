@@ -117,19 +117,14 @@ mvn -s settings-openvpp.xml -pl openvpp-gateway -am test
 > 说明：回环测试是**测试专用**通路，与主应用默认本地模拟模式无关；
 > 其中 MQTT 用例需可访问公共 broker（断网环境跳过即可），不影响 `java -jar` 零依赖启动。
 
-## 章节 tag 对照（未发布，规划留档）
-
-> **现状（2026-09-19 实测）**：本仓本地与远端（`git ls-remote --tags origin`）**均无任何 tag**，
-> 历史仅 2 个提交（squashed `init` + 实战番外 46~48 配套代码），无法忠实重建下表所列快照。
-> **当前读者获取入口 = master 分支**（专栏各篇文末与 README 均已按 master 口径表述，本表不再作为承诺）。
-> 若作者决定发布冻结快照：在修复验证通过的提交上执行 `git tag -a part1-cognition-r2 -m "..." && git push origin part1-cognition-r2`，
-> 并将下表「指向」列与专栏文末口径一并改回 tag——发布前不得在文档中承诺不存在的标签。
+## 章节 tag 对照
 
 | tag | 指向 | 说明 |
 |-----|------|------|
-| `part1-cognition-r2` | （规划）完整主干里程碑 | 原计划作为读者获取入口：结算四量口径、争议更正版本化留档、回滚内存态补偿、入参前置校验、防重放边界、并发幂等（原子认领 + 纠偏请求留档 + 审计账单 INSERT-only）。**截至 2026-09-19 未创建** |
-| `part1-cognition` | （规划）历史快照 | 原计划第一轮冻结快照，未创建 |
+| `part1-cognition-r2` | `ad6392b`（master HEAD，2026-09-19 已推送远端） | **读者获取入口冻结快照**。包含：结算四量口径、争议更正版本化与并发幂等（`correctionRequestId` 留档唯一键 + FOR UPDATE 版本串行化 + 审计账单 INSERT-only）、事务内原子认领、Redis 幂等守卫（故障退化 + 提交后缓存写入 + 重置清命名空间）、H2/MySQL 方言自适应与 Docker 交付对齐、真实环境回归（MySqlComposeIT）。获取：`git checkout part1-cognition-r2` |
 
+> 说明：`part1-cognition`（原规划的第一轮快照）从未创建、不再规划，历史口径已于 2026-09-19 与仓库实际对齐。
+> 获取入口二选一：`master` 分支（随修复滚动更新）或 `part1-cognition-r2` 标签（冻结快照）。
 > 测试数量**以最新 surefire 报告为准**（`mvn -s settings-openvpp.xml test` 后汇总各模块
 > `*/target/surefire-reports/*.txt`；live 用例如 MQTT 公网回环、TSDB benchmark 依赖外部环境，断网时跳过不计入口径）。
 
