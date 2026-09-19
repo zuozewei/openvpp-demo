@@ -240,8 +240,8 @@ public class ParkResponseOrchestrator {
                         return result;
                     }
                     result.setIdempotentReplay(true);
-                    trace.add("幂等拦截：responseId=" + responseId + " 已结算（SETTLED），不重复执行/出账，直接返回既有结果");
-                    log.warn("幂等拦截: {} 已结算，跳过重复执行", responseId);
+                    rebuildSettledReplay(responseId, trace, result);
+                    log.warn("幂等拦截: {} 已结算，跳过重复执行，返回数据库重建的既有结果", responseId);
                     result.setTrace(trace);
                     return result;
                 }
@@ -753,9 +753,53 @@ public class ParkResponseOrchestrator {
         }
     }
 
+    /**
+     * 幂等重放结果重建（第 5 轮复审修复）：此前重放仅返回默认字段 + 幂等标记，调用方
+     * 拿不到既有结算金额。现从数据库按最新账期版本重建完整结果——SETTLE 净实收 /
+     * PENALTY 考核 / 分摊 / 申报电量 / 基线与实测口径；毛额按「毛额 = 净实收 + 考核」
+     * 口径还原（与守恒核对同一恒等式），响应量与合格率复用结算同一公式计算。
+     * Redis 结果缓存命中路径不受影响（缓存本就携带完整结果序列）。
+     */
+    private void rebuildSettledReplay(String responseId, List<String> trace, DemoRunResult result) {
+        String version = repo.latestBillVersion(responseId, "PLATFORM", "SETTLE");
+        BigDecimal settleYuan = version == null ? BigDecimal.ZERO
+                : repo.settleAmountOfVersion(responseId, version);
+        BigDecimal penaltyYuan = version == null ? BigDecimal.ZERO
+                : repo.penaltyAmountOfVersion(responseId, version);
+        BigDecimal grossYuan = settleYuan.add(penaltyYuan);
+        BigDecimal declaredKwh = repo.taskDeclaredKwh(responseId);
+        BigDecimal gapKw = repo.taskGapKw(responseId);
+        double[] baselinePoint = repo.firstBaselinePoint(responseId);
+        double responseKwh = grossYuan.doubleValue() / PRICE_YUAN_PER_KWH;
+
+        result.setFeasible(true);
+        result.setGapKw(gapKw == null ? BigDecimal.ZERO : gapKw);
+        if (baselinePoint != null) {
+            result.setBaselineKw(BigDecimal.valueOf(baselinePoint[0]));
+            result.setActualKw(BigDecimal.valueOf(baselinePoint[1]));
+        }
+        result.setResponseKwh(BigDecimal.valueOf(responseKwh).setScale(3, RoundingMode.HALF_UP));
+        if (declaredKwh != null && declaredKwh.signum() > 0) {
+            result.setPassRatePct(BigDecimal.valueOf(
+                            metering.passRate(responseKwh, declaredKwh.doubleValue()))
+                    .setScale(1, RoundingMode.HALF_UP));
+        }
+        result.setGrossYuan(grossYuan);
+        result.setPenaltyYuan(penaltyYuan);
+        result.setSettleYuan(settleYuan);
+        result.setAllocation(repo.allocationOfVersion(responseId, version));
+        trace.add("幂等拦截：responseId=" + responseId + " 已结算（SETTLED），不重复执行/出账，"
+                + "从数据库重建既有结果返回（版本 " + version + "）");
+    }
+
     /** Redis 缓存命中的结果重放：反序列化后标记幂等重放；反序列化失败回退数据库路径 */
     private DemoRunResult replayFromCache(Optional<String> cachedJson, String responseId) {
         if (!cachedJson.isPresent()) {
+            return null;
+        }
+        // 在途标记（tryBegin 写入的 RUNNING）不是结果 JSON：缓存写入失败等 TTL 边缘场景
+        // 会把它 GET 出来，视为未命中走数据库路径，避免反序列化异常告警刷屏（第 5 轮复审）
+        if ("RUNNING".equals(cachedJson.get())) {
             return null;
         }
         try {

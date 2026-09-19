@@ -97,7 +97,7 @@ class ParkResponseOrchestratorTest {
     }
 
     @Test
-    void 重复执行幂等_不重复出账() {
+    void 重复执行幂等_不重复出账_重放返回完整重建结果() {
         orchestrator.run("run-001", "NORMAL", DECLARED, TARGET);
         DemoRunResult replay = orchestrator.run("run-001", "NORMAL", DECLARED, TARGET);
 
@@ -105,7 +105,12 @@ class ParkResponseOrchestratorTest {
         // 账单仍是 5 条（SETTLE×1 + PLATFORM_CUT×1 + SHARE×3），金额不变
         List<Map<String, Object>> bills = repo.listBills("run-001");
         assertEquals(5, bills.size());
-        assertEquals(0, new BigDecimal("1200.00").compareTo(repo.settleAmount("run-001")));
+        // 重放必须携带从数据库重建的完整结算结果（第 5 轮复审修复：此前只返回默认字段）
+        assertEquals(0, new BigDecimal("1200.00").compareTo(replay.getSettleYuan()));
+        assertEquals(0, new BigDecimal("1200.00").compareTo(replay.getGrossYuan()));
+        assertEquals(0, BigDecimal.ZERO.compareTo(replay.getPenaltyYuan()));
+        assertEquals(0, new BigDecimal("600.000").compareTo(replay.getResponseKwh()));
+        assertEquals(3, replay.getAllocation().size(), "重放还原用户分摊明细");
         assertEquals(0, repo.settleAmount("run-001").compareTo(repo.allocationSum("run-001", "V1")));
     }
 

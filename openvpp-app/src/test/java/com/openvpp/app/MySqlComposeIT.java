@@ -122,6 +122,15 @@ class MySqlComposeIT {
         assertTrue(replay.isIdempotentReplay());
         assertEquals(1, repo.countTasks("it-mysql-1"));
 
+        // 模拟 Redis 缓存丢失（停机/TTL 过期）：重放走数据库重建，结果字段与首次一致（第 5 轮复审）
+        redis.delete(key);
+        DemoRunResult dbReplay = orchestrator.run("it-mysql-1", "NORMAL", new BigDecimal("600"), new BigDecimal("900"));
+        assertTrue(dbReplay.isIdempotentReplay());
+        assertEquals(0, r.getSettleYuan().compareTo(dbReplay.getSettleYuan()), "缓存丢失后重放净实收一致");
+        assertEquals(0, r.getGrossYuan().compareTo(dbReplay.getGrossYuan()), "缓存丢失后重放毛额一致");
+        assertEquals(r.getAllocation().size(), dbReplay.getAllocation().size(), "缓存丢失后重放分摊条数一致");
+        assertEquals(1, repo.countTasks("it-mysql-1"));
+
         // 多轮更正：版本连续独立留档（真实 MySQL 的 FOR UPDATE 串行化与 INSERT-only）
         DemoRunResult c1 = orchestrator.dispute("it-mysql-1", new BigDecimal("380"), "it-req-1");
         assertEquals("V2", c1.getCorrectionVersion());

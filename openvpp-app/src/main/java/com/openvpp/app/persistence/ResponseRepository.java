@@ -284,6 +284,31 @@ public class ResponseRepository {
         return amounts.isEmpty() ? null : amounts.get(0);
     }
 
+    /** 指定版本的考核扣款（PENALTY），无记录返回零（幂等重放重建结果用） */
+    public BigDecimal penaltyAmountOfVersion(String responseId, String billVersion) {
+        List<BigDecimal> amounts = jdbc.query(
+                "SELECT amount_yuan FROM bill WHERE response_id=? AND subject='PLATFORM' AND bill_type='PENALTY' "
+                        + "AND bill_version=?",
+                (rs, rowNum) -> rs.getBigDecimal(1), responseId, billVersion);
+        return amounts.isEmpty() ? BigDecimal.ZERO : amounts.get(0);
+    }
+
+    /** 任务行调度缺口（GAP 终态残留值，正常完成返回零） */
+    public BigDecimal taskGapKw(String responseId) {
+        List<BigDecimal> values = jdbc.query(
+                "SELECT gap_kw FROM dr_task WHERE response_id=?",
+                (rs, rowNum) -> rs.getBigDecimal(1), responseId);
+        return values.isEmpty() ? null : values.get(0);
+    }
+
+    /** 第一个基线点的 [基线, 实测]（kW），无记录返回 null——幂等重放重建响应口径用 */
+    public double[] firstBaselinePoint(String responseId) {
+        List<double[]> points = jdbc.query(
+                "SELECT baseline_kw, actual_kw FROM baseline_record WHERE response_id=? AND point_index=0",
+                (rs, rowNum) -> new double[]{rs.getDouble(1), rs.getDouble(2)}, responseId);
+        return points.isEmpty() ? null : points.get(0);
+    }
+
     /** 指定版本的用户分摊（SHARE），纠偏幂等重放还原结果用 */
     public Map<String, BigDecimal> allocationOfVersion(String responseId, String billVersion) {
         Map<String, BigDecimal> allocation = new LinkedHashMap<>();

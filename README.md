@@ -80,6 +80,8 @@ curl -X POST "http://localhost:8080/api/v1/demo/reset"
 
 **Redis 缓存时序与故障口径（第 6 轮复审修复）**：结果缓存经事务同步在**数据库提交后**写入（提交失败只释放在途标记，绝不留下「缓存成功、数据库回滚」的脏结果）；GAP 结果不缓存、同键可重跑；演示重置同步 `SCAN` 清空幂等缓存命名空间（重置后同键重新落库）；Redis 不可用在**守卫内部**按退化语义消化——读取失败=未命中、登记失败=放行进入数据库认领、写/清失败=静默告警（连接/命令超时 2 秒兜底，不再向业务 500）。事务隔离显式 `READ_COMMITTED`：MySQL 默认 REPEATABLE READ 曾使锁下快照读拿到过期版本号（容器实测 12 路并发纠偏只出 3 版），H2 默认 READ_COMMITTED 故教学库未暴露。
 
+**幂等重放结果完整性（第 7 轮复审修复）**：同键重复请求（Redis 停机走数据库兜底、或缓存 TTL 过期）返回**从数据库按最新账期版本重建的完整结算结果**——净实收/毛额/考核/分摊/申报/基线实测/响应电量/合格率逐项还原，不再只返回默认字段；在途标记 `RUNNING` 不再被当作结果 JSON 反序列化刷告警。
+
 > 升级说明：`dispute_correction`（纠偏请求留档表）为新增结构。若存在旧版本演示库文件，
 > 请先删除 `~/.openvpp/openvpp-db*` 再启动（教学库不做迁移）。
 
@@ -121,7 +123,7 @@ mvn -s settings-openvpp.xml -pl openvpp-gateway -am test
 
 | tag | 指向 | 说明 |
 |-----|------|------|
-| `part1-cognition-r2` | `ad6392b`（master HEAD，2026-09-19 已推送远端） | **读者获取入口冻结快照**。包含：结算四量口径、争议更正版本化与并发幂等（`correctionRequestId` 留档唯一键 + FOR UPDATE 版本串行化 + 审计账单 INSERT-only）、事务内原子认领、Redis 幂等守卫（故障退化 + 提交后缓存写入 + 重置清命名空间）、H2/MySQL 方言自适应与 Docker 交付对齐、真实环境回归（MySqlComposeIT）。获取：`git checkout part1-cognition-r2` |
+| `part1-cognition-r2` | `7a754c1`（2026-09-19 已推送远端；含修复后随 master 前移） | **读者获取入口冻结快照**。包含：结算四量口径、争议更正版本化与并发幂等（`correctionRequestId` 留档唯一键 + FOR UPDATE 版本串行化 + 审计账单 INSERT-only）、事务内原子认领、Redis 幂等守卫（故障退化 + 提交后缓存写入 + 重置清命名空间 + 数据库重建重放结果）、H2/MySQL 方言自适应与 Docker 交付对齐、真实环境回归（MySqlComposeIT）。获取：`git checkout part1-cognition-r2` |
 
 > 说明：`part1-cognition`（原规划的第一轮快照）从未创建、不再规划，历史口径已于 2026-09-19 与仓库实际对齐。
 > 获取入口二选一：`master` 分支（随修复滚动更新）或 `part1-cognition-r2` 标签（冻结快照）。
