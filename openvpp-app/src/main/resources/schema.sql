@@ -1,6 +1,6 @@
--- 园区需求响应贯穿案例：核心业务结果持久化（教学用 H2 文件库）
+-- 园区需求响应贯穿案例：核心业务结果持久化（教学默认 H2 文件库，docker 交付切换 MySQL）
 -- 关联标识：response_id 贯穿 任务→指令→基线→账单 四表，是争议核查与追溯的锚点。
--- 生产形态：MySQL/PostgreSQL 同构建表，见第 25 篇。
+-- 生产形态：MySQL/PostgreSQL 同构建表，见第 25 篇（DDL 兼容两库，仓库层按连接方言自适应）。
 
 CREATE TABLE IF NOT EXISTS dr_task (
     response_id     VARCHAR(64) PRIMARY KEY,
@@ -44,4 +44,16 @@ CREATE TABLE IF NOT EXISTS bill (
     created_ms      BIGINT NOT NULL,
     -- 版本列入主键：同一主体多轮更正独立留档互不覆盖，原始账单（V1）永不删除
     PRIMARY KEY (response_id, subject, bill_type, bill_version)
+);
+
+-- 争议更正请求留档：correction_request_id 是纠偏请求幂等键，唯一键拦截同键重复
+-- 提交（含并发）——先占键再写更正账单，重复方据此返回原版本结果，不重复出账
+CREATE TABLE IF NOT EXISTS dispute_correction (
+    response_id            VARCHAR(64) NOT NULL,
+    correction_request_id  VARCHAR(64) NOT NULL,
+    bill_version           VARCHAR(8)  NOT NULL,
+    corrected_actual_kw    DECIMAL(14,3) NOT NULL,
+    diff_yuan              DECIMAL(14,2) NOT NULL,
+    created_ms             BIGINT NOT NULL,
+    PRIMARY KEY (response_id, correction_request_id)
 );

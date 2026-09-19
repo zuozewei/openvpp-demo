@@ -6,7 +6,8 @@ spring:
     name: openvpp-demo
   datasource:
     # 教学默认：H2 文件库（读者零外部依赖，重启数据仍在）
-    url: jdbc:h2:file:${user.home}/.openvpp/openvpp-db;AUTO_SERVER=TRUE
+    # LOCK_TIMEOUT：同键并发的原子认领在唯一索引上的等待窗口（并发幂等修复见编排器注释）
+    url: jdbc:h2:file:${user.home}/.openvpp/openvpp-db;AUTO_SERVER=TRUE;LOCK_TIMEOUT=10000
     driver-class-name: org.h2.Driver
     username: sa
     password: ""
@@ -25,3 +26,6 @@ openvpp:
     # 接入模式：local（默认，本地模拟，零外部依赖，断网可跑）/ remote（真实协议接入）
     # remote 模式下 MQTT 必须显式配置 broker 地址，工程不提供任何默认外部地址
     mode: local
+  db:
+    # 持久化方言：auto（默认，按连接元数据探测 H2/MySQL）/ mysql / h2（测试显式指定用）
+    dialect: auto

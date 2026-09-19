@@ -2,7 +2,9 @@ package com.openvpp.app.controller;
 
 import com.openvpp.app.orchestration.DemoRunResult;
 import com.openvpp.app.orchestration.ParkResponseOrchestrator;
+import com.openvpp.app.orchestration.TaskInProgressException;
 import com.openvpp.app.persistence.ResponseRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,11 +54,16 @@ public class ParkResponseController {
      * correctedActualKw，默认 380）重算结算四量与分摊，生成下一账期版本的全套
      * 更正账单（SETTLE/PENALTY/PLATFORM_CUT/SHARE/CORRECTION）；历史版本保留，
      * 支持同一任务多轮更正（V2、V3…），非零差额全额传导到服务费与分摊。
+     *
+     * correctionRequestId（可选，4-64 位）为纠偏请求幂等键：同一请求重复提交
+     * （含并发）返回原版本结果、不重复出账；不传则每次视为新请求自动登记。
+     * 并发多个不同请求按版本号原子分配，逐版本独立留档互不覆盖。
      */
     @PostMapping("/demo/dispute")
     public DemoRunResult dispute(@RequestParam String responseId,
-                                 @RequestParam(defaultValue = "380") BigDecimal correctedActualKw) {
-        return orchestrator.dispute(responseId, correctedActualKw);
+                                 @RequestParam(defaultValue = "380") BigDecimal correctedActualKw,
+                                 @RequestParam(required = false) String correctionRequestId) {
+        return orchestrator.dispute(responseId, correctedActualKw, correctionRequestId);
     }
 
     /**
@@ -78,6 +85,15 @@ public class ParkResponseController {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, Object>> badRequest(IllegalArgumentException e) {
         return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+    }
+
+    /**
+     * 同键任务认领竞争超限统一 409：并发窗口内任务正在处理（正常执行时长远小于
+     * 认领等待窗口，仅数据库锁等待超时等 pathological 场景触发），调用方稍后重试。
+     */
+    @ExceptionHandler(TaskInProgressException.class)
+    public ResponseEntity<Map<String, Object>> inProgress(TaskInProgressException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", e.getMessage()));
     }
 
     @GetMapping("/tasks")

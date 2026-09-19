@@ -62,15 +62,28 @@
         </dependency>
 
         <!-- 教学持久化：H2 内嵌数据库（文件模式），读者零外部依赖即可跑通；
-             生产形态在 application.yml 切换为 MySQL/PostgreSQL，见第 25 篇 -->
+             docker 交付（application-docker.yml）切换为 MySQL，见第 25 篇 -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <!-- docker 交付持久化：MySQL 驱动（compose 内 mysql:8.0），教学默认不加载；
+             Spring Boot 2.7.8+ BOM 管理的坐标为 com.mysql:mysql-connector-j -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+        <!-- docker 交付：Redis 前置幂等缓存（已完成结果的快速重放，见 IdempotencyGuard）；
+             本地教学/测试未开启 redis-enabled 时仅装配 Noop 守卫，零 Redis 依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
 
         <dependency>

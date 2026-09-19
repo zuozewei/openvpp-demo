@@ -89,8 +89,12 @@
 | DEGRADED | ev-001 掉线 | 可承诺 =(475+360)×0.9=751.5 kW < 900 → **不可行，返回缺口 148.5 kW**，不出账 |
 | DISPUTED | 计量补到（第 2 时段实测 400→380 kW） | 同 NORMAL 完成结算；更正响应量 = 600 + (400−380)×0.25 = **605 kWh**。申报 600 时合格率 100.8% ≥ 100% 仍按申报封顶、金额不变（差额 0，重算口径留痕）；申报 650 等非封顶场景：净实收 605×2 = 1,210 元，较基期 V1 差额 **+10 元**，全额传导为 V2 服务费与分摊重算。生成版本化更正账单五件套（SETTLE/PENALTY/PLATFORM_CUT/SHARE/CORRECTION），账单主键含 `bill_version`，各版本独立留档，支持多轮更正（V2、V3…），原始账单（V1）保留 |
 
-争议更正入口：`POST /api/v1/demo/dispute`（结算后独立入口，可传 `correctedActualKw`）；
-对已结算任务再以 `path=DISPUTED` 调 `run` 等价转入更正，不被"已结算"幂等拦截。
+争议更正入口：`POST /api/v1/demo/dispute`（结算后独立入口，可传 `correctedActualKw` 与可选
+`correctionRequestId`——纠偏请求幂等键，同键重复提交返回原版本结果不重复出账，并发不同请求
+按版本号原子分配逐版留档）；对已结算任务再以 `path=DISPUTED` 调 `run` 等价转入更正，不被"已结算"幂等拦截。
+
+并发口径：`run` 以事务内 `INSERT`（`response_id` 唯一主键）原子认领，同键并发只有一路完整执行、
+其余幂等重放（实测 50 路并发恰好 1 路执行）；更正账单一律 INSERT-only，历史版本不可变。
 
 ## 六、验证方法
 
@@ -109,8 +113,8 @@ curl -X POST "http://localhost:8080/api/v1/demo/run?responseId=run-pen&path=NORM
 curl -X POST "http://localhost:8080/api/v1/demo/run?responseId=run-002&path=DEGRADED"
 # 争议路径（随 run：结算后自动按 400→380 补到生成 V2 更正账单）
 curl -X POST "http://localhost:8080/api/v1/demo/run?responseId=run-003&path=DISPUTED&declaredKwh=650"
-# 结算后争议更正（独立入口：正/负差额与多轮更正均支持，历史版本保留）
-curl -X POST "http://localhost:8080/api/v1/demo/dispute?responseId=run-003&correctedActualKw=380"
+# 结算后争议更正（独立入口：正/负差额与多轮更正均支持，历史版本保留；correctionRequestId 可选幂等键）
+curl -X POST "http://localhost:8080/api/v1/demo/dispute?responseId=run-003&correctedActualKw=380&correctionRequestId=req-001"
 # 查询
 curl "http://localhost:8080/api/v1/tasks"
 curl "http://localhost:8080/api/v1/instructions?responseId=run-001"

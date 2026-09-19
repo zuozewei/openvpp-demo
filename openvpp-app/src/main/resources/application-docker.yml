@@ -1,0 +1,25 @@
+# 第 25 篇 docker compose 交付 profile：
+#   MySQL 承载任务/指令/基线/账单持久化（schema.sql 与 H2 同构，CREATE TABLE IF NOT EXISTS 可重复执行）；
+#   Redis 承载已完成结果的幂等快速重放（数据库唯一约束 + 事务内原子认领兜底，见 IdempotencyGuard）；
+#   EMQX 承载 remote 模式的 MQTT 协议接入（remote 由 compose 环境变量开启）。
+spring:
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:mysql}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:openvpp_demo}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:openvpp-demo}
+  sql:
+    init:
+      mode: always
+  h2:
+    console:
+      enabled: false
+
+  redis:
+    host: ${REDIS_HOST:redis}
+    port: ${REDIS_PORT:6379}
+
+openvpp:
+  idempotency:
+    # Redis 前置幂等缓存开关（业务落点：已完成结果的快速重放；正确性始终由数据库兜底）
+    redis-enabled: true

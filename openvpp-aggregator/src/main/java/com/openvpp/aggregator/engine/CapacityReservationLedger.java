@@ -15,9 +15,11 @@ import java.util.Map;
  * 预占生命周期：任务完成/取消/失败时按 taskId 释放（releaseByTask）；
  * 演示重置时整体清空（clear），避免内存台账与库表脱节。
  *
- * 教学实现为进程内内存表，线程不安全、重启即失；
- * 生产扩展见第 14 篇文末：预占持久化（库表/Redis）、并发一致性（行锁/乐观锁）、
- * 跨时间窗占用的滚动释放。
+ * 教学实现为进程内内存表；第 3 轮复核修复：同一 responseId 的并发请求曾触发
+ * occupiedIn 遍历时的 ConcurrentModificationException（HashMap/ArrayList 无保护），
+ * 现全部公开方法互斥，登记/查询/释放串行化，并发下既不抛异常也不丢更新。
+ * 预占的正式方案应落库或 Redis（跨实例一致 + 重启不丢），见第 14 篇文末：
+ * 预占持久化（库表/Redis）、并发一致性（行锁/乐观锁）、跨时间窗占用的滚动释放。
  */
 public class CapacityReservationLedger {
 
@@ -38,7 +40,7 @@ public class CapacityReservationLedger {
     /**
      * 登记一次预占（taskId 贯穿响应任务，任务完成/取消/失败时按此释放）。
      */
-    public void reserve(String taskId, String resourceId, TaskWindow window, BigDecimal occupiedKw) {
+    public synchronized void reserve(String taskId, String resourceId, TaskWindow window, BigDecimal occupiedKw) {
         reservations.computeIfAbsent(resourceId, k -> new ArrayList<>())
                 .add(new Entry(taskId, window, occupiedKw));
     }
@@ -46,7 +48,7 @@ public class CapacityReservationLedger {
     /**
      * 某资源在与 window 重叠的所有已登记任务中的累计占用（kW）。
      */
-    public BigDecimal occupiedIn(String resourceId, TaskWindow window) {
+    public synchronized BigDecimal occupiedIn(String resourceId, TaskWindow window) {
         return reservations.getOrDefault(resourceId, List.of()).stream()
                 .filter(e -> e.window.overlaps(window))
                 .map(e -> e.occupiedKw)
@@ -56,9 +58,9 @@ public class CapacityReservationLedger {
     /**
      * 剩余可用 = 有效能力 - 重叠窗口累计占用，不为负。
      */
-    public BigDecimal remainingKw(AssessedResource resource,
-                                  AssessedResource.Direction direction,
-                                  TaskWindow window) {
+    public synchronized BigDecimal remainingKw(AssessedResource resource,
+                                               AssessedResource.Direction direction,
+                                               TaskWindow window) {
         BigDecimal effective = resource.effectiveCapacityKw(
                 direction, window.getStartEpochSec(), window.getDurationSec());
         BigDecimal remaining = effective.subtract(occupiedIn(resource.getResourceId(), window));
@@ -68,7 +70,7 @@ public class CapacityReservationLedger {
     /**
      * 释放某资源已登记的全部预占（资源掉线重估时调用）。
      */
-    public void releaseAll(String resourceId) {
+    public synchronized void releaseAll(String resourceId) {
         reservations.remove(resourceId);
     }
 
@@ -76,8 +78,9 @@ public class CapacityReservationLedger {
      * 按任务标识释放预占（任务完成/取消/失败时调用）：
      * 遍历各资源移除该 taskId 的登记项，空资源的整条记录一并清除。
      * 返回实际释放的登记条数（0 表示该任务无预占，调用方可据此告警）。
+     * 只按 taskId 精确匹配，不触碰其他任务的登记项。
      */
-    public int releaseByTask(String taskId) {
+    public synchronized int releaseByTask(String taskId) {
         int released = 0;
         for (List<Entry> entries : reservations.values()) {
             for (int i = entries.size() - 1; i >= 0; i--) {
@@ -94,7 +97,7 @@ public class CapacityReservationLedger {
     /**
      * 清空全部预占（演示重置用，与数据库 deleteAll 配对调用）。
      */
-    public void clear() {
+    public synchronized void clear() {
         reservations.clear();
     }
 }
