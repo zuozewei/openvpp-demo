@@ -48,7 +48,7 @@ curl http://127.0.0.1:8080/api/v1/system/ping
 - 网关默认**本地模拟模式**（`openvpp.gateway.mode=local`）：`java -jar` 启动不连接任何外部消息服务，断网可跑；真实 MQTT/CoAP 协议接入须显式设置 `openvpp.gateway.mode=remote` 并配置 `openvpp.mqtt.broker`（工程不提供任何默认外部地址）。
 - 三路径现状：`NORMAL`（正常）、`DEGRADED`（降级报缺口）、`DISPUTED`（争议计量补正）均已实现；另有结算后争议更正的**独立入口** `POST /api/v1/demo/dispute`。结算采用四量口径：补偿毛额 → 考核扣款（落账 `PENALTY`，从应收补贴中扣除）→ 平台净实收（落账 `SETTLE`，即可分配金额）→ 分摊；争议更正按更正计量重算四量，非零差额**全额传导**为下一账期版本（`bill_version`）的服务费与分摊重算，五件套更正账单（SETTLE/PENALTY/PLATFORM_CUT/SHARE/CORRECTION）独立留档，原始账单（V1）永不删除，支持同一任务多轮更正（口径与示例数值见 `openvpp-app/PARK-DEMO.md`）。
 - 算法番外（第 33-35 篇）已**纳入代码工程并配模块级单测**（`openvpp-dispatch` 的 MPC 调度、`openvpp-settlement` 的区域结算等）；但主应用编排当前只调用**评估 → 聚合 → 指令 → 结算**主线，MPC 与区域结算模块**尚未接入编排链路**。
-- 交付栏实战番外（第 46-48 篇）配套代码同样为**纳入主代码工程、未接编排链路**的模块级实现：`openvpp-dispatch` 的目标分解与评估闭环（`com.openvpp.dispatch.decompose` / `evalloop`，16 项单测）、`openvpp-assessment` 的 GBDT 训推链（`com.openvpp.assessment.predict`，10 项单测，Python 零依赖演示 `tools/ai/gbdt_demo.py`，`--selfcheck` 可自检跨语言公式契约）、`openvpp-iot` 的多协议接入地图（`com.openvpp.iot.protocol`，8 项单测）。全仓回归 200 项 / 实际执行 198 项（2 项 live 默认跳过）；另有真实 MySQL + Redis 集成回归 `MySqlComposeIT`（4 项，需 compose 服务在位，见下节，不计入常规口径）。
+- 交付栏实战番外（第 46-48 篇）配套代码同样为**纳入主代码工程、未接编排链路**的模块级实现：`openvpp-dispatch` 的目标分解与评估闭环（`com.openvpp.dispatch.decompose` / `evalloop`，16 项单测）、`openvpp-assessment` 的 GBDT 训推链（`com.openvpp.assessment.predict`，10 项单测，Python 零依赖演示 `tools/ai/gbdt_demo.py`，`--selfcheck` 可自检跨语言公式契约）、`openvpp-iot` 的多协议接入地图（`com.openvpp.iot.protocol`，8 项单测）。全仓回归 201 项 / 实际执行 199 项（31 个测试类，2 项 live 默认跳过）；另有真实 MySQL + Redis 集成回归 `MySqlComposeIT`（4 项，需 compose 服务在位，类级 `@EnabledIf` 不满足时不执行、不计入上述常规口径，见下节）。
 
 ```bash
 mvn -s settings-openvpp.xml -pl openvpp-app -am -DskipTests package
