@@ -28,7 +28,7 @@ public class DeviceMessage {
     /** 负荷点值：如 power=1200.5 / soc=0.62 / temp=24.5 */
     private Map<String, Object> payload;
 
-    /** 报文完整性序列号 —— 对应 44260 配置要求第 4 条"数据校核" */
+    /** 报文完整性序列号 —— 对应 44260 第 5.4 条"数据校核"能力 */
     private Long seq;
 
     public String getProtocol() {

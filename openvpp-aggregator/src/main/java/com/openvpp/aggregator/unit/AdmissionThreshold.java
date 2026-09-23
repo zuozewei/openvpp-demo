@@ -13,7 +13,7 @@ public final class AdmissionThreshold {
     /** 总调节容量 5MW */
     public static final long MIN_TOTAL_ADJUST_KW = 5_000;
 
-    /** 单元调节容量 1MW，对应 44260"调峰调节容量宜≥1MW" */
+    /** 单元调节容量 1MW：对应 47241 第 4.2 条三层容量体系；44260 第 5.9(c) 的"调节容量宜不低于 1MW"是方案级指标，此处落到单元准入 */
     public static final long MIN_UNIT_ADJUST_KW = 1_000;
 
     /** 调节速率 %/min：1MW 单元每分钟至少变化 30kW */

@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
- * 资源档案 —— 对应 GB/T 44260 资源配置要求第 6 条。
+ * 资源档案 —— 对应 GB/T 44260-2024 第 5.6 条（资源基本信息收集清单）。
  * 每类资源（光伏/储能/充电桩/空调）继承此基类。
  * 档案是慢变数据：建档一次，年度更新，变更留审计。
  */
@@ -33,10 +33,10 @@ public abstract class ResourceProfile {
     /** 所属聚合主体 */
     private Long operatorId;
 
-    /** 用电户号/并网点标识 —— 排他性校验的业务键（44260 第 6.1 条） */
+    /** 用电户号/并网点标识 —— 排他性校验的业务键（业务约定，非 44260 条文） */
     private String gridAccountId;
 
-    /** 代理协议到期日 —— 44260 第 2 条：最小时间期限宜不小于 1 个月 */
+    /** 代理协议到期日 —— 44260 第 5.2 条：最小时间期限宜不小于 1 个月（"宜"为推荐值，工程上按默认门槛处理） */
     private LocalDate contractEnd;
 
     public String getResourceId() {

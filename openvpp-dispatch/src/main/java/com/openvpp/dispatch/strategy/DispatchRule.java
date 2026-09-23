@@ -16,11 +16,11 @@ public class DispatchRule {
 
     private final String ruleId;
     private final Scenario scenario;
-    /** 允许参与的资源类型（44260 配置要求第 9-11 条） */
+    /** 允许参与的资源类型（44260 第 5.9/5.10/5.11 条的"典型资源配置"，原文多为"宜…为主"，非排他准入） */
     private final Set<ResourceType> allowedTypes;
     /** 最大响应时间上限（毫秒），超时的资源类型被排除 */
     private final long maxResponseTimeMs;
-    /** 最短持续时长（秒），44260 备用/调峰的持续时间要求 */
+    /** 最短持续时长（秒），对应 44260 第 5.9(c)/5.11(b) 的持续时间指标要求 */
     private final long minSustainSeconds;
     /** 优先级：数值小者优先匹配 */
     private final int priority;

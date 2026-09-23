@@ -12,8 +12,9 @@ import java.util.stream.Collectors;
  * 单元分组器 —— 按 47241 第 11.3 条同节点约束把资源聚成 VPP 单元。
  * 三条铁律：
  * 1. 同一单元内资源必须同属一个出清节点（否则结算无法统一）；
- * 2. 代理期内才准入（44260 期限校验的调度侧复查）;
- * 3. 单元调节容量宜 ≥1MW 准入门槛（AdmissionThreshold）。
+ * 2. 代理期内才准入：仅消费上游传入的 contractValid 标记，**本类不从 contractEnd 复算到期日**
+ *    （调度前复查待补，见专栏第 02 篇追踪表 5.2 行）;
+ * 3. 单元调节容量宜 ≥1MW 准入门槛（AdmissionThreshold）；不达标的单元加 -below-threshold 后缀保留，不是拒绝。
  */
 public class UnitGrouper {
 
