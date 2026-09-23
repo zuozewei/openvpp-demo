@@ -30,7 +30,7 @@ class StrategyEngineTest {
     }
 
     @Test
-    void 内置底线规则覆盖三大场景() {
+    void 默认规则覆盖三大场景() {
         assertEquals(3, engine.ruleCount());
         assertTrue(engine.match(Scenario.FREQ_REG).isPresent());
         assertTrue(engine.match(Scenario.PEAK_SHIFT).isPresent());
@@ -89,15 +89,15 @@ class StrategyEngineTest {
     }
 
     @Test
-    void 区域规则可加严不可放松() {
-        // 华北区域加严：调峰响应上限从 15 分钟收紧到 10 分钟
+    void 区域规则可覆盖默认规则() {
+        // 华北区域规则：调峰响应上限从教学默认的 15 分钟收紧到 10 分钟
         engine.register(new DispatchRule("huabei-peak-strict", Scenario.PEAK_SHIFT,
                 EnumSet.of(ResourceType.FL, ResourceType.ES),
                 600_000, 1800, -1));   // 更高优先级（数值更小）
 
         Optional<String> violation = engine.check(Scenario.PEAK_SHIFT,
-                ResourceType.FL, 720_000, 3600);   // 12 分钟：国标放行但华北拦截
-        assertTrue(violation.isPresent(), "区域加严规则应优先生效");
+                ResourceType.FL, 720_000, 3600);   // 12 分钟：教学默认放行，华北区域规则拦截
+        assertTrue(violation.isPresent(), "区域规则应优先生效——默认值可覆盖，不是不可动的底线");
     }
 
     @Test
