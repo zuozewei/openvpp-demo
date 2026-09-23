@@ -90,13 +90,13 @@ class StrategyEngineTest {
 
     @Test
     void 区域规则可覆盖默认规则() {
-        // 华北区域规则：调峰响应上限从教学默认的 15 分钟收紧到 10 分钟
-        engine.register(new DispatchRule("huabei-peak-strict", Scenario.PEAK_SHIFT,
+        // 假设区域规则：调峰响应上限从教学默认的 15 分钟收紧到 10 分钟
+        engine.register(new DispatchRule("region-demo-peak-strict", Scenario.PEAK_SHIFT,
                 EnumSet.of(ResourceType.FL, ResourceType.ES),
                 600_000, 1800, -1));   // 更高优先级（数值更小）
 
         Optional<String> violation = engine.check(Scenario.PEAK_SHIFT,
-                ResourceType.FL, 720_000, 3600);   // 12 分钟：教学默认放行，华北区域规则拦截
+                ResourceType.FL, 720_000, 3600);   // 12 分钟：教学默认放行，假设区域规则拦截
         assertTrue(violation.isPresent(), "区域规则应优先生效——默认值可覆盖，不是不可动的底线");
     }
 
