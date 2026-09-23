@@ -123,9 +123,10 @@ mvn -s settings-openvpp.xml -pl openvpp-gateway -am test
 
 | tag | 指向 | 说明 |
 |-----|------|------|
-| `part1-cognition-r2` | `434ab2b`（2026-09-19；注解标签对象 `5553afd` 指向该提交） | **读者获取入口冻结快照**。包含：结算四量口径、争议更正版本化与并发幂等（`correctionRequestId` 留档唯一键 + FOR UPDATE 版本串行化 + 审计账单 INSERT-only）、事务内原子认领、Redis 幂等守卫（故障退化 + 提交后缓存写入 + 重置清命名空间 + 数据库重建重放结果）、H2/MySQL 方言自适应与 Docker 交付对齐、真实环境回归（MySqlComposeIT）。获取：`git checkout part1-cognition-r2` |
+| `part1-cognition-r3` | `187297e`（2026-09；注解标签对象 `0cc4227` 指向该提交） | **读者获取入口冻结快照（推荐）**。在 r2 基础上**仅修订注释、不改任何行为**：内置规则改称教学默认值并注明比 44260 5.10(d) 更严、条款编号精确到条、加权评分标注为非标准扩展、排他性标注为业务约定。列出的 r2 内容全部包含。获取：`git checkout part1-cognition-r3`；测试口径：全仓 201 项 / 执行 199 项 / 2 项 live 跳过 |
+| `part1-cognition-r2` | `434ab2b`（2026-09-19；注解标签对象 `5553afd` 指向该提交） | 历史快照，行为与 r3 完全一致。**其源码注释为修订前口径**（如 `RuleEngine` 把"调频只放储能"写成国标底线、`AssessStrategy` 把加权评分写成标准方法），引用注释时请以 r3 或 master 为准。包含：结算四量口径、争议更正版本化与并发幂等（`correctionRequestId` 留档唯一键 + FOR UPDATE 版本串行化 + 审计账单 INSERT-only）、事务内原子认领、Redis 幂等守卫（故障退化 + 提交后缓存写入 + 重置清命名空间 + 数据库重建重放结果）、H2/MySQL 方言自适应与 Docker 交付对齐、真实环境回归（MySqlComposeIT）。获取：`git checkout part1-cognition-r2` |
 
-> 注：`bace116`（2026-09-23）为**注释口径修订**（国标条款编号与"宜/应"标注），不影响任何行为，仅在 master；专栏第 02 篇的代码证据与测试数字仍以冻结快照 `434ab2b` 为准。
+> 注：标签 `part1-cognition-r2` 之后的 `bace116`、`187297e` 均为**注释与文档口径修订**，不影响任何行为；专栏第 02 篇的代码证据与测试数字在 r2/r3 上一致。
 
 > 说明：`part1-cognition`（原规划的第一轮快照）从未创建、不再规划，历史口径已于 2026-09-19 与仓库实际对齐。
 > 获取入口二选一：`master` 分支（随修复滚动更新）或 `part1-cognition-r2` 标签（冻结快照）。
