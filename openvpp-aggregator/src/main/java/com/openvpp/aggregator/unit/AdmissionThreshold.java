@@ -3,7 +3,7 @@ package com.openvpp.aggregator.unit;
 /**
  * 准入门槛常量 —— 对应 GB/T 47241-2026 第 4.2 条。
  * 条款为"宜"（推荐性），本身不构成强制验收依据；
- * 但地方细则与市场规则大概率引用该组数值，工程上视为事实准入基准。
+ * 本工程将其作为方案初筛默认值，被属地细则、市场规则或合同采用后才构成准入条件。
  */
 public final class AdmissionThreshold {
 

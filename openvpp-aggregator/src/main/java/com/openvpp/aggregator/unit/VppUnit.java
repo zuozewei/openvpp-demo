@@ -9,13 +9,14 @@ import java.util.List;
  * VPP 单元 —— 对应 GB/T 47241-2026 第 3.6/11.3 条。
  * 按资源特性、地理位置、电气位置及市场需求对资源逻辑分组，
  * 作为基本单元参与电力交易或电网调节。
- * 硬约束：同一单元的资源原则上隶属同一市场出清节点（11.3）。
+ * 分组约定：示例工程按 11.3 条选择同节点分组；
+ * 标准允许在电网条件和市场规则允许时跨节点聚合。
  */
 public class VppUnit {
 
     private String unitId;
 
-    /** 出清节点 —— 单元内资源必须同节点，否则结算无法统一 */
+    /** 出清节点 —— 示例工程按同节点分组，否则结算无法统一 */
     private String clearingNodeId;
 
     private List<String> resourceIds;
