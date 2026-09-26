@@ -21,7 +21,7 @@
 - 区域结算示例类更名为 `RegionAFreqRanking` / `RegionBPeakSettlement`（虚构示例口径，行为不变）；
 - 台账与光伏算例测试数据改用虚构区域标签与示例纬度。
 
-## [1.0.0] - 2026-09
+## 1.0.0 - 2026-09
 
 ### 新增
 
@@ -35,4 +35,4 @@
 - 工程口径：事务内原子认领、Redis 幂等守卫（故障退化 + 提交后缓存写入）、
   H2/MySQL 方言自适应、真实环境回归 MySqlComposeIT。
 
-[Unreleased]: https://gitee.com/zuozewei/openvpp-demo/compare/master...HEAD
+[Unreleased]: https://github.com/zuozewei/openvpp-demo/commits/master
