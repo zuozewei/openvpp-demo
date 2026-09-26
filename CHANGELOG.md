@@ -16,11 +16,9 @@
 
 ### 工程调整
 
-- TSDB live 基准的连接信息改为系统属性注入（用法见教程 06）；
-
+- TSDB live 基准的连接地址与凭据改为系统属性注入，仓库不再内置环境信息（用法见教程 06）；
 - RAG 演示语料目录改为命令行参数/环境变量注入，仓库自带示例语料 `tools/ai/corpus/`；
-- 区域结算示例类更名为 `RegionAFreqRanking`、
-  `RegionBPeakSettlement`（虚构示例口径，行为不变）；
+- 区域结算示例类更名为 `RegionAFreqRanking` / `RegionBPeakSettlement`（虚构示例口径，行为不变）；
 - 台账与光伏算例测试数据改用虚构区域标签与示例纬度。
 
 ## [1.0.0] - 2026-09

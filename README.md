@@ -1,7 +1,7 @@
 # openvpp-demo
 
 > 专栏《虚拟电厂系统开发实战：从物联接入到市场化运营》配套示例工程
-> 定位：最小可运行实现，不是玩具 Demo，也不是生产代码
+> 定位：最小可运行的虚拟电厂系统实现，不是玩具 Demo，也不是生产代码
 
 ![Java](https://img.shields.io/badge/Java-11-blue)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7-brightgreen)
@@ -19,8 +19,7 @@
 | 构建 | `mvn -s settings-openvpp.xml`（公共镜像，不依赖任何私有仓库） |
 | 许可证 | [Apache-2.0](LICENSE) |
 
-**示例说明**：示例数据均为虚构，
-区域规则口径为教学虚构示例，不对应任何真实地区准入或结算规则。
+> **示例说明**：示例数据均为虚构，区域规则口径为教学虚构示例，不对应任何真实地区准入或结算规则。
 
 ## 🖼️ 项目概览
 
