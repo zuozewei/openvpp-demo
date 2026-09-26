@@ -12,3 +12,5 @@ target/
 .project
 app-run.log
 .zcodeignore
+# ZCode 本地工具目录
+.zcode/
