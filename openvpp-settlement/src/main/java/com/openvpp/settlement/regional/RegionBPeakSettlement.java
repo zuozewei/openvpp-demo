@@ -1,7 +1,8 @@
 package com.openvpp.settlement.regional;
 
 /**
- * 华北调峰单时段结算 —— 专栏第 34 篇「双重 min 非对称激励」公式直译。
+ * 区域B调峰单时段结算 —— 专栏第 34 篇「双重 min 非对称激励」公式直译。
+ * （区域B 为虚构示例口径，不指向任何真实省级规则。）
  *
  * 公式：Rt = K · min{P/Pz, 1} · min{P, Pz} · tC · CC
  *
@@ -18,9 +19,9 @@ package com.openvpp.settlement.regional;
  *
  * 教学简化：只做单时段结算，不处理跨时段累计与多资源分摊。
  */
-public final class HuabeiPeakSettlement {
+public final class RegionBPeakSettlement {
 
-    /** 出清时间间隔：15 分钟 = 0.25h（华北调峰口径） */
+    /** 出清时间间隔：15 分钟 = 0.25h（区域B示例口径） */
     public static final double INTERVAL_HOURS = 0.25;
 
     /** 悬崖阈值：偏差超过 30% 全时段归零 */

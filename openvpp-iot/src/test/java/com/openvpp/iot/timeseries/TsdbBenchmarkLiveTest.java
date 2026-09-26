@@ -6,8 +6,13 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 /**
- * 时序基准对比 —— 默认跳过，需真实 TDengine/ClickHouse 环境：
- * mvn -s settings-openvpp.xml -pl openvpp-iot test -Dtest=TsdbBenchmarkLiveTest -Dtsdb.live=true
+ * 时序基准对比 —— 默认跳过，需自备 TDengine/ClickHouse 环境。
+ * 连接地址与凭据全部经系统属性注入，仓库不内置任何环境信息，缺属性时直接失败并提示缺失项：
+ * mvn -s settings-openvpp.xml -pl openvpp-iot test -Dtest=TsdbBenchmarkLiveTest -Dtsdb.live=true \
+ *   -Dtsdb.tdengine.host=&lt;host&gt; -Dtsdb.tdengine.port=&lt;port&gt; \
+ *   -Dtsdb.tdengine.user=&lt;user&gt; -Dtsdb.tdengine.password=&lt;password&gt; \
+ *   -Dtsdb.clickhouse.host=&lt;host&gt; -Dtsdb.clickhouse.port=&lt;port&gt; \
+ *   -Dtsdb.clickhouse.user=&lt;user&gt; -Dtsdb.clickhouse.password=&lt;password&gt;
  *
  * 基准场景：100 台设备 × 5 属性 × 1 秒/点 × 60 秒 = 30000 点批量写入；
  * 再按"单设备单属性时间窗"查询 600 点。两个实现跑同一套负载。
@@ -24,10 +29,22 @@ class TsdbBenchmarkLiveTest {
     @org.junit.jupiter.api.Test
     @org.junit.jupiter.api.condition.EnabledIfSystemProperty(named = "tsdb.live", matches = "true")
     void benchmark() {
-        run(new TdengineTsdbWriter("192.0.2.11", 11041, "openvpp_demo",
-                "root", "REDACTED_PASSWORD"));
-        run(new ClickHouseTsdbWriter("192.0.2.43", 43812, "openvpp_demo",
-                "default", "root"));
+        run(new TdengineTsdbWriter(required("tsdb.tdengine.host"), intProperty("tsdb.tdengine.port"), "openvpp_demo",
+                required("tsdb.tdengine.user"), required("tsdb.tdengine.password")));
+        run(new ClickHouseTsdbWriter(required("tsdb.clickhouse.host"), intProperty("tsdb.clickhouse.port"), "openvpp_demo",
+                required("tsdb.clickhouse.user"), required("tsdb.clickhouse.password")));
+    }
+
+    private static String required(String key) {
+        String value = System.getProperty(key);
+        if (value == null || value.isEmpty()) {
+            throw new IllegalStateException("live 基准缺少系统属性 -D" + key + "=<值>（仓库不内置环境地址与凭据）");
+        }
+        return value;
+    }
+
+    private static int intProperty(String key) {
+        return Integer.parseInt(required(key));
     }
 
     private void run(TsdbWriter writer) {

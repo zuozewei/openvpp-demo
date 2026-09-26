@@ -3,12 +3,16 @@
 """
 RAG 国标知识库检索演示 —— 专栏第 30 篇配套代码。
 零第三方依赖（纯标准库），完整复现 RAG 的"检索"半链路：
-  1. 语料：本仓库的 VPP 国标解析 Markdown 文档（真实语料，非玩具）；
+  1. 语料：Markdown 文档目录（仓库自带示例语料 tools/ai/corpus，
+     也可用 --corpus 或环境变量 RAG_CORPUS_DIRS 指向你自己的国标解析笔记）；
   2. 分块：按 ## 标题切块（RAG 分块策略的最小形态）；
   3. 向量化：中文 bigram 分词 + TF-IDF 加权（生产替换为 embedding 模型）；
   4. 检索：查询向量化 → 余弦相似度 → Top-K 命中块。
 
-运行：python rag_demo.py "查询问题"
+运行：
+  python rag_demo.py "查询问题"                              # 默认语料 ./corpus
+  python rag_demo.py "查询问题" --corpus <Markdown目录>       # 指定语料目录（可重复传入多个）
+  RAG_CORPUS_DIRS="目录1,目录2" python rag_demo.py "查询问题"  # 环境变量指定（逗号分隔）
 """
 import math
 import os
@@ -16,12 +20,36 @@ import re
 import sys
 from collections import Counter
 
-CORPUS_DIRS = [
-    # 相对本脚本的真实语料（tools/ai → 上溯 6 级到仓库根 zuozewei/）
-    "../../../../../../blog-post/12、电力系统/1、基础认知与国标规范",
-    "../../../../../../blog-post/12、电力系统/4、行业总结笔记",
-]
+# 默认语料目录：脚本同级的 corpus/（仓库自带示例语料，可整体替换为你自己的笔记）
+DEFAULT_CORPUS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "corpus")
 TOP_K = 3
+
+
+def resolve_corpus_dirs(argv):
+    """解析语料目录与查询：--corpus 优先，其次环境变量 RAG_CORPUS_DIRS（逗号分隔），最后默认 ./corpus。
+
+    返回 (剩余参数列表, 语料目录列表)。
+    """
+    dirs = []
+    rest = []
+    i = 0
+    while i < len(argv):
+        if argv[i] == "--corpus" and i + 1 < len(argv):
+            dirs.append(argv[i + 1])
+            i += 2
+        elif argv[i].startswith("--corpus="):
+            dirs.append(argv[i].split("=", 1)[1])
+            i += 1
+        else:
+            rest.append(argv[i])
+            i += 1
+    if not dirs:
+        env = os.environ.get("RAG_CORPUS_DIRS")
+        if env:
+            dirs = [d.strip() for d in env.split(",") if d.strip()]
+    if not dirs:
+        dirs = [DEFAULT_CORPUS_DIR]
+    return rest, dirs
 
 
 def bigrams(text):
@@ -36,11 +64,11 @@ def bigrams(text):
     return grams
 
 
-def load_chunks():
+def load_chunks(corpus_dirs):
     """扫描语料目录，按 ## 标题切块。每块 = {doc, heading, text}。"""
     chunks = []
-    for d in CORPUS_DIRS:
-        base = os.path.normpath(os.path.join(os.path.dirname(__file__), d))
+    for d in corpus_dirs:
+        base = os.path.normpath(os.path.expanduser(d))
         if not os.path.isdir(base):
             continue
         for fn in sorted(os.listdir(base)):
@@ -95,12 +123,15 @@ def search(query, chunks, vectors, idf, top_k=TOP_K):
 
 
 def main():
-    query = sys.argv[1] if len(sys.argv) > 1 else "虚拟电厂调节容量不低于多少"
-    chunks = load_chunks()
+    rest, corpus_dirs = resolve_corpus_dirs(sys.argv[1:])
+    query = rest[0] if rest else "虚拟电厂调节容量不低于多少"
+    chunks = load_chunks(corpus_dirs)
     if not chunks:
-        print("未找到语料，请检查 CORPUS_DIRS 路径")
+        print("未找到语料：用 --corpus <Markdown目录> 指定语料，或设置环境变量 RAG_CORPUS_DIRS，"
+              "或把语料放入脚本同级的 corpus/ 目录")
         return
     vectors, idf = tfidf_vectors(chunks)
+    print(f"语料目录: {corpus_dirs}")
     print(f"语料块数: {len(chunks)}  |  查询: {query}\n")
     for score, c in search(query, chunks, vectors, idf):
         print(f"[{score:.4f}] {c['doc']} :: {c['heading']}")

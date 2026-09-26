@@ -11,15 +11,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 光伏出力预测单测：天文层精度 / 温度损耗 / 天气置信度 / 区间宽度。
- * 基准算例：5MWp 屋顶光伏，广州（北纬 23.13°），夏至日正午晴天。
+ * 基准算例：5MWp 屋顶光伏，示例纬度北纬 23.13°，夏至日正午晴天。
  */
 class PvPowerForecasterTest {
 
     private static final double CAPACITY_KWP = 5000.0;
-    private static final double GUANGZHOU_LAT = 23.13;
+    private static final double DEMO_LAT = 23.13;
 
     private final PvPowerForecaster forecaster =
-            new PvPowerForecaster(CAPACITY_KWP, GUANGZHOU_LAT, 20.0, -0.35);
+            new PvPowerForecaster(CAPACITY_KWP, DEMO_LAT, 20.0, -0.35);
 
     private static final LocalDateTime SUMMER_NOON =
             LocalDateTime.of(2026, 6, 21, 12, 0);
@@ -27,7 +27,7 @@ class PvPowerForecasterTest {
     @Test
     void 天文层夏至正午辐照在合理区间() {
         double gEx = forecaster.extraterrestrialIrradiance(SUMMER_NOON);
-        // 广州夏至正午地外辐照约 1200-1360 W/m²（素材算例 1320 为近似值）
+        // 该纬度夏至正午地外辐照约 1200-1360 W/m²（素材算例 1320 为近似值）
         assertTrue(gEx > 1100 && gEx < 1400,
                 "天文层辐照超物理边界: " + gEx);
     }

@@ -32,7 +32,7 @@ import static org.mockito.Mockito.doThrow;
  * 争议更正（随 run、结算后独立入口、正负差额、第 3 轮留档）/
  * 落库失败回滚后的内存态补偿与再次执行 / 超长 responseId 前置拒绝。
  *
- * 数值断言与 PARK-DEMO.md 手工核算底稿一致：
+ * 数值断言与 docs/case-study/park-demo.md 手工核算底稿一致：
  * 默认案例（申报 600）考核为 0：毛额 = 净实收 = 1200.00 元；
  * 分摊 user-storage 475.00 / user-ac 380.00 / user-ev 285.00；
  * 平台服务费 60.00；分配侧合计 = 净实收（资金守恒）。

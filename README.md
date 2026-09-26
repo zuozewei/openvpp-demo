@@ -2,9 +2,43 @@
 
 > 专栏《虚拟电厂系统开发实战：从物联接入到市场化运营》配套示例工程
 > 定位：最小可运行实现，不是玩具 Demo，也不是生产代码
-> 技术栈：Java 11 · Spring Boot 2.7 · Maven 多模块
 
-## 模块总览
+![Java](https://img.shields.io/badge/Java-11-blue)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7-brightgreen)
+![Maven](https://img.shields.io/badge/Maven-多模块-orange)
+![License](https://img.shields.io/badge/License-Apache%202.0-green)
+
+## 📌 项目信息
+
+| 项目 | 说明 |
+|------|------|
+| 配套专栏 | 《虚拟电厂系统开发实战：从物联接入到市场化运营》 |
+| 定位 | 教学/演示工程：各专栏篇目的可运行配套代码，模块与篇目一一对应 |
+| 技术栈 | Java 11 · Spring Boot 2.7 · Maven 多模块（11 个业务模块） |
+| 持久化 | 单体形态 H2 文件库（零外部依赖）；Docker 形态 MySQL + Redis + EMQX |
+| 构建 | `mvn -s settings-openvpp.xml`（公共镜像，不依赖任何私有仓库） |
+| 许可证 | [Apache-2.0](LICENSE) |
+
+**示例说明**：示例数据均为虚构，
+区域规则口径为教学虚构示例，不对应任何真实地区准入或结算规则。
+
+## 🖼️ 项目概览
+
+一个贯穿案例串起虚拟电厂的完整业务闭环（H2 文件库持久化，读者零外部依赖）：
+
+```
+模拟遥测 → 接入校验 → 数据入库 → 能力评估 → 资源聚合 → 响应任务
+        → 指令下发 → 执行核验 → 响应量计算 → 结算分摊 → 账单查询
+```
+
+- 设备接入：MQTT/CoAP 双协议网关，设备认证、断网续传、多协议接入地图；
+- 能力评估：44260 七指标评估、GBDT 预测训推链（Python 副车 + Java 主战）；
+- 资源聚合：VPP 单元分组、准入门槛（47241 四指标）、可承诺容量；
+- 调度执行：指令链路、策略引擎、MPC 滚动优化、目标分解与评估闭环；
+- 结算市场：基线核定、结算四量口径、争议更正版本化、区域规则示例；
+- 工程口径：幂等/并发认领/缓存时序/方言自适应等均有单测锚定，教学数值可复算。
+
+## ✅ 模块总览
 
 | 模块 | 职责 | 对应专栏篇目 |
 |------|------|--------------|
@@ -20,7 +54,27 @@
 | `openvpp-edge` | 边缘侧缓存补传 demo | 第 09 篇 |
 | `openvpp-app` | 单体启动入口 + 业务闭环编排（贯穿案例） | 第 05、19、25 篇 |
 
-## 快速开始
+## 📂 项目结构
+
+```
+openvpp-demo/
+├── README.md                  # 项目主入口（本文件）
+├── LICENSE                    # Apache-2.0
+├── settings-openvpp.xml       # 工程 Maven settings（公共镜像逃生通道）
+├── docker-compose.yml         # 一键交付编排（应用 + MySQL + Redis + EMQX）
+├── docs/
+│   ├── README.md              # 文档中心总索引
+│   ├── snapshots.md           # 章节 tag 对照表
+│   ├── tutorials/             # ★ 专栏配套教程（01-07，实操向）
+│   └── case-study/            # 贯穿案例手工核算底稿
+├── tools/
+│   ├── mqtt-burst.sh          # MQTT 上行突发压测脚本
+│   └── ai/                    # 零依赖 Python 演示（GBDT/量化/RAG）+ 示例语料
+├── openvpp-common|gateway|iot|resource|assessment|aggregator|dispatch|settlement|market|edge
+└── openvpp-app/               # 单体启动入口 + 业务闭环编排
+```
+
+## 🚀 快速开始
 
 ```bash
 mvn -s settings-openvpp.xml install -DskipTests
@@ -31,113 +85,41 @@ curl http://127.0.0.1:8080/api/v1/system/ping
 # {"code":0,"message":"success","data":{"service":"openvpp-demo","status":"UP",...}}
 ```
 
-> `settings-openvpp.xml`：全局 Maven 配置了不可达私服镜像时的逃生通道（显式走公共镜像，不动全局配置）。
+零外部依赖：H2 文件库 + 网关本地模拟模式，断网可跑。详细步骤见[教程 01](docs/tutorials/01-quick-start.md)。
 
-## 园区需求响应贯穿案例（第 19 篇，已接入主工程）
+## 📚 专栏配套教程
 
-`openvpp-app` 把各业务模块串成完整闭环（H2 文件库持久化，读者零外部依赖）：
+| 教程 | 对应篇目 | 一句话说明 |
+|------|----------|-----------|
+| [01 快速开始与零依赖启动](docs/tutorials/01-quick-start.md) | 通用 | 构建、启动、健康检查，断网可跑 |
+| [02 园区需求响应贯穿案例](docs/tutorials/02-park-demand-response.md) | 第 19 篇 | 11 模块业务闭环：评估 → 聚合 → 指令 → 结算，含幂等/并发/争议更正 |
+| [03 Docker Compose 一键交付](docs/tutorials/03-docker-compose.md) | 第 25 篇 | 应用 + MySQL + Redis + EMQX 四容器编排与真实环境回归 |
+| [04 网关回环测试](docs/tutorials/04-gateway-loopback.md) | 第 06 篇 | MQTT/CoAP 协议接入链路验证 |
+| [05 AI 工具集（GBDT/量化/RAG）](docs/tutorials/05-ai-toolkit.md) | 第 29/30/47 篇 | 三个零依赖 Python 演示与 Java 侧联调 |
+| [06 时序库写入基准](docs/tutorials/06-tsdb-benchmark.md) | 时序存储选型 | TDengine vs ClickHouse 同负载对比 |
+| [07 MQTT 上行突发压测](docs/tutorials/07-mqtt-burst.md) | 第 18 篇 | 批量上行压测脚本用法与输出解读 |
 
-```
-模拟遥测 → 接入校验 → 数据入库 → 能力评估 → 资源聚合 → 响应任务
-        → 指令下发 → 执行核验 → 响应量计算 → 结算分摊 → 账单查询
-```
+更多文档：[文档中心](docs/README.md) · [章节 tag 对照](docs/snapshots.md) · [贯穿案例核算底稿](docs/case-study/park-demo.md)
 
-**数据与接入口径（请务必先读）**：
+## 🧪 测试口径
 
-- 园区案例为**模拟数据驱动的业务编排**：遥测/计量/资源容量均为编排层内置模拟源（`buildSamples`/`buildMembers` 直接构造），**不来自网关真实协议接入**；链路其余环节（评估/聚合/指令/结算）走真实业务代码。
-- 网关默认**本地模拟模式**（`openvpp.gateway.mode=local`）：`java -jar` 启动不连接任何外部消息服务，断网可跑；真实 MQTT/CoAP 协议接入须显式设置 `openvpp.gateway.mode=remote` 并配置 `openvpp.mqtt.broker`（工程不提供任何默认外部地址）。
-- 三路径现状：`NORMAL`（正常）、`DEGRADED`（降级报缺口）、`DISPUTED`（争议计量补正）均已实现；另有结算后争议更正的**独立入口** `POST /api/v1/demo/dispute`。结算采用四量口径：补偿毛额 → 考核扣款（落账 `PENALTY`，从应收补贴中扣除）→ 平台净实收（落账 `SETTLE`，即可分配金额）→ 分摊；争议更正按更正计量重算四量，非零差额**全额传导**为下一账期版本（`bill_version`）的服务费与分摊重算，五件套更正账单（SETTLE/PENALTY/PLATFORM_CUT/SHARE/CORRECTION）独立留档，原始账单（V1）永不删除，支持同一任务多轮更正（口径与示例数值见 `openvpp-app/PARK-DEMO.md`）。
-- 算法番外（第 33-35 篇）已**纳入代码工程并配模块级单测**（`openvpp-dispatch` 的 MPC 调度、`openvpp-settlement` 的区域结算等）；但主应用编排当前只调用**评估 → 聚合 → 指令 → 结算**主线，MPC 与区域结算模块**尚未接入编排链路**。
-- 交付栏实战番外（第 46-48 篇）配套代码同样为**纳入主代码工程、未接编排链路**的模块级实现：`openvpp-dispatch` 的目标分解与评估闭环（`com.openvpp.dispatch.decompose` / `evalloop`，16 项单测）、`openvpp-assessment` 的 GBDT 训推链（`com.openvpp.assessment.predict`，10 项单测，Python 零依赖演示 `tools/ai/gbdt_demo.py`，`--selfcheck` 可自检跨语言公式契约）、`openvpp-iot` 的多协议接入地图（`com.openvpp.iot.protocol`，8 项单测）。全仓回归 201 项 / 实际执行 199 项（31 个测试类，2 项 live 默认跳过）；另有真实 MySQL + Redis 集成回归 `MySqlComposeIT`（4 项，需 compose 服务在位，类级 `@EnabledIf` 不满足时不执行、不计入上述常规口径，见下节）。
+- 常规回归：全仓 31 个测试类 / 201 项 / 实际执行 199 项 / 2 项 live 默认跳过
+  （TSDB benchmark 与 GBDT 副车联调依赖外部环境，用法见教程 06/05）；
+- MQTT 公网回环走公共 broker，**离线不会自动跳过而是断言失败**，断网时请单独排除该用例（教程 04）；
+- 真实 MySQL + Redis 集成回归 `MySqlComposeIT`（4 项，需 compose 服务在位，见教程 03）；
+- 读者获取入口绑定固定标签：推荐 `part1-cognition-r5` 冻结快照，历史快照差异见
+  [章节 tag 对照](docs/snapshots.md)。
 
-```bash
-mvn -s settings-openvpp.xml -pl openvpp-app -am -DskipTests package
-java -jar openvpp-app/target/openvpp-app-1.0.0.jar
+## ⚠️ 注意事项
 
-# 四条路径（教学假设数值见 openvpp-app/PARK-DEMO.md 手工核算底稿）
-curl -X POST "http://localhost:8080/api/v1/demo/run?responseId=run-001&path=NORMAL"    # 正常：600kWh/毛额1200/净实收1200元
-curl -X POST "http://localhost:8080/api/v1/demo/run?responseId=run-002&path=DEGRADED"  # 降级：缺口 148.5kW
-curl -X POST "http://localhost:8080/api/v1/demo/run?responseId=run-001&path=NORMAL"    # 幂等重放：idempotentReplay=true
-curl -X POST "http://localhost:8080/api/v1/demo/run?responseId=run-pen&path=NORMAL&declaredKwh=800"  # 非零考核：考核400元、净实收800元
+1. **网关模式**：默认 `local` 本地模拟（不连任何外部消息服务）；真实 MQTT/CoAP 接入须显式
+   `openvpp.gateway.mode=remote` 并配置 `openvpp.mqtt.broker`，工程不提供任何默认外部地址。
+2. **教学库不做迁移**：表结构升级时请删除 `~/.openvpp/openvpp-db*` 再启动。
+3. **live/外部依赖用例**：默认跳过或依赖外部服务，不影响常规构建（各教程有专门说明）。
+4. **Maven 镜像**：始终带 `-s settings-openvpp.xml`，全局镜像不可达时显式走公共镜像。
+5. **内容红线**：本仓库不内置任何环境地址与凭据；自备环境的连接信息
+   一律经系统属性/环境变量注入（如教程 06）。
 
-# 争议更正（结算后独立入口；正/负差额与多轮更正均支持，历史版本保留）
-# correctionRequestId 为纠偏请求幂等键（可选，4-64 位）：同键重复提交返回原版本结果不重复出账
-curl -X POST "http://localhost:8080/api/v1/demo/dispute?responseId=run-pen&correctedActualKw=380&correctionRequestId=req-001"
+## 📄 许可证
 
-# 查询入口（任务/指令/基线/账单，responseId 贯穿关联；账单含 BILL_VERSION 列，V1/V2 并存）
-curl "http://localhost:8080/api/v1/tasks"
-curl "http://localhost:8080/api/v1/instructions?responseId=run-001"
-curl "http://localhost:8080/api/v1/baselines?responseId=run-001"
-curl "http://localhost:8080/api/v1/bills?responseId=run-001"
-
-# 重置（清理演示数据后可再跑）
-curl -X POST "http://localhost:8080/api/v1/demo/reset"
-```
-
-幂等保证：同一 `responseId` 重复触发不重复下发、不重复出账（唯一例外：任务已结算后再以 `path=DISPUTED` 触发 = 争议更正请求，不被幂等拦截）；`responseId` 限 4-50 位（派生指令编号须落在 `VARCHAR(64)` 内，超长前置 400 拒绝）；闭环执行中落库失败会先做内存态补偿（释放容量预占、清除指令镜像）再随事务回滚抛出。重启后任务与账单仍在（H2 文件库 `~/.openvpp/openvpp-db`）。
-
-**并发幂等口径（第 5 轮整改，正确性由数据库承担）**：`run` 入口以事务内 `INSERT`（`response_id` 唯一主键即认领锁）原子认领任务——同键并发后到者在唯一索引上阻塞，持有方提交后其收到重复键并读取终态转幂等重放（实测 50 路并发恰好 1 路完整执行、49 路重放、任务/指令/账单各一份）；持有方回滚则后到者自动接管，回滚不留残状态。争议更正以 `correctionRequestId`（dispute_correction 留档表唯一键）拦截同键重复提交，`SELECT .. FOR UPDATE` 锁任务行串行化版本分配，更正账单一律 `INSERT`（禁止 MERGE 覆盖历史版本）——实测 12 个并发不同请求生成 12 个连续版本（V2..V13）互不覆盖。容量预占台账全方法互斥（消灭并发遍历 CME）。
-
-**Redis 缓存时序与故障口径（第 6 轮复审修复）**：结果缓存经事务同步在**数据库提交后**写入（提交失败只释放在途标记，绝不留下「缓存成功、数据库回滚」的脏结果）；GAP 结果不缓存、同键可重跑；演示重置同步 `SCAN` 清空幂等缓存命名空间（重置后同键重新落库）；Redis 不可用在**守卫内部**按退化语义消化——读取失败=未命中、登记失败=放行进入数据库认领、写/清失败=静默告警（连接/命令超时 2 秒兜底，不再向业务 500）。事务隔离显式 `READ_COMMITTED`：MySQL 默认 REPEATABLE READ 曾使锁下快照读拿到过期版本号（容器实测 12 路并发纠偏只出 3 版），H2 默认 READ_COMMITTED 故教学库未暴露。
-
-**幂等重放结果完整性（第 7 轮复审修复）**：同键重复请求（Redis 停机走数据库兜底、或缓存 TTL 过期）返回**从数据库按最新账期版本重建的完整结算结果**——净实收/毛额/考核/分摊/申报/基线实测/响应电量/合格率逐项还原，不再只返回默认字段；在途标记 `RUNNING` 不再被当作结果 JSON 反序列化刷告警。
-
-> 升级说明：`dispute_correction`（纠偏请求留档表）为新增结构。若存在旧版本演示库文件，
-> 请先删除 `~/.openvpp/openvpp-db*` 再启动（教学库不做迁移）。
-
-## Docker Compose 一键交付（第 25 篇）
-
-```bash
-docker compose up --build
-# 应用 http://localhost:8080（docker profile），EMQX 控制台 http://localhost:18083（admin/openvpp）
-```
-
-一条命令拉起**应用 + MySQL + Redis + EMQX** 四个容器，三个中间件都有真实业务落点（非摆设）：
-
-| 中间件 | 业务落点 |
-|--------|----------|
-| MySQL | 任务/指令/基线/账单持久化（`application-docker.yml` 数据源；`schema.sql` 两库同构，仓库层按数据源 URL 自适应方言：H2 用 `MERGE INTO .. KEY`，MySQL 用 `INSERT .. ON DUPLICATE KEY UPDATE`） |
-| Redis | 已完成结果的幂等快速重放（`IdempotencyGuard`，`openvpp.idempotency.redis-enabled=true` 启用；在途标记 TTL 120s、结果缓存 TTL 30min）。**正确性始终由数据库唯一约束 + 事务内原子认领兜底**，Redis 不可用时守卫内部自动退化为纯数据库路径（故障退化有单测覆盖） |
-| EMQX | `openvpp.gateway.mode=remote` 的 MQTT 协议接入（订阅 `openvpp/+/telemetry|event|ack`，教学消费者打 `[INGRESS-MOCK]` 日志） |
-
-依赖就绪采用 `depends_on` + `service_healthy` 健康检查（mysqladmin / redis-cli / emqx ctl），应用不再"起了但连不上"。业务闭环的遥测/计量仍为编排层内置模拟源（口径见上节），与单体 jar 形态一致。
-
-**真实环境回归（MySqlComposeIT，4 项）**：`docker compose up -d mysql redis` 后显式运行
-`mvn -s settings-openvpp.xml -pl openvpp-app test -Dtest=MySqlComposeIT -DfailIfNoTests=false`，
-覆盖真实 MySQL 建表、提交后 Redis 缓存写入、同键 12 路并发认领与并发纠偏版本连续性、
-重置清缓存后重新落库。宿主机 6379 被占用时以 `-Dopenvpp.it.redis-port=端口` 指定。
-若宿主机无法直连 Docker Hub，可经镜像源拉取后重打标准 tag（如 `docker.m.daocloud.io/library/mysql:8.0` → `mysql:8.0`）。
-
-## 网关回环测试（第 06 篇）
-
-```bash
-mvn -s settings-openvpp.xml -pl openvpp-gateway -am test
-# MqttIngestServiceTest：经公共 broker（broker-cn.emqx.io）回环
-# CoapIngestServerTest：本机 127.0.0.1 随机端口回环
-```
-
-> 说明：回环测试是**测试专用**通路，与主应用默认本地模拟模式无关；
-> 其中 MQTT 用例需可访问公共 broker（断网环境跳过即可），不影响 `java -jar` 零依赖启动。
-
-## 章节 tag 对照
-
-| tag | 指向 | 说明 |
-|-----|------|------|
-| `part1-cognition-r5` | `ca4a9d6`（2026-09-24；注解标签对象 `448e5e7` 指向该提交） | **读者获取入口冻结快照（推荐）**。在 r4 基础上修订聚合模块注释、**不改任何行为**：`AdmissionThreshold` 注释改为"方案初筛默认值"口径（属地细则、市场规则或合同采用后才构成准入条件）、`VppUnit`/`UnitGrouper` 同节点注释改为"示例工程分组约定"并注明标准允许在电网条件和市场规则允许时跨节点聚合。获取：`git checkout part1-cognition-r5`；测试口径：全仓 31 个测试类 / 201 项 / 执行 199 项 / 2 项 live 跳过（2026-09-24 复跑一致）。注：策略示例命名沿 r4（华北旧命名，master `4b20db2` 起统一为 `region-demo`，行为一致） |
-| `part1-cognition-r4` | `2357b6a`（2026-09；注解标签对象 `4be57b9` 指向该提交） | 历史快照，行为与 r5 一致。在 r3 基础上修订注释与测试名：删除"负反馈已实现"表述并注明 5.10(b) 未落地、内置底线改称教学默认规则并注明可被区域规则覆盖、测试名改为"默认规则覆盖三大场景/区域规则可覆盖默认规则"。其聚合模块注释仍为修订前口径（"事实准入基准""硬约束"），引用注释请以 r5 或 master 为准。获取：`git checkout part1-cognition-r4` |
-| `part1-cognition-r3` | `187297e`（2026-09；注解标签对象 `0cc4227`） | 历史快照，行为与 r5 一致。**其注释仍含过期口径**（`RuleEngine` 的"负反馈已实现""默认值不可放松"，测试名"区域规则可加严不可放松"），引用注释请以 r5 或 master 为准 |
-| `part1-cognition-r2` | `434ab2b`（2026-09-19；注解标签对象 `5553afd` 指向该提交） | 历史快照，行为与 r5 一致。**其源码注释为修订前口径**（如 `RuleEngine` 把"调频只放储能"写成国标底线、`AssessStrategy` 把加权评分写成标准方法），引用注释时请以 r5 或 master 为准。包含：结算四量口径、争议更正版本化与并发幂等（`correctionRequestId` 留档唯一键 + FOR UPDATE 版本串行化 + 审计账单 INSERT-only）、事务内原子认领、Redis 幂等守卫（故障退化 + 提交后缓存写入 + 重置清命名空间 + 数据库重建重放结果）、H2/MySQL 方言自适应与 Docker 交付对齐、真实环境回归（MySqlComposeIT）。获取：`git checkout part1-cognition-r2` |
-
-> 注：r2/r3 之后的 `bace116`、`187297e`、`2357b6a`、`4b20db2`、`ca4a9d6` 均为**注释与文档口径修订**，不影响任何行为；专栏第 02 篇的代码证据与测试数字在 r2/r3/r4/r5 上一致。
-
-> 说明：`part1-cognition`（原规划的第一轮快照）从未创建、不再规划，历史口径已于 2026-09-19 与仓库实际对齐。
-> 获取入口二选一：`master` 分支（随修订滚动更新）或 `part1-cognition-r5` 标签（**当前推荐的冻结快照**；r2/r3/r4 为行为一致的历史快照，注释含过期口径）。
-> 测试数量**以最新 surefire 报告为准**（`mvn -s settings-openvpp.xml test` 后汇总各模块
-> `*/target/surefire-reports/*.txt`；live 用例中的 TSDB benchmark 与 GBDT 副车联调依赖外部环境，
-> 无法连通时标记跳过；MQTT 公网回环走公共 broker，**离线不会自动跳过而是断言失败**，断网时请单独排除该用例）。
-
-## 示例说明
-
-- 示例数据均为虚构，不对应任何真实地区准入或结算规则
-- 仓库不内置任何环境地址与凭据
-
+[Apache-2.0](LICENSE)

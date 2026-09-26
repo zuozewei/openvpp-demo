@@ -44,10 +44,10 @@ class ResourceLedgerServiceTest {
 
     @Test
     void 四类资源建档入台账() {
-        ledger.enroll(withContract(new PvResourceProfile(), "pv-001", "华南/广州", "10kV/馈线A1"), "acct-pv");
-        ledger.enroll(withContract(new StorageResourceProfile(), "es-001", "华南/广州", "10kV/馈线A2"), "acct-es");
-        ledger.enroll(withContract(new AcLoadResourceProfile(), "ac-001", "华东/上海", "35kV/馈线B1"), "acct-ac");
-        ledger.enroll(withContract(new EvChargerResourceProfile(), "ev-001", "华东/上海", "35kV/馈线B2"), "acct-ev");
+        ledger.enroll(withContract(new PvResourceProfile(), "pv-001", "区域A/园区一站", "10kV/馈线A1"), "acct-pv");
+        ledger.enroll(withContract(new StorageResourceProfile(), "es-001", "区域A/园区一站", "10kV/馈线A2"), "acct-es");
+        ledger.enroll(withContract(new AcLoadResourceProfile(), "ac-001", "区域B/园区一站", "35kV/馈线B1"), "acct-ac");
+        ledger.enroll(withContract(new EvChargerResourceProfile(), "ev-001", "区域B/园区一站", "35kV/馈线B2"), "acct-ev");
 
         assertEquals(4, ledger.query(null, null).size());
         assertEquals(ResourceType.DG, ledger.require("pv-001").getType());
@@ -58,10 +58,10 @@ class ResourceLedgerServiceTest {
 
     @Test
     void 排他性冲突拒绝建档() {
-        ledger.enroll(withContract(new StorageResourceProfile(), "es-001", "华南/广州", "10kV/馈线A1"), "acct-x");
+        ledger.enroll(withContract(new StorageResourceProfile(), "es-001", "区域A/园区一站", "10kV/馈线A1"), "acct-x");
 
         StorageResourceProfile dup = new StorageResourceProfile();
-        withContract(dup, "es-999", "华南/广州", "10kV/馈线A1");   // 同一地理+电气位置
+        withContract(dup, "es-999", "区域A/园区一站", "10kV/馈线A1");   // 同一地理+电气位置
 
         assertThrows(IllegalStateException.class,
                 () -> ledger.enroll(dup, "acct-x"), "同位置重复建档必须被拦截");
@@ -72,7 +72,7 @@ class ResourceLedgerServiceTest {
         StorageResourceProfile shortTerm = new StorageResourceProfile();
         shortTerm.setResourceId("es-short");
         shortTerm.setCapacity(new BigDecimal("500"));
-        shortTerm.setGeoLocation("华南/深圳");
+        shortTerm.setGeoLocation("区域A/园区二站");
         shortTerm.setElectricalNode("10kV/馈线C1");
         shortTerm.setContractEnd(LocalDate.now().plusDays(15));   // 仅 15 天
 
@@ -82,7 +82,7 @@ class ResourceLedgerServiceTest {
 
     @Test
     void 容量变更留前后值审计() {
-        ledger.enroll(withContract(new StorageResourceProfile(), "es-001", "华南/广州", "10kV/馈线A2"), "acct-es");
+        ledger.enroll(withContract(new StorageResourceProfile(), "es-001", "区域A/园区一站", "10kV/馈线A2"), "acct-es");
         ledger.updateCapacity("es-001", new BigDecimal("2000"));
 
         List<AuditRecord> history = auditTrail.historyOf("es-001");
@@ -97,7 +97,7 @@ class ResourceLedgerServiceTest {
 
     @Test
     void 注销留痕且台账移除() {
-        ledger.enroll(withContract(new PvResourceProfile(), "pv-001", "华南/广州", "10kV/馈线A1"), "acct-pv");
+        ledger.enroll(withContract(new PvResourceProfile(), "pv-001", "区域A/园区一站", "10kV/馈线A1"), "acct-pv");
         ledger.retire("pv-001");
 
         assertThrows(IllegalArgumentException.class, () -> ledger.require("pv-001"));
@@ -108,10 +108,10 @@ class ResourceLedgerServiceTest {
 
     @Test
     void 按类型与电气位置查询支撑聚合取数() {
-        ledger.enroll(withContract(new StorageResourceProfile(), "es-001", "华南/广州", "10kV/馈线A1"), "a1");
-        ledger.enroll(withContract(new StorageResourceProfile(), "es-002", "华南/广州", "10kV/馈线A2"), "a2");
-        ledger.enroll(withContract(new StorageResourceProfile(), "es-003", "华北/北京", "110kV/馈线C1"), "a3");
-        ledger.enroll(withContract(new PvResourceProfile(), "pv-001", "华南/广州", "10kV/馈线A3"), "a4");
+        ledger.enroll(withContract(new StorageResourceProfile(), "es-001", "区域A/园区一站", "10kV/馈线A1"), "a1");
+        ledger.enroll(withContract(new StorageResourceProfile(), "es-002", "区域A/园区一站", "10kV/馈线A2"), "a2");
+        ledger.enroll(withContract(new StorageResourceProfile(), "es-003", "区域B/园区二站", "110kV/馈线C1"), "a3");
+        ledger.enroll(withContract(new PvResourceProfile(), "pv-001", "区域A/园区一站", "10kV/馈线A3"), "a4");
 
         assertEquals(3, ledger.query(ResourceType.ES, null).size());
         assertEquals(2, ledger.query(ResourceType.ES, "10kV/").size(), "按电压等级过滤失效");

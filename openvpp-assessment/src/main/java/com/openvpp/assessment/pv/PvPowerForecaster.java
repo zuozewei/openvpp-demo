@@ -65,7 +65,7 @@ public class PvPowerForecaster {
 
     /**
      * 天文层：地外辐照（无不确定性，纯日地几何）。
-     * 简化实现：按太阳高度角正弦近似，夏至日正午广州约 1200-1360 W/m²。
+     * 简化实现：按太阳高度角正弦近似，北纬 23° 一带夏至日正午约 1200-1360 W/m²。
      * public 以便单测直接校验物理边界。
      */
     public double extraterrestrialIrradiance(LocalDateTime time) {

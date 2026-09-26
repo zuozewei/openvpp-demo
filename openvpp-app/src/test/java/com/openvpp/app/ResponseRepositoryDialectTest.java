@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * ResponseRepository 的幂等 upsert 在 MySQL 下为 INSERT .. ON DUPLICATE KEY UPDATE
  * （H2 为 MERGE INTO .. KEY），此处用 H2 MySQL 兼容模式 + 显式方言开关跑通全链路，
  * 验证 docker 交付的 SQL 语法与语义，不需要真实 MySQL 容器。
- * 数值断言沿用 PARK-DEMO.md 手工核算底稿。
+ * 数值断言沿用 docs/case-study/park-demo.md 手工核算底稿。
  */
 @SpringBootTest
 @TestPropertySource(properties = {

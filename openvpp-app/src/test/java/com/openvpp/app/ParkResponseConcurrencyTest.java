@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 持有方提交后转幂等重放，持有方回滚则后到者接管）；争议更正以 correctionRequestId
  * 留档唯一键拦截同键重复提交，FOR UPDATE 锁任务行串行化版本分配，审计账单 INSERT-only。
  *
- * 数值断言沿用 PARK-DEMO.md 手工核算底稿：申报 600 → 净实收 1200.00。
+ * 数值断言沿用 docs/case-study/park-demo.md 手工核算底稿：申报 600 → 净实收 1200.00。
  */
 @SpringBootTest
 @TestPropertySource(properties = {
