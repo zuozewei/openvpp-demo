@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://blog.csdn.net/zuozewei/category_13211922.html">
-    <img src="docs/images/column-poster.png" alt="专栏《虚拟电厂系统开发实战：从物联接入到市场化运营》海报封面" width="120">
+    <img src="docs/images/column-poster.png" alt="专栏《虚拟电厂系统开发实战：从物联接入到市场化运营》海报封面" width="800">
   </a>
 </p>
 
