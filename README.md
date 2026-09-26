@@ -8,11 +8,17 @@
 ![Maven](https://img.shields.io/badge/Maven-多模块-orange)
 ![License](https://img.shields.io/badge/License-Apache%202.0-green)
 
+<p align="center">
+  <a href="https://blog.csdn.net/zuozewei/category_13211922.html">
+    <img src="docs/images/column-poster.png" alt="专栏《虚拟电厂系统开发实战：从物联接入到市场化运营》海报封面" width="120">
+  </a>
+</p>
+
 ## 📌 项目信息
 
 | 项目 | 说明 |
 |------|------|
-| 配套专栏 | 《虚拟电厂系统开发实战：从物联接入到市场化运营》 |
+| 配套专栏 | [《虚拟电厂系统开发实战：从物联接入到市场化运营》](https://blog.csdn.net/zuozewei/category_13211922.html)（CSDN） |
 | 定位 | 教学/演示工程：各专栏篇目的可运行配套代码，模块与篇目一一对应 |
 | 技术栈 | Java 11 · Spring Boot 2.7 · Maven 多模块（11 个业务模块） |
 | 持久化 | 单体形态 H2 文件库（零外部依赖）；Docker 形态 MySQL + Redis + EMQX |
@@ -98,7 +104,7 @@ curl http://127.0.0.1:8080/api/v1/system/ping
 | [06 时序库写入基准](docs/tutorials/06-tsdb-benchmark.md) | 时序存储选型 | TDengine vs ClickHouse 同负载对比 |
 | [07 MQTT 上行突发压测](docs/tutorials/07-mqtt-burst.md) | 第 18 篇 | 批量上行压测脚本用法与输出解读 |
 
-更多文档：[文档中心](docs/README.md) · [章节 tag 对照](docs/snapshots.md) · [贯穿案例核算底稿](docs/case-study/park-demo.md)
+更多文档：[文档中心](docs/README.md) · [章节 tag 对照](docs/snapshots.md) · [贯穿案例核算底稿](docs/case-study/park-demo.md) · [专栏目录（CSDN）](https://blog.csdn.net/zuozewei/category_13211922.html)
 
 ## 🧪 测试口径
 
