@@ -1,133 +1,133 @@
 # openvpp-demo
 
-**简体中文** | [English](README.en.md)
+[简体中文](README.zh-CN.md) | **English**
 
-> 专栏《虚拟电厂系统开发实战：从物联接入到市场化运营》配套示例工程
-> 定位：最小可运行的虚拟电厂系统实现，不是玩具 Demo，也不是生产代码
+> Companion example project for the CSDN article series *Building Virtual Power Plant Systems: From IoT Integration to Market Operations*.
+> Scope: a minimal runnable virtual power plant system implementation, neither a toy demo nor production code.
+
+The linked tutorials and reference documents are currently available in Chinese.
 
 ![Java](https://img.shields.io/badge/Java-11-blue)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7-brightgreen)
-![Maven](https://img.shields.io/badge/Maven-多模块-orange)
+![Maven](https://img.shields.io/badge/Maven-multi--module-orange)
 ![License](https://img.shields.io/badge/License-Apache%202.0-green)
 
 <p align="center">
   <a href="https://blog.csdn.net/zuozewei/category_13211922.html">
-    <img src="docs/images/openvpp-cover.png" alt="专栏《虚拟电厂系统开发实战：从物联接入到市场化运营》海报封面" width="800">
+    <img src="docs/images/openvpp-cover-en.png" alt="Cover for Building Virtual Power Plant Systems: From IoT Integration to Market Operations" width="800">
   </a>
 </p>
 
-## 📌 项目信息
+## 📌 Project information
 
-| 项目 | 说明 |
-|------|------|
-| 配套专栏 | [《虚拟电厂系统开发实战：从物联接入到市场化运营》](https://blog.csdn.net/zuozewei/category_13211922.html)（CSDN） |
-| 定位 | 教学/演示工程：各专栏篇目的可运行配套代码，模块与篇目一一对应 |
-| 技术栈 | Java 11 · Spring Boot 2.7 · Maven 多模块（11 个业务模块） |
-| 持久化 | 单体形态 H2 文件库（零外部依赖）；Docker 形态 MySQL + Redis + EMQX |
-| 构建 | `mvn -s settings-openvpp.xml`（公共镜像，不依赖任何私有仓库） |
-| 许可证 | [Apache-2.0](LICENSE) |
+| Item | Description |
+|------|-------------|
+| Article series | [*Building Virtual Power Plant Systems: From IoT Integration to Market Operations*](https://blog.csdn.net/zuozewei/category_13211922.html) (CSDN, in Chinese) |
+| Purpose | Teaching and demonstration project: runnable companion code for the articles, with modules mapped to article topics |
+| Technology | Java 11 · Spring Boot 2.7 · multi-module Maven project (11 business modules) |
+| Persistence | H2 file database for the standalone application (no external dependencies); MySQL + Redis + EMQX for the Docker setup |
+| Build | `mvn -s settings-openvpp.xml` (public mirrors; no private repository required) |
+| License | [Apache-2.0](LICENSE) |
 
-> **示例说明**：示例数据均为虚构，区域规则口径为教学虚构示例，不对应任何真实地区准入或结算规则。
+> **About the examples:** All example data is fictional. Regional rules are fictional teaching examples and do not represent admission or settlement rules in any real region.
 
-## 🖼️ 项目概览
+## 🖼️ Project overview
 
-一个贯穿案例串起虚拟电厂的完整业务闭环（H2 文件库持久化，读者零外部依赖）：
+One end-to-end scenario connects the virtual power plant workflow. The standalone application persists data in an H2 file database and needs no external services:
 
 ```
-模拟遥测 → 接入校验 → 数据入库 → 能力评估 → 资源聚合 → 响应任务
-        → 指令下发 → 执行核验 → 响应量计算 → 结算分摊 → 账单查询
+Simulated telemetry → ingestion validation → data storage → capability assessment
+  → resource aggregation → response task → command dispatch → execution verification
+  → response quantity calculation → settlement allocation → bill lookup
 ```
 
-- 设备接入：MQTT/CoAP 双协议网关，设备认证、断网续传、多协议接入地图；
-- 能力评估：44260 七指标评估、GBDT 预测训推链（Python 副车 + Java 主战）；
-- 资源聚合：VPP 单元分组、准入门槛（47241 四指标）、可承诺容量；
-- 调度执行：指令链路、策略引擎、MPC 滚动优化、目标分解与评估闭环；
-- 结算市场：基线核定、结算四量口径、争议更正版本化、区域规则示例；
-- 工程口径：幂等/并发认领/缓存时序/方言自适应等均有单测锚定，教学数值可复算。
+- Device connectivity: MQTT/CoAP dual-protocol gateway, device authentication, retransmission after disconnection, and a multi-protocol connection map.
+- Capability assessment: seven 44260 indicators and a GBDT training and inference pipeline (Python auxiliary service + Java main application).
+- Resource aggregation: VPP unit grouping, admission thresholds (four 47241 indicators), and committable capacity.
+- Dispatch execution: command chain, rules engine, MPC rolling optimization, target decomposition, and an assessment loop.
+- Settlement and market: baseline determination, four settlement quantities, versioned dispute corrections, and example regional rules.
+- Engineering details: unit tests cover idempotency, concurrent claiming, cache timing, and SQL dialect adaptation; the teaching figures can be recalculated.
 
-## ✅ 模块总览
+## ✅ Module overview
 
-| 模块 | 职责 | 对应专栏篇目 |
-|------|------|--------------|
-| `openvpp-common` | 统一返回、枚举常量（资源类型/场景），零业务依赖 | 第 01-04 篇 |
-| `openvpp-resource` | 资源档案、物模型、设备影子、台账 | 第 04、07、11 篇 |
-| `openvpp-assessment` | 能力评估算法（44260 七指标）、评估策略、GBDT 预测训推链 | 第 02、12、13 篇；交付栏第 47 篇 |
-| `openvpp-aggregator` | VPP 单元、聚合引擎、准入门槛（47241 四指标） | 第 03、14 篇 |
-| `openvpp-gateway` | MQTT/CoAP 协议接入 | 第 06 篇 |
-| `openvpp-iot` | 设备认证、断网续传、多协议接入地图 | 第 09、10 篇；交付栏第 48 篇 |
-| `openvpp-dispatch` | 指令链路、策略引擎、MPC、目标分解与调度闭环 | 第 15、16 篇；算法栏第 33 篇；交付栏第 46 篇 |
-| `openvpp-settlement` | 基线核算、结算分摊 | 第 17、21 篇 |
-| `openvpp-market` | 申报、竞价（简化演示） | 第 19、20 篇 |
-| `openvpp-edge` | 边缘侧缓存补传 demo | 第 09 篇 |
-| `openvpp-app` | 单体启动入口 + 业务闭环编排（贯穿案例） | 第 05、19、25 篇 |
+| Module | Responsibility | Related articles |
+|--------|----------------|------------------|
+| `openvpp-common` | Shared response format and enums (resource types and scenarios), with no business dependencies | Articles 01–04 |
+| `openvpp-resource` | Resource records, object models, device shadows, and ledgers | Articles 04, 07, 11 |
+| `openvpp-assessment` | Capability assessment algorithms (seven 44260 indicators), assessment strategies, and the GBDT training and inference pipeline | Articles 02, 12, 13; delivery track article 47 |
+| `openvpp-aggregator` | VPP units, aggregation engine, and admission thresholds (four 47241 indicators) | Articles 03, 14 |
+| `openvpp-gateway` | MQTT/CoAP protocol ingestion | Article 06 |
+| `openvpp-iot` | Device authentication, retransmission after disconnection, and a multi-protocol connection map | Articles 09, 10; delivery track article 48 |
+| `openvpp-dispatch` | Command chain, rules engine, MPC, target decomposition, and the dispatch loop | Articles 15, 16; algorithms track article 33; delivery track article 46 |
+| `openvpp-settlement` | Baseline calculation and settlement allocation | Articles 17, 21 |
+| `openvpp-market` | Submission and bidding (simplified demonstration) | Articles 19, 20 |
+| `openvpp-edge` | Edge-side cache and retransmission demo | Article 09 |
+| `openvpp-app` | Standalone application entry point and end-to-end workflow orchestration | Articles 05, 19, 25 |
 
-## 📂 项目结构
+## 📂 Project structure
 
 ```
 openvpp-demo/
-├── README.md                  # 中文项目主入口（本文件）
-├── README.en.md               # 英文项目主入口
+├── README.md                  # English project home (this file)
+├── README.zh-CN.md            # Chinese project home
+├── README.en.md               # Link from the previous English README path
 ├── LICENSE                    # Apache-2.0
-├── settings-openvpp.xml       # 工程 Maven settings（公共镜像逃生通道）
-├── docker-compose.yml         # 一键交付编排（应用 + MySQL + Redis + EMQX）
+├── settings-openvpp.xml       # Maven settings with public mirrors
+├── docker-compose.yml         # Application + MySQL + Redis + EMQX
 ├── docs/
-│   ├── README.md              # 文档中心总索引
-│   ├── snapshots.md           # 章节 tag 对照表
-│   ├── tutorials/             # ★ 专栏配套教程（01-07，实操向）
-│   └── case-study/            # 贯穿案例手工核算底稿
+│   ├── README.md              # Documentation index (Chinese)
+│   ├── snapshots.md           # Article tag reference (Chinese)
+│   ├── tutorials/             # Companion tutorials 01–07 (Chinese)
+│   └── case-study/            # End-to-end case calculations (Chinese)
 ├── tools/
-│   ├── mqtt-burst.sh          # MQTT 上行突发压测脚本
-│   └── ai/                    # 零依赖 Python 演示（GBDT/量化/RAG）+ 示例语料
+│   ├── mqtt-burst.sh          # MQTT uplink burst test script
+│   └── ai/                    # Dependency-free Python demos (GBDT/quantization/RAG) and sample data
 ├── openvpp-common|gateway|iot|resource|assessment|aggregator|dispatch|settlement|market|edge
-└── openvpp-app/               # 单体启动入口 + 业务闭环编排
+└── openvpp-app/               # Standalone application and workflow orchestration
 ```
 
-## 🚀 快速开始
+## 🚀 Quick start
 
 ```bash
 mvn -s settings-openvpp.xml install -DskipTests
 cd openvpp-app && mvn -s ../settings-openvpp.xml spring-boot:run
 
-# 验证
+# Verify
 curl http://127.0.0.1:8080/api/v1/system/ping
 # {"code":0,"message":"success","data":{"service":"openvpp-demo","status":"UP",...}}
 ```
 
-零外部依赖：H2 文件库 + 网关本地模拟模式，断网可跑。详细步骤见[教程 01](docs/tutorials/01-quick-start.md)。
+The H2 file database and local gateway simulation need no external services and can run offline. See [Tutorial 01](docs/tutorials/01-quick-start.md) for details.
 
-## 📚 专栏配套教程
+## 📚 Companion tutorials
 
-| 教程 | 对应篇目 | 一句话说明 |
-|------|----------|-----------|
-| [01 快速开始与零依赖启动](docs/tutorials/01-quick-start.md) | 通用 | 构建、启动、健康检查，断网可跑 |
-| [02 园区需求响应贯穿案例](docs/tutorials/02-park-demand-response.md) | 第 19 篇 | 11 模块业务闭环：评估 → 聚合 → 指令 → 结算，含幂等/并发/争议更正 |
-| [03 Docker Compose 一键交付](docs/tutorials/03-docker-compose.md) | 第 25 篇 | 应用 + MySQL + Redis + EMQX 四容器编排与真实环境回归 |
-| [04 网关回环测试](docs/tutorials/04-gateway-loopback.md) | 第 06 篇 | MQTT/CoAP 协议接入链路验证 |
-| [05 AI 工具集（GBDT/量化/RAG）](docs/tutorials/05-ai-toolkit.md) | 第 29/30/47 篇 | 三个零依赖 Python 演示与 Java 侧联调 |
-| [06 时序库写入基准](docs/tutorials/06-tsdb-benchmark.md) | 时序存储选型 | TDengine vs ClickHouse 同负载对比 |
-| [07 MQTT 上行突发压测](docs/tutorials/07-mqtt-burst.md) | 第 18 篇 | 批量上行压测脚本用法与输出解读 |
+| Tutorial | Related article | Summary |
+|----------|-----------------|---------|
+| [01 Quick start without external services](docs/tutorials/01-quick-start.md) | General | Build, start, and health check; works offline |
+| [02 Industrial park demand-response case](docs/tutorials/02-park-demand-response.md) | Article 19 | Workflow across 11 modules: assessment → aggregation → dispatch → settlement, including idempotency, concurrency, and dispute corrections |
+| [03 One-command Docker Compose setup](docs/tutorials/03-docker-compose.md) | Article 25 | Four-container setup with the application, MySQL, Redis, and EMQX, plus real-environment regression checks |
+| [04 Gateway loopback test](docs/tutorials/04-gateway-loopback.md) | Article 06 | Verify the MQTT/CoAP ingestion path |
+| [05 AI toolkit (GBDT/quantization/RAG)](docs/tutorials/05-ai-toolkit.md) | Articles 29/30/47 | Three dependency-free Python demos and Java-side integration |
+| [06 Time-series database write benchmark](docs/tutorials/06-tsdb-benchmark.md) | Time-series storage selection | Compare TDengine and ClickHouse under the same load |
+| [07 MQTT uplink burst test](docs/tutorials/07-mqtt-burst.md) | Article 18 | Use the bulk uplink test script and interpret its output |
 
-更多文档：[文档中心](docs/README.md) · [章节 tag 对照](docs/snapshots.md) · [贯穿案例核算底稿](docs/case-study/park-demo.md) · [专栏目录（CSDN）](https://blog.csdn.net/zuozewei/category_13211922.html)
+More documentation (in Chinese): [Documentation index](docs/README.md) · [Article tag reference](docs/snapshots.md) · [Case calculation notes](docs/case-study/park-demo.md) · [Article series on CSDN](https://blog.csdn.net/zuozewei/category_13211922.html)
 
-## 🧪 测试口径
+## 🧪 Test scope
 
-- 常规回归：全仓 31 个测试类 / 201 项 / 实际执行 199 项 / 2 项 live 默认跳过
-  （TSDB benchmark 与 GBDT 副车联调依赖外部环境，用法见教程 06/05）；
-- MQTT 公网回环走公共 broker，**离线不会自动跳过而是断言失败**，断网时请单独排除该用例（教程 04）；
-- 真实 MySQL + Redis 集成回归 `MySqlComposeIT`（4 项，需 compose 服务在位，见教程 03）；
-- 读者获取入口绑定固定标签：推荐 `part1-cognition-r5` 冻结快照，历史快照差异见
-  [章节 tag 对照](docs/snapshots.md)。
+- Regular regression suite: 31 test classes / 201 test cases / 199 executed / 2 live tests skipped by default. The TSDB benchmark and GBDT auxiliary-service integration require external environments; see Tutorials 06 and 05.
+- The public MQTT loopback uses a public broker. It **does not automatically skip offline** and will fail an assertion when disconnected; exclude that case separately when offline (Tutorial 04).
+- `MySqlComposeIT` contains 4 real MySQL + Redis integration checks and requires the Compose services (Tutorial 03).
+- The recommended reader entry point is the frozen `part1-cognition-r5` tag. See the [article tag reference](docs/snapshots.md) for differences from earlier snapshots.
 
-## ⚠️ 注意事项
+## ⚠️ Notes
 
-1. **网关模式**：默认 `local` 本地模拟（不连任何外部消息服务）；真实 MQTT/CoAP 接入须显式
-   `openvpp.gateway.mode=remote` 并配置 `openvpp.mqtt.broker`，工程不提供任何默认外部地址。
-2. **教学库不做迁移**：表结构升级时请删除 `~/.openvpp/openvpp-db*` 再启动。
-3. **live/外部依赖用例**：默认跳过或依赖外部服务，不影响常规构建（各教程有专门说明）。
-4. **Maven 镜像**：始终带 `-s settings-openvpp.xml`，全局镜像不可达时显式走公共镜像。
-5. **内容红线**：本仓库不内置任何环境地址与凭据；自备环境的连接信息
-   一律经系统属性/环境变量注入（如教程 06）。
+1. **Gateway mode:** The default `local` mode simulates traffic without connecting to external messaging services. For real MQTT/CoAP ingestion, explicitly set `openvpp.gateway.mode=remote` and configure `openvpp.mqtt.broker`. The project provides no default external address.
+2. **No teaching-database migrations:** After schema changes, delete `~/.openvpp/openvpp-db*` before restarting.
+3. **Live/external-dependency tests:** These are skipped by default or require external services; they do not affect a regular build. See the relevant tutorials.
+4. **Maven mirror:** Always pass `-s settings-openvpp.xml` to use the public mirrors when global mirrors are unavailable.
+5. **Environment data:** This repository includes no environment addresses or credentials. Inject connection details for your own environment through system properties or environment variables (see Tutorial 06).
 
-## 📄 许可证
+## 📄 License
 
 [Apache-2.0](LICENSE)
