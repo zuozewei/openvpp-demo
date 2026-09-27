@@ -1,5 +1,7 @@
 # openvpp-demo
 
+**简体中文** | [English](README.en.md)
+
 > 专栏《虚拟电厂系统开发实战：从物联接入到市场化运营》配套示例工程
 > 定位：最小可运行的虚拟电厂系统实现，不是玩具 Demo，也不是生产代码
 
@@ -63,7 +65,8 @@
 
 ```
 openvpp-demo/
-├── README.md                  # 项目主入口（本文件）
+├── README.md                  # 中文项目主入口（本文件）
+├── README.en.md               # 英文项目主入口
 ├── LICENSE                    # Apache-2.0
 ├── settings-openvpp.xml       # 工程 Maven settings（公共镜像逃生通道）
 ├── docker-compose.yml         # 一键交付编排（应用 + MySQL + Redis + EMQX）
