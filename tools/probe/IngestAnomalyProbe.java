@@ -23,7 +23,8 @@ import java.util.concurrent.TimeUnit;
  * 运行（在仓库根目录，先 mvn -pl openvpp-gateway -am package 或保证 target/classes 存在）：
  *   CP="$(cat /tmp/ovpp-cp.txt)"  # 或按 README 生成 gateway 依赖 classpath
  *   javac -encoding UTF-8 -cp "$CP:openvpp-gateway/target/classes" -d /tmp/probe tools/probe/IngestAnomalyProbe.java
- *   java -cp "/tmp/probe:$CP:openvpp-gateway/target/classes:$(ls ~/.m2/repository/org/slf4j/slf4j-simple/2.0.0/slf4j-simple-2.0.0.jar)" IngestAnomalyProbe [broker]
+ *   java -cp "/tmp/probe:$CP:openvpp-gateway/target/classes:$(ls ~/.m2/repository/org/slf4j/slf4j-simple/2.0.0/slf4j-simple-2.0.0.jar)" IngestAnomalyProbe
+ *   （可选）末尾追加 broker 地址参数覆盖默认值，如 tcp://broker-cn.emqx.io:1883
  *
  * 观察窗口：每条样本间隔 300ms；对照消息后等待 3s；1MB 后等待 5s。全部计时用毫秒纪元值打印。
  */

@@ -19,7 +19,13 @@ mvn -s settings-openvpp.xml -pl openvpp-gateway -am compile
 mvn -s settings-openvpp.xml -pl openvpp-gateway -am dependency:build-classpath -Dmdep.outputFile=/tmp/ovpp-cp.txt -q
 CP="$(cat /tmp/ovpp-cp.txt):openvpp-gateway/target/classes:$HOME/.m2/repository/org/slf4j/slf4j-simple/2.0.0/slf4j-simple-2.0.0.jar"
 javac -encoding UTF-8 -cp "$CP" -d /tmp/probe tools/probe/IngestAnomalyProbe.java
-java -cp "/tmp/probe:$CP" IngestAnomalyProbe [broker]
+java -cp "/tmp/probe:$CP" IngestAnomalyProbe
+```
+
+如需指定 broker 地址（默认 `tcp://broker-cn.emqx.io:1883`）：
+
+```bash
+java -cp "/tmp/probe:$CP" IngestAnomalyProbe tcp://broker-cn.emqx.io:1883
 ```
 
 ## 该次观测结论（详见日志）
