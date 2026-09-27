@@ -1,0 +1,38 @@
+1790524677045 [+64ms] PROBE broker=tcp://broker-cn.emqx.io:1883 pid=29694
+23:57:59.392 [main] INFO com.openvpp.gateway.mqtt.MqttIngestService - MQTT subscribed: openvpp/+/+
+23:57:59.392 [MQTT Call: ovpp-probe-sub-06] INFO com.openvpp.gateway.mqtt.MqttIngestService - MQTT subscribed: openvpp/+/+
+1790524679405 [+2423ms] PHASE subscriber-connect ms=1439
+1790524679406 [+2424ms] SUBSCRIBED pattern=openvpp/+/+
+1790524680237 [+3255ms] PHASE publisher-connect ms=823
+23:58:00.557 [MQTT Call: ovpp-probe-sub-06] ERROR com.openvpp.gateway.mqtt.MqttIngestService - Failed to handle message from openvpp/dev-001/telemetry: Unrecognized token 'not': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')
+ at [Source: (String)"not-a-json"; line: 1, column: 4]
+1790524680589 [+3607ms] SEND tag=S1-非法JSON topic=openvpp/dev-001/telemetry bytes=10
+1790524681238 [+4256ms] SEND tag=S2-缺ts-seq topic=openvpp/dev-001/telemetry bytes=23
+1790524681392 [+4410ms] RECV tag=S2-缺ts-seq seq=null ts=null latencyMs=133 payload={power=1 }
+1790524681878 [+4896ms] SEND tag=S3-两段主题 topic=openvpp/dev-001 bytes=23
+1790524682509 [+5527ms] SEND tag=S4-未知类型 topic=openvpp/dev-001/tele bytes=23
+23:58:02.515 [MQTT Call: ovpp-probe-sub-06] ERROR com.openvpp.gateway.mqtt.MqttIngestService - Failed to handle message from openvpp/dev-001/tele: Unknown topic type: tele
+1790524683149 [+6167ms] SEND tag=S6a-首发seq7 topic=openvpp/dev-001/telemetry bytes=50
+1790524683149 [+6167ms] RECV tag=S6a-首发seq7 seq=7 ts=1758000000000 latencyMs=0 payload={power=5 }
+1790524683798 [+6816ms] SEND tag=S6b-同seq重复 topic=openvpp/dev-001/telemetry bytes=50
+1790524683799 [+6817ms] RECV tag=S6b-同seq重复 seq=7 ts=1758000000000 latencyMs=1 payload={power=5 }
+1790524684414 [+7432ms] RECV tag=S6c-旧seq3补发 seq=3 ts=1758000000001 latencyMs=1790524684414 payload={power=6 }
+1790524684421 [+7439ms] SEND tag=S6c-旧seq3补发 topic=openvpp/dev-001/telemetry bytes=50
+1790524685108 [+8126ms] SEND tag=CTRL1-存活对照 topic=openvpp/dev-001/telemetry bytes=50
+1790524685108 [+8126ms] RECV tag=CTRL1-存活对照 seq=8 ts=1758000000002 latencyMs=0 payload={power=7 }
+1790524689817 [+12835ms] SEND-FAIL tag=S5-约1MB大报文 bytes=1048625 reasonCode=32109 class=MqttException cause=EOFException
+1790524694821 [+17839ms] PHASE publisher-reconnect after disconnect
+1790524695954 [+18972ms] SEND tag=CTRL2-大报文后存活 topic=openvpp/dev-001/telemetry bytes=51
+1790524695955 [+18973ms] RECV tag=CTRL2-大报文后存活 seq=10 ts=1758000000004 latencyMs=1 payload={power=8 }
+1790524700263 [+23281ms] PHASE summary subscriber-alive=see-CTRL2-receipt
+1790524700283 [+23301ms] REC tag=S1-非法JSON bytes=10 sentAt=1790524680559 receivedAt=-1 notReceived
+1790524700284 [+23302ms] REC tag=S2-缺ts-seq bytes=23 sentAt=1790524681238 receivedAt=1790524681371 latencyMs=133
+1790524700285 [+23303ms] REC tag=S3-两段主题 bytes=23 sentAt=1790524681878 receivedAt=-1 notReceived
+1790524700285 [+23303ms] REC tag=S4-未知类型 bytes=23 sentAt=1790524682509 receivedAt=-1 notReceived
+1790524700286 [+23304ms] REC tag=S6a-首发seq7 bytes=50 sentAt=1790524683149 receivedAt=1790524683149 latencyMs=0
+1790524700286 [+23304ms] REC tag=S6b-同seq重复 bytes=50 sentAt=1790524683798 receivedAt=1790524683799 latencyMs=1
+1790524700286 [+23304ms] REC tag=S6c-旧seq3补发 bytes=50 sentAt=1790524684421 receivedAt=1790524684414 latencyMs=-7
+1790524700287 [+23305ms] REC tag=CTRL1-存活对照 bytes=50 sentAt=1790524685108 receivedAt=1790524685108 latencyMs=0
+1790524700287 [+23305ms] REC tag=S5-约1MB大报文 bytes=1048625 sentAt=1790524689775 receivedAt=-1 notReceived note=publish threw REASON_CODE=32109 msg=已断开连接
+1790524700287 [+23305ms] REC tag=CTRL2-大报文后存活 bytes=51 sentAt=1790524695954 receivedAt=1790524695955 latencyMs=1
+1790524700288 [+23306ms] PROBE done wallMs=23305
