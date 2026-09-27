@@ -12,6 +12,12 @@ The linked tutorials and reference documents are currently available in Chinese.
 ![Maven](https://img.shields.io/badge/Maven-multi--module-orange)
 ![License](https://img.shields.io/badge/License-Apache%202.0-green)
 
+<p align="center">
+  <a href="https://blog.csdn.net/zuozewei/category_13211922.html">
+    <img src="docs/images/openvpp-cover-en.png" alt="Cover for Building Virtual Power Plant Systems: From IoT Integration to Market Operations" width="800">
+  </a>
+</p>
+
 ## 📌 Project information
 
 | Item | Description |
