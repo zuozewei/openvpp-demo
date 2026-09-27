@@ -14,3 +14,6 @@ app-run.log
 .zcodeignore
 # ZCode 本地工具目录
 .zcode/
+
+# Californium (CoAP 库) 运行时自动生成的默认配置
+Californium3.properties
