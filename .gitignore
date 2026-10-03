@@ -17,3 +17,4 @@ app-run.log
 
 # Californium (CoAP 库) 运行时自动生成的默认配置
 Californium3.properties
+.obsidian/
