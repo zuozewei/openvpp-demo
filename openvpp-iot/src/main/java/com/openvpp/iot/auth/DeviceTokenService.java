@@ -57,20 +57,32 @@ public class DeviceTokenService {
     }
 
     /**
-     * 平台侧：校验令牌。五道关，按代价从低到高短路求值：
+     * 平台侧：校验令牌。输入域约定与五道关，按代价从低到高短路求值：
+     *   输入域 服务端时标与消息时标均须为非负（Unix 纪元后的毫秒值）——负值
+     *        属无效时钟输入，直接拒绝；不做该检查时，负的服务端时标与
+     *        正的极端消息时标相减可能得到精确的 Long.MIN_VALUE，
+     *        Math.abs 后仍为负而绕过窗口检查；
      *   关 0 字段规范化安全（deviceId/keyId/nonce/messageType 不含分隔符，
-     *        杜绝规范串拼接歧义与登记键歧义——纯检查，最先做）；
+     *        令牌非空——杜绝规范串拼接歧义与登记键歧义，纯检查，最先做）；
      *   关 1 设备已注册且 keyId 有效（已吊销/未注册在此挡下，连 HMAC 都不用算）；
      *   关 2 协议版本一致（防止降级）；
      *   关 3 时标在窗口内（只做时效限制，不是防重放的充分条件；差值用
-     *        subtractExact 饱和处理——极端时标下朴素减法会溢出，
-     *        Long.MIN_VALUE 取绝对值仍为负，会让窗口检查放行）；
+     *        subtractExact 检测减法溢出并拒绝——注意这是溢出检测而非饱和
+     *        截断；该方向的可表示大差值（如消息时标取 Long.MAX_VALUE、
+     *        服务端时标为正常正数时）不触发溢出，由后续窗口比较按出窗拒绝）；
      *   关 4 签名一致（常量时间比对防时序攻击）且 nonce 首次出现（窗口内防重放）。
      * 通过即把 nonce 登记为已用——后续窗口内的同 nonce 重放一律拒绝。
+     * 上述输入域与拒绝形态覆盖教学演示的正常参数域与已构造的反例输入，
+     * 不外推为"所有异常输入均已安全"——缺失/格式错误令牌的网关侧拒绝
+     * 与审计属接线时定义的契约（见正文第六节）。
      */
     public boolean verify(AuthMessage message, String token, long nowMs) {
-        // 关 0：字段规范化安全（先于一切计算与查表）
-        if (!message.hasCanonicalSafeFields()) {
+        // 输入域：服务端时标与消息时标非负（纪元后毫秒值），无效时钟输入直接拒绝
+        if (nowMs < 0 || message.timestamp() < 0) {
+            return false;
+        }
+        // 关 0：字段规范化安全 + 令牌非空（先于一切计算与查表）
+        if (token == null || token.isEmpty() || !message.hasCanonicalSafeFields()) {
             return false;
         }
         // 关 2 + 关 3：纯计算，最先做
@@ -80,9 +92,9 @@ public class DeviceTokenService {
         // 边界口径与 NonceRegistry 统一：时间差达到窗口（|now − ts| ≥ windowMs）即出窗，
         // 边界属于拒绝侧——恰好到期的那一刻，时间窗在这里拒绝、nonce 占位也仍保留，
         // 两层同时设防，不给"等号边界"留重放缝隙。
-        // 差值用 subtractExact 计算：now − ts 溢出（极端时标，如 Long.MIN_VALUE）时
-        // 朴素减法得到负的最小值，Math.abs 后仍为负，窗口检查会被绕过——
-        // 溢出即差值超出表示范围、必然远超窗口，直接归入拒绝侧
+        // 差值用 subtractExact 检测减法溢出：溢出即差值超出 long 表示范围，
+        // 必然远超窗口，直接归入拒绝侧（subtractExact 是溢出检测并抛异常，
+        // 不是截断到上限的饱和运算）
         long diff;
         try {
             diff = Math.subtractExact(nowMs, message.timestamp());

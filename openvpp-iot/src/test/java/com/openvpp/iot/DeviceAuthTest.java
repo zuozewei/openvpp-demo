@@ -22,11 +22,11 @@ import java.util.concurrent.Future;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * 设备认证单测：18 个安全场景。
+ * 设备认证单测：20 个安全场景。
  * 原 6 场景（合法/错密钥/未注册/过期/窗口内时漂/吊销）全保留并适配新令牌模型；
  * 新增 7 场景覆盖完整性校验、窗口内重放、并发重放、密钥轮换、密钥密文存储；
  * 补时间窗边界 3 场景（到期前/时/后双层拒绝），以及极端时标溢出、
- * 规范串分隔符歧义两类输入域回归。
+ * 分隔符歧义、负时标输入域、空令牌四类输入域回归。
  */
 class DeviceAuthTest {
 
@@ -294,17 +294,44 @@ class DeviceAuthTest {
 
     @Test
     void 极端时标消息被时间窗拒绝() {
-        // 差值溢出回归：now − ts 超出 long 表示范围时，朴素减法得到最小负数，
-        // Math.abs 后仍为负，窗口检查会被绕过——饱和处理必须归入拒绝侧
+        // 减法溢出回归：服务端正常正数时标减 Long.MIN_VALUE 溢出，
+        // 朴素减法得到最小负数，Math.abs 后仍为负，窗口检查会被绕过——
+        // subtractExact 检测到溢出必须归入拒绝侧
         AuthMessage msg = buildMessage("dev-001", "k1", Long.MIN_VALUE, PAYLOAD);
         String token = tokenService.sign(msg, "secret-of-dev-001");
         assertFalse(authFilter.authenticate(msg, token, NOW),
-                "极端时标（差值溢出）的消息必须被时间窗拒绝");
-        // 溢出方向对称：消息时标远超服务端时钟同样拒绝
+                "极端过去时标（减法溢出）的消息必须被时间窗拒绝");
+        // 远超窗口的未来时标回归：正数服务端时标减 Long.MAX_VALUE 的差值
+        // 仍可表示（约 -9.2e18，未触发减法溢出），由窗口比较按出窗拒绝
         AuthMessage farFuture = buildMessage("dev-001", "k1", Long.MAX_VALUE, PAYLOAD);
         String farFutureToken = tokenService.sign(farFuture, "secret-of-dev-001");
         assertFalse(authFilter.authenticate(farFuture, farFutureToken, NOW),
-                "极端超前时标（差值溢出）的消息必须被时间窗拒绝");
+                "极端超前时标（可表示的大差值、远超窗口）必须被窗口比较拒绝");
+    }
+
+    @Test
+    void 负时标输入域外的消息被拒绝() {
+        // 输入域回归：时标非负是 verify 的输入域约定——负的服务端时标
+        //（无效时钟输入）与正的极端消息时标相减可能得到精确的 Long.MIN_VALUE，
+        // Math.abs 后仍为负而绕过窗口检查，输入域检查必须先行拒绝
+        AuthMessage msg = buildMessage("dev-001", "k1", NOW, PAYLOAD);
+        String token = tokenService.sign(msg, "secret-of-dev-001");
+        assertFalse(authFilter.authenticate(msg, token, -1),
+                "负的服务端时标属无效输入，必须被拒绝");
+        AuthMessage negTs = buildMessage("dev-001", "k1", -1, PAYLOAD);
+        String negTsToken = tokenService.sign(negTs, "secret-of-dev-001");
+        assertFalse(authFilter.authenticate(negTs, negTsToken, NOW),
+                "负的消息时标属无效输入，必须被拒绝");
+    }
+
+    @Test
+    void 空令牌被拒绝且不触发签名比对() {
+        // 接入契约最小面：令牌缺失/空串在关卡直接拒绝，不进入 HMAC 运算
+        AuthMessage msg = buildMessage("dev-001", "k1", NOW, PAYLOAD);
+        assertFalse(authFilter.authenticate(msg, null, NOW),
+                "空令牌必须被拒绝");
+        assertFalse(authFilter.authenticate(msg, "", NOW),
+                "空串令牌必须被拒绝");
     }
 
     @Test
