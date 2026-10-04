@@ -31,15 +31,26 @@ public class DeviceCredentialStore {
     }
 
     /**
-     * 注册/轮换密钥：明文密钥入参只在调用栈内存在，加密后以密文落库。
+     * 注册/轮换密钥：明文密钥入参只在调用栈内存在，加密后以密文保存。
      * 同 keyId 重复注册视为换绑（覆盖该版本并恢复为有效态）。
+     * deviceId/keyId 不允许包含分隔符 '|'：它们会进入 nonce 登记键与
+     * MAC 规范化串，含分隔符的取值会制造登记键与规范串的拼接歧义
+     * （与 AuthMessage.hasCanonicalSafeFields 的接收端校验同一口径）。
      */
     public void enroll(String deviceId, String keyId, String deviceSecretPlaintext) {
+        requireDelimFree(deviceId, "deviceId");
+        requireDelimFree(keyId, "keyId");
         String protectedSecret = keyProtector.protect(deviceSecretPlaintext);
         List<CredentialRecord> records =
                 credentials.computeIfAbsent(deviceId, k -> new CopyOnWriteArrayList<>());
         records.removeIf(r -> r.keyId().equals(keyId));
         records.add(new CredentialRecord(deviceId, keyId, protectedSecret, false));
+    }
+
+    private static void requireDelimFree(String value, String name) {
+        if (value == null || value.isEmpty() || value.indexOf('|') >= 0) {
+            throw new IllegalArgumentException(name + " 不得为空或包含分隔符 '|'：" + value);
+        }
     }
 
     /** 设备退役/丢失/解约：吊销全部版本，即时生效 */

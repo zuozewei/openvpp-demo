@@ -82,6 +82,25 @@ public final class AuthMessage {
                 String.valueOf(timestamp), nonce, messageType, payloadDigest);
     }
 
+    /**
+     * 规范化安全校验：可变字符串字段不得包含分隔符 '|' 且非空。
+     * 竖线拼接是歧义编码——不校验时，nonce="n|x"、messageType="telemetry" 与
+     * nonce="n"、messageType="x|telemetry" 可拼出同一规范串，后者可复用前者签名
+     * 并换用另一登记键绕过防重放查重（字段边界移动反例）。因此接收端必须在
+     * 校验关卡显式拒绝含分隔符的输入，不能依赖"默认生成器不产出分隔符"的假设；
+     * 注册侧（DeviceCredentialStore.enroll）对 deviceId/keyId 同样校验，
+     * 堵住登记键 deviceId|nonce 的同类歧义。payloadDigest 为十六进制串不含分隔符，
+     * protocolVersion 由版本关卡按常量比对，均无需在此校验。
+     */
+    public boolean hasCanonicalSafeFields() {
+        return isDelimFree(deviceId) && isDelimFree(keyId)
+                && isDelimFree(nonce) && isDelimFree(messageType);
+    }
+
+    private static boolean isDelimFree(String value) {
+        return value != null && !value.isEmpty() && value.indexOf('|') < 0;
+    }
+
     /** 计算正文摘要的工具方法（设备侧与接入层共用同一口径） */
     public static String digestOf(String payload) {
         return HmacSupport.sha256Hex(payload);

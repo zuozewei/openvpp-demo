@@ -57,22 +57,39 @@ public class DeviceTokenService {
     }
 
     /**
-     * 平台侧：校验令牌。四道关，按代价从低到高短路求值：
+     * 平台侧：校验令牌。五道关，按代价从低到高短路求值：
+     *   关 0 字段规范化安全（deviceId/keyId/nonce/messageType 不含分隔符，
+     *        杜绝规范串拼接歧义与登记键歧义——纯检查，最先做）；
      *   关 1 设备已注册且 keyId 有效（已吊销/未注册在此挡下，连 HMAC 都不用算）；
      *   关 2 协议版本一致（防止降级）；
-     *   关 3 时标在窗口内（只做时效限制，不是防重放的充分条件）；
+     *   关 3 时标在窗口内（只做时效限制，不是防重放的充分条件；差值用
+     *        subtractExact 饱和处理——极端时标下朴素减法会溢出，
+     *        Long.MIN_VALUE 取绝对值仍为负，会让窗口检查放行）；
      *   关 4 签名一致（常量时间比对防时序攻击）且 nonce 首次出现（窗口内防重放）。
      * 通过即把 nonce 登记为已用——后续窗口内的同 nonce 重放一律拒绝。
      */
     public boolean verify(AuthMessage message, String token, long nowMs) {
+        // 关 0：字段规范化安全（先于一切计算与查表）
+        if (!message.hasCanonicalSafeFields()) {
+            return false;
+        }
         // 关 2 + 关 3：纯计算，最先做
         if (!AuthMessage.PROTOCOL_VERSION.equals(message.protocolVersion())) {
             return false;
         }
         // 边界口径与 NonceRegistry 统一：时间差达到窗口（|now − ts| ≥ windowMs）即出窗，
         // 边界属于拒绝侧——恰好到期的那一刻，时间窗在这里拒绝、nonce 占位也仍保留，
-        // 两层同时设防，不给"等号边界"留重放缝隙
-        if (Math.abs(nowMs - message.timestamp()) >= windowMs) {
+        // 两层同时设防，不给"等号边界"留重放缝隙。
+        // 差值用 subtractExact 计算：now − ts 溢出（极端时标，如 Long.MIN_VALUE）时
+        // 朴素减法得到负的最小值，Math.abs 后仍为负，窗口检查会被绕过——
+        // 溢出即差值超出表示范围、必然远超窗口，直接归入拒绝侧
+        long diff;
+        try {
+            diff = Math.subtractExact(nowMs, message.timestamp());
+        } catch (ArithmeticException overflow) {
+            return false;
+        }
+        if (Math.abs(diff) >= windowMs) {
             return false;
         }
         // 关 1：取密钥（此处才解密密钥，未注册设备不触发解密运算）

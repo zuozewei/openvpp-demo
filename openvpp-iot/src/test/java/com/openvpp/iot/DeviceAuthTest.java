@@ -22,9 +22,11 @@ import java.util.concurrent.Future;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * 设备认证单测：13 个安全场景。
+ * 设备认证单测：18 个安全场景。
  * 原 6 场景（合法/错密钥/未注册/过期/窗口内时漂/吊销）全保留并适配新令牌模型；
- * 新增 7 场景覆盖完整性校验、窗口内重放、并发重放、密钥轮换、密钥密文存储。
+ * 新增 7 场景覆盖完整性校验、窗口内重放、并发重放、密钥轮换、密钥密文存储；
+ * 补时间窗边界 3 场景（到期前/时/后双层拒绝），以及极端时标溢出、
+ * 规范串分隔符歧义两类输入域回归。
  */
 class DeviceAuthTest {
 
@@ -274,7 +276,7 @@ class DeviceAuthTest {
     }
 
     @Test
-    void 密钥以密文形态落库() {
+    void 密钥保护器加解密往返为密文形态() {
         // 仓库内不出现明文：任意 keyId 取出的都是解密后的可用密钥，
         // 而存储介质上的形态由 KeyProtector 保证为密文——这里验证加解密往返一致
         KeyProtector kp = new AesGcmKeyProtector(
@@ -286,5 +288,40 @@ class DeviceAuthTest {
                 "密文不得包含明文片段");
         assertEquals("secret-of-dev-001", kp.unprotect(protectedSecret),
                 "受保护形态必须可逆——服务端认证需要解出密钥执行 MAC 运算");
+    }
+
+    // ---------- 输入域回归：极端时标溢出与规范串分隔符歧义 ----------
+
+    @Test
+    void 极端时标消息被时间窗拒绝() {
+        // 差值溢出回归：now − ts 超出 long 表示范围时，朴素减法得到最小负数，
+        // Math.abs 后仍为负，窗口检查会被绕过——饱和处理必须归入拒绝侧
+        AuthMessage msg = buildMessage("dev-001", "k1", Long.MIN_VALUE, PAYLOAD);
+        String token = tokenService.sign(msg, "secret-of-dev-001");
+        assertFalse(authFilter.authenticate(msg, token, NOW),
+                "极端时标（差值溢出）的消息必须被时间窗拒绝");
+        // 溢出方向对称：消息时标远超服务端时钟同样拒绝
+        AuthMessage farFuture = buildMessage("dev-001", "k1", Long.MAX_VALUE, PAYLOAD);
+        String farFutureToken = tokenService.sign(farFuture, "secret-of-dev-001");
+        assertFalse(authFilter.authenticate(farFuture, farFutureToken, NOW),
+                "极端超前时标（差值溢出）的消息必须被时间窗拒绝");
+    }
+
+    @Test
+    void 含分隔符的字段被规范化安全校验拒绝() {
+        // 字段边界移动反例：不校验时，nonce="n"、messageType="x|telemetry" 与
+        // nonce="n|x"、messageType="telemetry" 拼出同一规范串，可复用签名并
+        // 换用另一登记键绕过防重放查重——接收端必须在字段校验关卡直接拒绝，
+        // 不能依赖"默认生成器不产出分隔符"的假设
+        AuthMessage moved = new AuthMessage("dev-001", AuthMessage.PROTOCOL_VERSION, "k1", NOW,
+                "n", "x|telemetry", AuthMessage.digestOf(PAYLOAD));
+        String movedToken = tokenService.sign(moved, "secret-of-dev-001");
+        assertFalse(authFilter.authenticate(moved, movedToken, NOW),
+                "nonce 与 messageType 的边界移动组合必须在字段校验关卡被拒绝");
+        AuthMessage bad = new AuthMessage("dev-001", AuthMessage.PROTOCOL_VERSION, "k1", NOW,
+                "n|x", "telemetry", AuthMessage.digestOf(PAYLOAD));
+        String badToken = tokenService.sign(bad, "secret-of-dev-001");
+        assertFalse(authFilter.authenticate(bad, badToken, NOW),
+                "含分隔符的随机数必须在字段校验关卡被拒绝");
     }
 }

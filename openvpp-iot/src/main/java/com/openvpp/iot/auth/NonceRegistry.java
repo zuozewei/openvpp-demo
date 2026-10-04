@@ -47,7 +47,15 @@ public class NonceRegistry {
     public boolean registerOnce(String deviceId, String nonce, long messageTimestampMs, long nowMs) {
         evictExpired(nowMs);
         String key = deviceId + "|" + nonce;
-        return usedNonces.putIfAbsent(key, messageTimestampMs + windowMs) == null;
+        long expiry;
+        try {
+            expiry = Math.addExact(messageTimestampMs, windowMs);
+        } catch (ArithmeticException overflow) {
+            // 极端时标下最晚可接受时刻溢出：防御性取上界占位——该时标的消息
+            // 在时间窗关卡（subtractExact 饱和处理）已被拒，占位不参与放行决策
+            expiry = Long.MAX_VALUE;
+        }
+        return usedNonces.putIfAbsent(key, expiry) == null;
     }
 
     /** 惰性清理：只删已**越过**过期时刻的条目（expiry < now）；到期时刻本身仍占位，与消息校验边界一致 */
