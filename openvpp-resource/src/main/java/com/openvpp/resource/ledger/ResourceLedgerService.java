@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
  * 资源台账服务 —— 平台资源档案的唯一权威入口。
  *
  * 承载三条硬规则：
- * 1. 排他性：同一（户号/并网点）同一时期只能接入一个运营商 —— 建档强制校验（业务约定，非 44260 条文）；
+ * 1. 排他性：同一（户号/并网点）同一时期只能接入一个运营商（47241 第 6.1 条）—— 建档强制校验；
  * 2. 44260 第 5.2 条代理期限：代理协议宜不小于 1 个月 —— 建档处强制校验（"宜"为推荐值，工程上按默认门槛），到期日复算由聚合侧负责；
- * 3. 47241 运行管理：档案变更必须留审计 —— 建档/变更/注销全留痕。
+ * 3. 注销不删除：档案变更必须留审计（结算取证口径）—— 建档/变更/注销全留痕。
  */
 public class ResourceLedgerService {
 
@@ -93,7 +93,7 @@ public class ResourceLedgerService {
                 .anyMatch(p -> gridAccountId.equals(p.getGridAccountId()));
         if (occupied) {
             throw new IllegalStateException(
-                    "44260 排他性冲突：户号/并网点已被其他资源占用: " + gridAccountId);
+                    "47241 排他性冲突：户号/并网点已被其他资源占用: " + gridAccountId);
         }
     }
 

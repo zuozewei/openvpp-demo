@@ -33,7 +33,7 @@ public abstract class ResourceProfile {
     /** 所属聚合主体 */
     private Long operatorId;
 
-    /** 用电户号/并网点标识 —— 排他性校验的业务键（业务约定，非 44260 条文） */
+    /** 用电户号/并网点标识 —— 排他性校验的业务键（47241 第 6.1 条） */
     private String gridAccountId;
 
     /** 代理协议到期日 —— 44260 第 5.2 条：最小时间期限宜不小于 1 个月（"宜"为推荐值，工程上按默认门槛处理） */
