@@ -11,7 +11,8 @@ package com.openvpp.iot.auth;
  * MAC 覆盖字段清单（顺序固定，设备侧与平台侧必须一致）：
  *   deviceId | protocolVersion | keyId | timestamp | nonce | messageType | payloadDigest
  * 其中 payloadDigest = SHA-256(正文原文) 的十六进制串——正文不直接进 MAC
- * 输入而是先摘要，是为了让 MAC 输入长度恒定、正文编码差异（空白/换行）可单独治理。
+ * 输入而是先摘要，是为了让正文摘要段的输入长度恒定（完整规范串仍含
+ * deviceId 等可变长度字段，并非定长输入）、正文编码差异（空白/换行）可单独治理。
  *
  * 不可变对象，构造即完整。
  */

@@ -115,7 +115,7 @@ More documentation (in Chinese): [Documentation index](docs/README.md) · [Artic
 
 ## 🧪 Test scope
 
-- Regular regression suite: 31 test classes / 201 test cases / 199 executed / 2 live tests skipped by default. The TSDB benchmark and GBDT auxiliary-service integration require external environments; see Tutorials 06 and 05.
+- Regular regression suite: 31 test classes / 205 test cases / 203 executed / 2 live tests skipped by default (as of commit 7e54828, 2026-10-04). The TSDB benchmark and GBDT auxiliary-service integration require external environments; see Tutorials 06 and 05.
 - The public MQTT loopback uses a public broker. It **does not automatically skip offline** and will fail an assertion when disconnected; exclude that case separately when offline (Tutorial 04).
 - `MySqlComposeIT` contains 4 real MySQL + Redis integration checks and requires the Compose services (Tutorial 03).
 - The recommended reader entry point is the frozen `part1-cognition-r5` tag. See the [article tag reference](docs/snapshots.md) for differences from earlier snapshots.

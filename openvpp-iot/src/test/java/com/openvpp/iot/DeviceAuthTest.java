@@ -294,19 +294,19 @@ class DeviceAuthTest {
 
     @Test
     void 极端时标消息被时间窗拒绝() {
-        // 减法溢出回归：服务端正常正数时标减 Long.MIN_VALUE 溢出，
-        // 朴素减法得到最小负数，Math.abs 后仍为负，窗口检查会被绕过——
-        // subtractExact 检测到溢出必须归入拒绝侧
+        // 输入域归因：Long.MIN_VALUE 属负时标，在减法前即被非负输入域检查拒绝——
+        // 该用例不进入 subtractExact 溢出分支（非负 long 相减的差值均可表示，
+        // 溢出分支在当前输入契约下不可达，保留为防御代码）
         AuthMessage msg = buildMessage("dev-001", "k1", Long.MIN_VALUE, PAYLOAD);
         String token = tokenService.sign(msg, "secret-of-dev-001");
         assertFalse(authFilter.authenticate(msg, token, NOW),
-                "极端过去时标（减法溢出）的消息必须被时间窗拒绝");
-        // 远超窗口的未来时标回归：正数服务端时标减 Long.MAX_VALUE 的差值
-        // 仍可表示（约 -9.2e18，未触发减法溢出），由窗口比较按出窗拒绝
+                "最小长整数时标（负值）必须被输入域检查拒绝");
+        // 出窗比较归因：正数服务端时标减 Long.MAX_VALUE 的差值可表示（约 -9.2e18），
+        // 未触发减法溢出，由窗口比较按出窗拒绝
         AuthMessage farFuture = buildMessage("dev-001", "k1", Long.MAX_VALUE, PAYLOAD);
         String farFutureToken = tokenService.sign(farFuture, "secret-of-dev-001");
         assertFalse(authFilter.authenticate(farFuture, farFutureToken, NOW),
-                "极端超前时标（可表示的大差值、远超窗口）必须被窗口比较拒绝");
+                "最大长整数时标（可表示的大差值、远超窗口）必须被窗口比较拒绝");
     }
 
     @Test
