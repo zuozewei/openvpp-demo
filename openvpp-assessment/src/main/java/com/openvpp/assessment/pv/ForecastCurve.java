@@ -3,21 +3,21 @@ package com.openvpp.assessment.pv;
 import java.time.LocalDateTime;
 
 /**
- * 光伏出力预测曲线 —— 单时刻预测值 + 分位区间。
- * 44260 评估的产出不是"一个数"，而是"一个数加它能兑现的概率"：
- * P_50 用于日前计划，P_90（悲观）用于保守申报，区间宽度即风险量化。
+ * 光伏出力预测曲线 —— 单时刻中心预测 + 未校准的悲观/乐观参考上下界。
+ * 44260 评估的产出不是"一个数"，而是"一个数加风险量化"：
+ * P_50 为字段占位名（不保证条件中位数），P_90（悲观）用于保守申报，区间未校准、不承诺概率覆盖。
  */
 public class ForecastCurve {
 
     private final LocalDateTime time;
 
-    /** 中位数预测（最可能值） */
+    /** 中心预测（字段占位名 P_50，不保证条件中位数） */
     private final double p50Kw;
 
-    /** 悲观分位（90% 概率实际出力不低于此值） */
+    /** 悲观参考下界（字段占位名 P_90，未校准，不承诺概率覆盖） */
     private final double p90Kw;
 
-    /** 乐观分位（90% 概率实际出力不高于此值） */
+    /** 乐观参考上界（字段占位名 P_10，未校准，不承诺概率覆盖） */
     private final double p10Kw;
 
     public ForecastCurve(LocalDateTime time, double p50Kw, double p90Kw, double p10Kw) {
@@ -27,7 +27,7 @@ public class ForecastCurve {
         this.p10Kw = p10Kw;
     }
 
-    /** 预测区间宽度（kW），风险量化的直接读数 */
+    /** 区间绝对宽度（kW）；相对裕量为本值除以中心预测 */
     public double uncertaintyWidth() {
         return p10Kw - p90Kw;
     }

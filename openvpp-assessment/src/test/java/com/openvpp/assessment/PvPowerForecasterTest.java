@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * 光伏出力预测单测：天文层精度 / 温度损耗 / 天气置信度 / 区间宽度。
+ * 光伏出力预测单测：天文层边界 / 算例回归 / 人工裕量契约 / 相对区间宽度。
  * 基准算例：5MWp 屋顶光伏，示例纬度北纬 23.13°，夏至日正午晴天。
  */
 class PvPowerForecasterTest {
@@ -33,7 +33,7 @@ class PvPowerForecasterTest {
     }
 
     @Test
-    void 晴天正午并网功率约为铭牌75到85折() {
+    void 晴天正午并网功率约为铭牌的75到85百分比() {
         ForecastCurve curve = forecaster.forecast(SUMMER_NOON, WeatherClass.CLEAR, 35.0);
         double ratio = curve.getP50Kw() / CAPACITY_KWP;
         // 当前参数实跑约 4053 kW（0.8106）；素材结论 3800-4000kW（0.76-0.80）为量级参照
@@ -55,14 +55,22 @@ class PvPowerForecasterTest {
     }
 
     @Test
-    void 天气越差预测区间越宽() {
+    void 天气越差相对区间宽度越宽() {
         ForecastCurve clear = forecaster.forecast(SUMMER_NOON, WeatherClass.CLEAR, 35.0);
+        ForecastCurve partly = forecaster.forecast(SUMMER_NOON, WeatherClass.PARTLY_CLOUDY, 35.0);
         ForecastCurve overcast = forecaster.forecast(SUMMER_NOON, WeatherClass.OVERCAST, 35.0);
+        ForecastCurve storm = forecaster.forecast(SUMMER_NOON, WeatherClass.STORM, 35.0);
 
-        assertTrue(overcast.uncertaintyWidth() > clear.uncertaintyWidth(),
-                "坏天气的不确定性区间必须更宽");
+        // 相对宽度（绝对宽/中心预测）随天气档位单调增加；绝对宽度受出力下降影响，不保证单调
+        assertTrue(relativeWidth(partly) > relativeWidth(clear), "相对宽度须递增: 晴天->晴间多云");
+        assertTrue(relativeWidth(overcast) > relativeWidth(partly), "相对宽度须递增: 晴间多云->阴天");
+        assertTrue(relativeWidth(storm) > relativeWidth(overcast), "相对宽度须递增: 阴天->雷暴");
         assertTrue(clear.getP90Kw() < clear.getP50Kw());
         assertTrue(clear.getP10Kw() > clear.getP50Kw());
+    }
+
+    private double relativeWidth(ForecastCurve curve) {
+        return curve.uncertaintyWidth() / curve.getP50Kw();
     }
 
     @Test
