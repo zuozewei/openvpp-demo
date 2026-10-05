@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
  * 3. 组件层（直流转交流）：倾角余弦 + 温度损耗（正午最强光反而被热损耗吃掉 ~10%）；
  * 4. 逆变器层（并网功率）：效率随负载率变化。
  *
- * 输出 P_50 + P_10/P_90 概率区间，区间宽度由天气分类驱动。
+ * 输出 P_50 + P_10/P_90 分位区间（未校准的教学口径：悲观/中位/乐观排序，不承诺概率覆盖），区间宽度由天气分类驱动。
  */
 public class PvPowerForecaster {
 
@@ -55,7 +55,7 @@ public class PvPowerForecaster {
         double pDc = capacityKwp * (gEff / G_STC) * (1 + tempCoeffPct / 100.0 * (tCell - T_STC));
         double p50 = pDc * inverterEfficiency(pDc);
 
-        // 概率区间：天气越差区间越宽。以置信度反推半宽比例
+        // 分位区间：天气越差区间越宽。以置信度反推半宽比例
         double halfWidthRatio = (1 - weather.getConfidence()) * 0.9;
         double p90 = Math.max(0, p50 * (1 - halfWidthRatio));
         double p10 = p50 * (1 + halfWidthRatio * 0.5);
