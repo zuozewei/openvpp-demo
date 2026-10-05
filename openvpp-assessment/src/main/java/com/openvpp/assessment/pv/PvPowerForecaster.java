@@ -51,7 +51,7 @@ public class PvPowerForecaster {
         double gGround = gEx * CLEAR_SKY_TRANSMITTANCE * weather.getCloudFactor();
         double gEff = gGround * Math.cos(Math.toRadians(tiltDeg - optimalTilt()))
                 + gGround * DIFFUSE_RATIO;   // 散射+反射分量近似
-        double tCell = ambientTempC + (gEff / 800.0) * 20.0;   // NOCT 近似
+        double tCell = ambientTempC + (gEff / 800.0) * 20.0;   // NOCT 近似（隐含 NOCT=40°C；典型晶硅组件 45±2°C，教学简化取值）
         double pDc = capacityKwp * (gEff / G_STC) * (1 + tempCoeffPct / 100.0 * (tCell - T_STC));
         double p50 = pDc * inverterEfficiency(pDc);
 

@@ -37,7 +37,7 @@ class PvPowerForecasterTest {
         ForecastCurve curve = forecaster.forecast(SUMMER_NOON, WeatherClass.CLEAR, 35.0);
         double ratio = curve.getP50Kw() / CAPACITY_KWP;
         // 素材结论：5MWp 晴天正午实际并网约 3800-4000kW（0.76-0.80）
-        assertTrue(ratio > 0.70 && ratio < 0.85,
+        assertTrue(ratio > 0.75 && ratio < 0.85,
                 "温度损耗+逆变效率后功率比异常: " + ratio);
         assertTrue(curve.getP50Kw() < CAPACITY_KWP, "正午功率不应达铭牌（热损耗）");
     }
