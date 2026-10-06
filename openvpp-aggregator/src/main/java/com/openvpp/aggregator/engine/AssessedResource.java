@@ -13,7 +13,7 @@ import java.math.BigDecimal;
  */
 public class AssessedResource {
 
-    /** 调节方向：UP=上调（增出力/降负荷），DOWN=下调 */
+    /** 调节方向（并网点净输出参照）：UP=上调（增出力/降负荷），DOWN=下调（减出力/增负荷） */
     public enum Direction {
         UP, DOWN
     }
@@ -35,7 +35,8 @@ public class AssessedResource {
     private final long dataAgeSeconds;
 
     /**
-     * 兼容构造：教学简化默认 DOWN 方向、即时可用、数据新鲜。
+     * 兼容构造：教学简化默认 DOWN（净输出参照下的减出力/增负荷）方向、即时可用、数据新鲜；
+     * 削负荷类示例应显式传 UP。
      */
     public AssessedResource(String resourceId, String clearingNodeId,
                             BigDecimal adjustCapacityKw, BigDecimal confidence,

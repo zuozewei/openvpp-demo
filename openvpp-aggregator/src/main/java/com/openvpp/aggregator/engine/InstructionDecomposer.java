@@ -69,7 +69,7 @@ public class InstructionDecomposer {
      *
      * @param members           单元内成员
      * @param committablePoolKw 聚合可承诺容量（折扣后，仅用于可行性校验，不作分配分母）
-     * @param commandKw         单元级调度指令（下调为正）
+     * @param commandKw         单元级调度指令幅值（恒为正，调节方向由 direction 参数表达）
      * @param direction         任务调节方向（与成员方向不匹配的不参与分配）
      * @param window            任务时间窗（预占冲突判定粒度）
      * @param taskId            响应任务标识（预占按此登记，任务结束按此释放）
@@ -157,7 +157,8 @@ public class InstructionDecomposer {
     }
 
     /**
-     * 教学便利入口：默认下调方向、固定 1 小时窗口、独立空台账（无历史预占）。
+     * 教学便利入口：默认 DOWN（净输出参照下的减出力/增负荷）方向、固定 1 小时窗口、独立空台账（无历史预占）；
+     * 削负荷类示例应显式传 UP。
      */
     public DecompositionResult decompose(List<AssessedResource> members,
                                          BigDecimal committablePoolKw,

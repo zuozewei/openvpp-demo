@@ -28,8 +28,10 @@ class AggregatorEngineTest {
     private final InstructionDecomposer decomposer = new InstructionDecomposer();
 
     private static AssessedResource res(String id, String node, double kw, double conf, boolean valid) {
+        // 教学场景统一按削负荷构造（并网点净输出参照下为 UP 上调）
         return new AssessedResource(id, node,
-                BigDecimal.valueOf(kw), BigDecimal.valueOf(conf), 3600, valid);
+                BigDecimal.valueOf(kw), BigDecimal.valueOf(conf), 3600, valid,
+                AssessedResource.Direction.UP, 0L, 0L);
     }
 
     @Test
@@ -83,7 +85,9 @@ class AggregatorEngineTest {
         BigDecimal command = new BigDecimal("1500");
 
         InstructionDecomposer.DecompositionResult result =
-                decomposer.decompose(members, pool, command);
+                decomposer.decompose(members, pool, command,
+                        AssessedResource.Direction.UP, new TaskWindow(0L, 3600L),
+                        "task-1500", new CapacityReservationLedger());
 
         assertTrue(result.isFeasible(), "1500 ≤ 2331 必须可行");
         Map<String, BigDecimal> plan = result.getPlan();
@@ -108,7 +112,9 @@ class AggregatorEngineTest {
         BigDecimal command = new BigDecimal("9999");
 
         InstructionDecomposer.DecompositionResult result =
-                decomposer.decompose(members, pool, command);
+                decomposer.decompose(members, pool, command,
+                        AssessedResource.Direction.UP, new TaskWindow(0L, 3600L),
+                        "task-gap", new CapacityReservationLedger());
 
         // 断言④：不可行时必须明确返回缺口量，不得静默截断
         assertFalse(result.isFeasible());
@@ -129,7 +135,9 @@ class AggregatorEngineTest {
         assertEquals(0, committable.compareTo(new BigDecimal("1080.0")));
 
         InstructionDecomposer.DecompositionResult result =
-                decomposer.decompose(members, committable, new BigDecimal("1080"));
+                decomposer.decompose(members, committable, new BigDecimal("1080"),
+                        AssessedResource.Direction.UP, new TaskWindow(0L, 3600L),
+                        "task-1080", new CapacityReservationLedger());
 
         // 断言④：可承诺容量口径下任务恰可行
         assertTrue(result.isFeasible(), "任务等于可承诺容量必须可行");
@@ -188,21 +196,21 @@ class AggregatorEngineTest {
 
         InstructionDecomposer.DecompositionResult first =
                 decomposer.decompose(members, committable, new BigDecimal("800"),
-                        AssessedResource.Direction.DOWN, window, "task-1", ledger);
+                        AssessedResource.Direction.UP, window, "task-1", ledger);
         assertTrue(first.isFeasible(), "首任务 800 kW 必须可行");
 
         // 断言③：同一资源同一重叠窗口再下发 200 kW，
         // 有效能力 1000 - 已预占 800 = 剩余 200，恰可行且二次分配 ≤ 剩余能力
         InstructionDecomposer.DecompositionResult second =
                 decomposer.decompose(members, committable, new BigDecimal("200"),
-                        AssessedResource.Direction.DOWN, window, "task-2", ledger);
+                        AssessedResource.Direction.UP, window, "task-2", ledger);
         assertTrue(second.isFeasible());
         assertEquals(0, second.getPlan().get("es-001").compareTo(new BigDecimal("200")));
 
         // 第三次 1 kW：剩余能力为 0，断言②+④ —— 不得占用已预占容量，返回缺口
         InstructionDecomposer.DecompositionResult third =
                 decomposer.decompose(members, committable, BigDecimal.ONE,
-                        AssessedResource.Direction.DOWN, window, "task-3", ledger);
+                        AssessedResource.Direction.UP, window, "task-3", ledger);
         assertFalse(third.isFeasible(), "重叠窗口内剩余能力为 0 时必须返回缺口");
         assertEquals(0, third.getGapKw().compareTo(BigDecimal.ONE));
 
@@ -242,11 +250,11 @@ class AggregatorEngineTest {
         assertTrue(after.getPlan().isEmpty());
     }
 
-    /** 便利方法：显式台账 + 窗口，方向取下调 */
+    /** 便利方法：显式台账 + 窗口，方向取上调（削负荷，并网点净输出参照） */
     private InstructionDecomposer.DecompositionResult decomposeWith(
             List<AssessedResource> members, BigDecimal committable, BigDecimal command,
             TaskWindow window, CapacityReservationLedger ledger) {
         return decomposer.decompose(members, committable, command,
-                AssessedResource.Direction.DOWN, window, "task-decomposeWith", ledger);
+                AssessedResource.Direction.UP, window, "task-decomposeWith", ledger);
     }
 }
