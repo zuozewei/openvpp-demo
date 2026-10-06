@@ -9,13 +9,15 @@ import java.time.LocalDateTime;
  * 不可变字段随创建固化，状态迁移只改 state 与五个可观测时标。
  *
  * 确认时间轴（每个时间点只证明一件事，互不替代）：
- *   sentAt       平台发送：指令已进入发送流程（44260 的 t_order）
+ *   sentAt       平台发送：指令已进入发送流程
  *   ackedAt      设备接收确认：设备收到并接受——只证明通信与受理完成
  *   actStartedAt 设备开始动作：设备开始执行
- *   reachedAt    遥测达到目标：实际功率进入目标容差带（t_action 只能以它为准）
- *   stableAt     连续稳定达标：指定窗口内持续满足，响应成功的唯一判据
+ *   reachedAt    遥测达到目标：实测功率进入目标容差带（资源目标到位时刻，
+ *                不直接等同 44260 的聚合级 t_action 指标）
+ *   stableAt     连续稳定达标：指定采样规则下持续满足，响应成功的唯一判据
  *
- * 注意：ACK 时间不能用于响应时延结算依据；响应时延 = reachedAt - sentAt。
+ * 注意：ACK 时间不能用作功率响应依据；资源目标到位时延 = reachedAt - sentAt
+ * （单资源口径，与 44260 聚合级响应指标分属两套评价体系，不互换）。
  */
 public class DispatchInstruction {
 
@@ -141,7 +143,8 @@ public class DispatchInstruction {
 
     /**
      * 通信确认耗时：sentAt → ackedAt。
-     * 只反映"设备多久收到"，仅供参考，不能作为响应时延结算依据。
+     * 只反映"设备多久收到"，仅供参考，不能作为功率响应依据；
+     * 回执缺失时的推断填充值也会计入，统计时应剔除。
      */
     public Long ackElapsedMs() {
         if (sentAt == null || ackedAt == null) {
@@ -151,8 +154,8 @@ public class DispatchInstruction {
     }
 
     /**
-     * 44260 响应时间指标：t_action - t_order = reachedAt - sentAt。
-     * 以遥测进入容差带为 t_action；未达标返回 null——ACK 不是响应。
+     * 资源目标到位时延：reachedAt - sentAt（本文单资源口径，
+     * 不直接等同 44260 聚合级响应指标）。未达标返回 null——ACK 不是响应。
      */
     public Long responseTimeMs() {
         if (sentAt == null || reachedAt == null) {

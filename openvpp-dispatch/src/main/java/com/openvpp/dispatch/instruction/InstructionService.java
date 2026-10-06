@@ -16,7 +16,8 @@ import java.util.function.Consumer;
  *    （本地消息表 + 异步投递）消除"数据库成功、消息发送失败"的窗口期；
  * 2. 响应判定只信遥测：ACK 只证明"设备收到并接受"，COMPLETED 只能由
  *    至少 2 个连续带内遥测点驱动（相邻点间隔不超过缺口上限，间隔以遥测
- *    时间戳计），响应时延 = 遥测达标时刻 - 发送时刻；
+ *    时间戳计），资源目标到位时延 = 遥测达标时刻 - 发送时刻（单资源口径，
+ *    非 44260 聚合级响应指标）；
  * 3. 回执确定性规则：重复回执幂等忽略；乱序回执快进补齐（ACK 丢失但
  *    设备已动作/已达标时以遥测与后续事件为准）；终态后迟到消息一律忽略，
  *    不得重新激活执行；
@@ -78,7 +79,7 @@ public class InstructionService {
         switch (instruction.getState()) {
             case SENT:
                 instruction.transitTo(InstructionState.ACKED);
-                log.info("指令已确认: {} 通信耗时 {}ms（仅通信指标，不作响应时延）",
+                log.info("指令已确认: {} 通信耗时 {}ms（仅通信指标，不作功率响应依据）",
                         instructionId, instruction.ackElapsedMs());
                 break;
             case ACKED:
@@ -143,7 +144,7 @@ public class InstructionService {
         }
         if (instruction.evaluateTelemetry(measuredKw, toleranceKw, stableWindowMs, observedAt)) {
             instruction.completeByTelemetry();
-            log.info("遥测连续稳定达标: {} 响应时延 {}ms", instructionId,
+            log.info("遥测连续稳定达标: {} 资源到位时延 {}ms", instructionId,
                     instruction.responseTimeMs());
         }
     }
