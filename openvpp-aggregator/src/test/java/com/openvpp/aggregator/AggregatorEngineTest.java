@@ -78,7 +78,7 @@ class AggregatorEngineTest {
                 "容量池口径错误: " + pool);
         assertTrue(pool.compareTo(
                 BigDecimal.valueOf(1000 + 1200 + 800)) < 0,
-                "承诺容量必须小于铭牌加总");
+                "本算例承诺容量必须小于输入可调容量加总");
     }
 
     @Test
