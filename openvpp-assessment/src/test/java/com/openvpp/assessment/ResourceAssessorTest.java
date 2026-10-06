@@ -102,5 +102,9 @@ class ResourceAssessorTest {
         double idle = ev.utilizationScore(0.30);
         assertTrue(medium > busy && medium > idle,
                 "中等繁忙站的可调潜力应高于满负荷站与闲置站");
+        assertTrue(busy < idle,
+                "素材口径下满负荷站车主拒绝调节，应低于闲置站");
+        assertEquals(0.462, medium, 0.001);
+        assertEquals(0.086, busy, 0.001);
     }
 }

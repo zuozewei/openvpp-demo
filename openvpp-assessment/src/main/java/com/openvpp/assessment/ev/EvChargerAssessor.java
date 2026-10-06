@@ -61,11 +61,20 @@ public class EvChargerAssessor {
 
     /** 站点利用率与可调潜力的反直觉关系：中等繁忙最优 */
     public double utilizationScore(double utilization) {
-        // 30%→0.336, 60%→0.462（峰值）, 85%→0.298, 95%→0.086 的拟合曲线
+        // 分段线性锚定素材四点：30%→0.336、60%→0.462（峰值）、85%→0.298、95%→0.086
+        // 两端自然延伸：0%→0（无在充车辆）、95%→100% 一侧延伸到边界 0；区间外返回 0
         if (utilization <= 0 || utilization >= 1) {
             return 0;
         }
-        return Math.sin(utilization * Math.PI * 0.75) * 0.5;
+        double[] anchorUtil = {0.0, 0.30, 0.60, 0.85, 0.95, 1.0};
+        double[] anchorScore = {0.0, 0.336, 0.462, 0.298, 0.086, 0.0};
+        for (int i = 1; i < anchorUtil.length; i++) {
+            if (utilization <= anchorUtil[i]) {
+                return anchorScore[i - 1] + (anchorScore[i] - anchorScore[i - 1])
+                        * (utilization - anchorUtil[i - 1]) / (anchorUtil[i] - anchorUtil[i - 1]);
+            }
+        }
+        return 0;
     }
 
     /** 车辆类型构成：决定可容忍调节时长 */
