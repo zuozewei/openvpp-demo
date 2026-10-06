@@ -18,6 +18,9 @@ import java.util.stream.Collectors;
  */
 public class UnitGrouper {
 
+    /** 未达准入门槛单元的标识后缀（保留单元供诊断，不做删除）。 */
+    public static final String BELOW_THRESHOLD_SUFFIX = "-below-threshold";
+
     /**
      * 按出清节点分组，每组生成一个 VppUnit；不达准入门槛的单元被标记但保留（供诊断）。
      */
@@ -44,7 +47,7 @@ public class UnitGrouper {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         // 准入校验挂在单元上，申报前统一检查
         if (!unit.passAdmission(unitAdjustKw)) {
-            unit.setUnitId(unit.getUnitId() + "-below-threshold");
+            unit.setUnitId(unit.getUnitId() + BELOW_THRESHOLD_SUFFIX);
         }
         return unit;
     }
