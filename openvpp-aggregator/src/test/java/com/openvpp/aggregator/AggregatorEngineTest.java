@@ -27,11 +27,17 @@ class AggregatorEngineTest {
     private final CapacityPoolCalculator poolCalc = new CapacityPoolCalculator(0.9);
     private final InstructionDecomposer decomposer = new InstructionDecomposer();
 
+    /** 默认按可上调资源构造（削负荷/放电，净输出参照下为 UP） */
     private static AssessedResource res(String id, String node, double kw, double conf, boolean valid) {
-        // 教学场景统一按削负荷构造（并网点净输出参照下为 UP 上调）
+        return res(id, node, kw, conf, valid, AssessedResource.Direction.UP);
+    }
+
+    /** dir 按资源物理能力给定：削负荷/放电=UP，弃光=DOWN（并网点净输出参照） */
+    private static AssessedResource res(String id, String node, double kw, double conf, boolean valid,
+                                        AssessedResource.Direction dir) {
         return new AssessedResource(id, node,
                 BigDecimal.valueOf(kw), BigDecimal.valueOf(conf), 3600, valid,
-                AssessedResource.Direction.UP, 0L, 0L);
+                dir, 0L, 0L);
     }
 
     @Test
@@ -39,7 +45,7 @@ class AggregatorEngineTest {
         List<AssessedResource> pool = List.of(
                 res("es-001", "N1", 1000, 0.95, true),
                 res("ac-001", "N1", 500, 0.9, true),
-                res("pv-001", "N2", 800, 0.7, true));
+                res("load-001", "N2", 800, 0.7, true));
 
         List<VppUnit> units = grouper.group(pool, Scenario.PEAK_SHIFT);
 
@@ -64,7 +70,7 @@ class AggregatorEngineTest {
         List<AssessedResource> members = List.of(
                 res("es-001", "N1", 1000, 0.95, true),    // 可信 950
                 res("ac-001", "N1", 1200, 0.9, true),     // 可信 1080
-                res("pv-001", "N1", 800, 0.7, true));     // 可信 560
+                res("load-001", "N1", 800, 0.7, true));    // 可信 560（可调负荷；光伏仅弃光下调，不入本上调算例）
 
         BigDecimal pool = poolCalc.poolOf(members);
         // (950+1080+560) × 0.9 = 2590 × 0.9 = 2331
@@ -80,7 +86,7 @@ class AggregatorEngineTest {
         List<AssessedResource> members = List.of(
                 res("es-001", "N1", 1000, 0.95, true),    // 可信 950
                 res("ac-001", "N1", 1200, 0.9, true),     // 可信 1080
-                res("pv-001", "N1", 800, 0.7, true));     // 可信 560
+                res("load-001", "N1", 800, 0.7, true));    // 可信 560（可调负荷；光伏仅弃光下调，不入本上调算例）
         BigDecimal pool = poolCalc.poolOf(members);       // 可承诺 2331
         BigDecimal command = new BigDecimal("1500");
 
@@ -101,8 +107,8 @@ class AggregatorEngineTest {
             assertTrue(share.compareTo(m.credibleCapacityKw()) <= 0,
                     "分配不得突破有效能力上界: " + m.getResourceId());
         }
-        // 储能可信容量最大，应分得最大份额
-        assertTrue(plan.get("es-001").compareTo(plan.get("pv-001")) > 0);
+        // 份额与可信容量成正比：储能 950 大于可调负荷 560
+        assertTrue(plan.get("es-001").compareTo(plan.get("load-001")) > 0);
     }
 
     @Test
