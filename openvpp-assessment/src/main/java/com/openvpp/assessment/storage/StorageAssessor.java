@@ -8,6 +8,9 @@ package com.openvpp.assessment.storage;
  * 另有两条工程硬约束：
  * 1. 站用电率直接扣减可承诺容量；
  * 2. 循环寿命预算：今日已用循环量耗尽则不再申报（哪怕 SOC 允许）。
+ *
+ * 参照口径：可放电量与净功率均按交流侧可承诺值表述——可用能量已折放电效率，
+ * 站用电率仅折减功率口径；电池侧换算只在 SOC 演化（socAfterDischarge）时出现。
  */
 public class StorageAssessor {
 
@@ -39,14 +42,14 @@ public class StorageAssessor {
         double netRateKw = pcsRateKw * (1 - stationUsePct / 100.0);
 
         // 双向潜力不对称：放电受 (SOC - SOC_min) 约束，充电受 (SOC_max - SOC) 约束
-        // 可用能量按效率折算（放电扣效率，充电加效率）
+        // 可用能量按效率折算到交流侧（放电乘效率，充电除以效率）
         double dischargeableKwh = Math.max(0, (socPct - socMinPct) / 100.0 * ratedKwh * efficiencyPct / 100.0);
         double chargeableKwh = Math.max(0, (socMaxPct - socPct) / 100.0 * ratedKwh / (efficiencyPct / 100.0));
 
         double dischargeKw = Math.min(netRateKw, dischargeableKwh > 0 ? netRateKw : 0);
         double chargeKw = Math.min(netRateKw, chargeableKwh > 0 ? netRateKw : 0);
 
-        // 满功率可持续时长（s）：可用能量 ÷ 放电功率，素材算例 50% SOC ≈ 5700s（1.58h）
+        // 净功率可持续时长（s）：可用能量 ÷ 净功率，教学算例 50% SOC ≈ 2850s（0.79h）
         long sustainSeconds = dischargeKw > 0 ? (long) (dischargeableKwh / dischargeKw * 3600) : 0;
 
         // 循环寿命预算是置信度开关：预算耗尽则今日不再申报
@@ -61,7 +64,8 @@ public class StorageAssessor {
 
     /**
      * 深度放电后 SOC 滚动演化 —— 评估"后续时段潜力衰减"的求解器。
-     * 第 04 篇算例：50% SOC 放电 2h 后跌至 10%，放电潜力从 2000kW 崩到 110kW。
+     * 教学算例：50% SOC 以 PCS 额定 2,000kW 放电 2h，SOC 触至 10% 下限，
+     * 可用能量清零、放电潜力崩到 0。入参为交流侧放电功率，电池侧消耗按效率折算。
      */
     public double socAfterDischarge(double socPct, double dischargeKw, double hours) {
         double usedKwh = dischargeKw * hours / (efficiencyPct / 100.0);

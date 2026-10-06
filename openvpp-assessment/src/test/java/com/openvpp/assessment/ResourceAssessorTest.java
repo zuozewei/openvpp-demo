@@ -8,7 +8,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * 储能/空调/充电桩三类评估器单测，全部锚定素材物理与行为算例。
+ * 储能/空调/充电桩三类评估器单测，锚定素材教学算例与局部边界
+ * （任务判定、离站校验等伪代码未接数实现，不在覆盖范围）。
  */
 class ResourceAssessorTest {
 
@@ -31,12 +32,12 @@ class ResourceAssessorTest {
 
     @Test
     void 储能深度放电后潜力枯竭() {
-        // 第 04 篇算例：50% 放电 2h 后 SOC 跌至 ~10%，放电潜力从 2000 崩到 110
+        // 教学算例：50% 以 PCS 额定 2,000kW 放电 2h，SOC 触至 10% 下限，可用能量清零
         double socAfter = storage.socAfterDischarge(50.0, 2000, 2.0);
         assertTrue(socAfter < 15.0, "深度放电后 SOC 应接近下限: " + socAfter);
 
         StorageAssessor.StorageCapability cap = storage.assess(socAfter, 1000);
-        assertTrue(cap.getDischargeKw() < 200, "SOC 枯竭后放电潜力应急剧下跌");
+        assertEquals(0.0, cap.getDischargeKw(), 0.01, "SOC 触底后可用能量清零，放电潜力为 0");
         assertTrue(cap.getChargeKw() > 1800, "SOC 低位时充电潜力应充足");
     }
 
@@ -51,8 +52,8 @@ class ResourceAssessorTest {
     private final AcLoadAssessor ac = new AcLoadAssessor(2000, 5_000_000, 1.5);
 
     @Test
-    void 空调完全关停ETP时长约125分钟() {
-        // 素材算例：净得热 1000kW 时 t = 5e6 × 1.5 / 1000 = 7500s ≈ 125min
+    void 空调完全关停可容忍时长约125分钟() {
+        // 素材算例同值（恒定净得热估算）：5e6 × 1.5 / 1000 = 7500s ≈ 125min
         AcLoadAssessor.AcCapability cap = ac.assessFullShutdown(1000, 1200);
         assertEquals(7500, cap.getEndureSeconds());
         assertEquals(1200 * 0.9, cap.getShedKw(), 0.01, "承诺削减须打回弹系数");
@@ -68,9 +69,10 @@ class ResourceAssessorTest {
     }
 
     @Test
-    void 空调轮停周期必须大于重启保护() {
+    void 空调连续停机须大于重启保护阈值() {
+        // 教学口径：入参为连续停机时长，240 秒为教学阈值（非通用常量），严格大于为裕量策略
         assertTrue(ac.rotationCycleValid(300, 240));
-        assertFalse(ac.rotationCycleValid(240, 240), "等于保护延时物理上损伤压缩机");
+        assertFalse(ac.rotationCycleValid(240, 240), "等于保护延时按教学裕量判不合法");
         assertFalse(ac.rotationCycleValid(120, 240));
     }
 

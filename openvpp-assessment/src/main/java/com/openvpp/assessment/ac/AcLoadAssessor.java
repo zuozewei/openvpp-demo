@@ -43,14 +43,20 @@ public class AcLoadAssessor {
         return new AcCapability(committedShedKw, endureSeconds, recoverySeconds);
     }
 
-    /** 预冷模式：响应前降温 2°C，可容忍温升扩大，时长近似翻倍 */
+    /** 预冷模式：响应前降温 2°C，可容忍温升扩大，时长近似翻倍；预冷下限受舒适温度约束，本工程未建模 */
     public AcCapability assessWithPrecool(double netHeatGainKw, double baseLoadKw) {
         long endureSeconds = (long) (thermalCapKjPerDeg * (maxTempRiseDeg + PRECOOL_GAIN_DEG) / netHeatGainKw);
         long recoverySeconds = (long) (endureSeconds * 0.4);
         return new AcCapability(baseLoadKw * REBOUND_FACTOR, endureSeconds, recoverySeconds);
     }
 
-    /** 轮停周期合法性校验：必须大于压缩机重启保护延时 */
+    /**
+     * 压缩机保护校验（教学口径）。
+     * 参数契约：cycleSeconds 须传入实际连续停机时长（由停机/重启时间戳计算后传入），
+     * 只传"运行+停机"的周期长度挡不住长周期夹短停机的情形。
+     * 保护延时按具体设备手册配置，本工程示例 240 秒仅为教学输入、非通用常量；
+     * 严格大于判合法属教学裕量策略——等于阈值并不必然物理损伤。
+     */
     public boolean rotationCycleValid(int cycleSeconds, int restartGuardSeconds) {
         return cycleSeconds > restartGuardSeconds;
     }
