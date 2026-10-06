@@ -5,7 +5,7 @@ package com.openvpp.assessment.ac;
  *
  * 核心物理（第 04 篇）：建筑热惯性是可调潜力的来源——
  * 关停后温度缓慢漂移的窗口期，就是可承诺的响应时长。
- * 三个工程细节必须进模型：恢复期、回弹系数、预冷增益。
+ * 四个工程细节进模型：恢复期、回弹系数、预冷增益、轮停保护。
  */
 public class AcLoadAssessor {
 
@@ -13,7 +13,7 @@ public class AcLoadAssessor {
     private final double thermalCapKjPerDeg;
     private final double maxTempRiseDeg;
 
-    /** 回弹缓冲系数：承诺容量打折，防止多栋同时恢复顶穿台变 */
+    /** 回弹缓冲系数：教学自选折扣（未实测标定）。为多栋同时恢复留裕量，不构成台变安全的工程保证 */
     private static final double REBOUND_FACTOR = 0.9;
     /** 预冷增益：响应前预冷 2°C，时长近似翻倍 */
     private static final double PRECOOL_GAIN_DEG = 2.0;
@@ -31,10 +31,10 @@ public class AcLoadAssessor {
      * @return 可削减功率、可持续时长、恢复期
      */
     public AcCapability assessFullShutdown(double netHeatGainKw, double baseLoadKw) {
-        // ETP 核心公式：t = C × ΔT / Q_net
+        // 恒定净得热热容估算（非动态热模型精确解）：t = C × ΔT / Q_net
         long endureSeconds = (long) (thermalCapKjPerDeg * maxTempRiseDeg / netHeatGainKw);
 
-        // 恢复期：满载拉回温度，经验为 endure 的 1/3 ~ 1/2
+        // 恢复期：教学简化按 endure 的 40% 估算（比例自选，真实恢复曲线待实测）
         long recoverySeconds = (long) (endureSeconds * 0.4);
 
         // 可承诺削减 = 基准功率 × 回弹系数
@@ -75,7 +75,7 @@ public class AcLoadAssessor {
         public double getShedKw() { return shedKw; }
         public long getEndureSeconds() { return endureSeconds; }
         public long getRecoverySeconds() { return recoverySeconds; }
-        /** 完整周期 = 响应 + 恢复，调度排程用这个 */
+        /** 完整周期 = 响应 + 恢复；供后续排程接口使用，当前工程无排程调用 */
         public long fullCycleSeconds() { return endureSeconds + recoverySeconds; }
     }
 }
