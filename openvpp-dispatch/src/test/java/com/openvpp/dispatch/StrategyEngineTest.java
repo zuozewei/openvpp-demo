@@ -15,7 +15,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * 策略引擎全场景单测：
+ * 策略引擎 8 项代表性模块单测（非全场景覆盖）：
  * 场景匹配 / 类型拦截 / 能力上限 / 涉控边界 / 代理失效 / 区域规则叠加。
  */
 class StrategyEngineTest {
