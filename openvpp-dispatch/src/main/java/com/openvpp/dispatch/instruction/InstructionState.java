@@ -7,9 +7,10 @@ import java.util.Set;
 /**
  * 指令状态 —— 调度指令生命周期的状态机。
  *
- * 确认时间轴（五个可观测时间点，各自语义独立）：
+ * 确认时间轴（五个时间点，各自语义独立；ackedAt/actStartedAt 在回执缺失时
+ *   以处理时刻填充，属推断值）：
  *   平台发送 sentAt → 设备接收确认 ackedAt → 设备开始动作 actStartedAt
- *   → 遥测达到目标 reachedAt → 连续稳定达标 stableAt
+ *   → 遥测达到目标 reachedAt → 连续稳定达标 stableAt（平台处理时刻）
  *
  * 状态图：
  *   CREATED ──下发──> SENT ──设备确认──> ACKED ──开始动作──> ACTING
@@ -20,11 +21,11 @@ import java.util.Set;
  *      │                ├── 迟到遥测证明达标 ──> COMPLETED（响应成功）
  *      │                └── 核查确认未执行 ────> FAILED
  *      │
- *      └── 任意非终态可被 CANCELLED 抢占：人工接管 > 本地保护 > 平台控制
+ *      └── 任意非终态可被 CANCELLED 抢占（教学实现只做状态抢占，不承担五级仲裁）
  *
  * 核心规则：
  * 1. COMPLETED 只能由遥测连续稳定达标驱动——ACK 仅代表"设备收到并接受"，
- *    不得作为响应成功或响应时延结算的依据；
+ *    不得作为功率响应依据；
  * 2. 遥测达标的证明力高于回执：回执丢失时允许从 SENT/ACKED 跨态补完 COMPLETED；
  * 3. 终态（COMPLETED/FAILED/CANCELLED）后迟到的消息一律忽略，不得重新激活执行。
  */

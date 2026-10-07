@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
  *   reachedAt    遥测达到目标：实测功率进入目标容差带（资源目标到位时刻，
  *                不直接等同 44260 的聚合级 t_action 指标）
  *   stableAt     连续稳定达标：指定采样规则下持续满足，响应成功的唯一判据
+ *                （平台完成判定的处理时刻，与遥测样点时间分属两个时间域）
  *
  * 注意：ACK 时间不能用作功率响应依据；资源目标到位时延 = reachedAt - sentAt
  * （单资源口径，与 44260 聚合级响应指标分属两套评价体系，不互换）。
@@ -128,7 +129,8 @@ public class DispatchInstruction {
     /**
      * 遥测驱动的完成：遥测达标的证明力高于回执。
      * 回执丢失场景允许跨态补完（SENT/ACKED → COMPLETED），
-     * 缺失的中间时标以达标时刻推断补齐并视为推断值。
+     * 缺失的中间时标以处理当下的系统时间填充（推断值，非真实回执时刻）；
+     * stableAt 为平台完成判定的处理时刻，与遥测样点时间分属两个时间域。
      */
     public void completeByTelemetry() {
         LocalDateTime now = LocalDateTime.now();
