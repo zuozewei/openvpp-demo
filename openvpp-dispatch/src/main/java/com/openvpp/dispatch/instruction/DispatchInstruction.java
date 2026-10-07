@@ -6,7 +6,8 @@ import java.time.LocalDateTime;
 
 /**
  * 调度指令 —— 从聚合分解到设备执行的最小工作单元。
- * 不可变字段随创建固化，状态迁移只改 state 与五个可观测时标。
+ * 不可变字段随创建固化，状态迁移只改 state 与五个生命周期时标
+ * （ackedAt/actStartedAt 在回执缺失时以处理时刻填充，属推断值）。
  *
  * 确认时间轴（每个时间点只证明一件事，互不替代）：
  *   sentAt       平台发送：指令已进入发送流程
@@ -135,7 +136,7 @@ public class DispatchInstruction {
     public void completeByTelemetry() {
         LocalDateTime now = LocalDateTime.now();
         if (this.ackedAt == null) {
-            this.ackedAt = now;      // ACK 丢失，以达标时刻推断
+            this.ackedAt = now;      // ACK 丢失，以处理当下的系统时间填充（推断值，非真实回执时刻）
         }
         if (this.actStartedAt == null) {
             this.actStartedAt = now;
