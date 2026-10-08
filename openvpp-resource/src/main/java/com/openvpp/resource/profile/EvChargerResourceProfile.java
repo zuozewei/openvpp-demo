@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 /**
  * 充电桩资源档案 —— 建模到"站"，车/桩会话是瞬态子实体（第 04 篇决策）。
  * 个性字段：桩数、单桩功率、V2G 支持、车辆类型构成。
+ * "桩-场站"归属经基类 stationId 表达（引用业务主体体系的场站档案）。
  */
 public class EvChargerResourceProfile extends ResourceProfile {
 

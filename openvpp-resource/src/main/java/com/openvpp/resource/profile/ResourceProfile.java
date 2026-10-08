@@ -33,6 +33,9 @@ public abstract class ResourceProfile {
     /** 所属聚合主体 */
     private Long operatorId;
 
+    /** 归属场站（业务主体体系 Station.stationId 的引用键，第 52 篇底座）—— 数据范围查询按此键判定可见性；未挂靠场站的资源不参与按范围查询 */
+    private String stationId;
+
     /** 用电户号/并网点标识 —— 排他性校验的业务键（47241 第 6.1 条） */
     private String gridAccountId;
 
@@ -93,6 +96,14 @@ public abstract class ResourceProfile {
 
     public void setOperatorId(Long operatorId) {
         this.operatorId = operatorId;
+    }
+
+    public String getStationId() {
+        return stationId;
+    }
+
+    public void setStationId(String stationId) {
+        this.stationId = stationId;
     }
 
     public String getGridAccountId() {
