@@ -57,3 +57,33 @@ CREATE TABLE IF NOT EXISTS dispute_correction (
     created_ms             BIGINT NOT NULL,
     PRIMARY KEY (response_id, correction_request_id)
 );
+
+-- 第 52 篇运营底座：教学登录账号（全部为虚构演示账号，密码仅存加盐散列、不落明文）。
+-- 账号-场站绑定以本表自持（不依赖业务主体模型），场站名称等展示信息后续波次与资源侧联接。
+CREATE TABLE IF NOT EXISTS sys_account (
+    login           VARCHAR(64)  PRIMARY KEY,
+    password_hash   VARCHAR(255) NOT NULL,   -- 格式 salt$hex，见 PasswordDigest
+    role            VARCHAR(32)  NOT NULL,   -- RoleType：PLATFORM_ADMIN / OPERATOR / STATION_OPERATOR
+    tenant_id       VARCHAR(64)  NOT NULL,
+    -- 逗号分隔的场站编号清单；平台角色空串 = 租户内全场站（tenantWide 语义），
+    -- 运营商/场站角色空串 = 无绑定场站，数据范围按空范围短路查询
+    station_ids     VARCHAR(512) NOT NULL DEFAULT '',
+    display_name    VARCHAR(64)  NOT NULL,
+    created_ms      BIGINT       NOT NULL
+);
+
+-- 第 52 篇运营底座：操作审计留痕——每次关键操作记录账号、角色、动作、业务对象、版本、时间与结果。
+-- 查询恒带租户条件（tenant_id），按身份收窄到账号维度由仓库层执行（见 AuditLogRepository）。
+CREATE TABLE IF NOT EXISTS operation_audit (
+    audit_id        BIGINT AUTO_INCREMENT PRIMARY KEY,
+    account_id      VARCHAR(64) NOT NULL,
+    tenant_id       VARCHAR(64) NOT NULL,
+    role            VARCHAR(32) NOT NULL,
+    action          VARCHAR(64) NOT NULL,   -- LOGIN / 后续篇业务动作
+    target_type     VARCHAR(64),            -- ACCOUNT / EVENT / DECLARATION ...
+    target_id       VARCHAR(128),           -- 业务对象标识
+    target_version  VARCHAR(32) NOT NULL DEFAULT '-',
+    result          VARCHAR(16) NOT NULL,   -- SUCCESS / REJECTED
+    detail          VARCHAR(512),
+    created_ms      BIGINT NOT NULL
+);

@@ -22,6 +22,10 @@ spring:
 # 专栏示例工程统一约定：接口路径前缀，禁止出现真实项目路径风格
 openvpp:
   api-prefix: /api/v1
+  auth:
+    # 教学登录会话 TTL（分钟）：内存 ConcurrentHashMap + 惰性过期（SessionStore），
+    # 容器化交付的 Redis 共享会话形态属后续验收篇
+    session-ttl-minutes: 30
   gateway:
     # 接入模式：local（默认，本地模拟，零外部依赖，断网可跑）/ remote（真实协议接入）
     # remote 模式下 MQTT 必须显式配置 broker 地址，工程不提供任何默认外部地址
