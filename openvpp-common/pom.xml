@@ -12,5 +12,13 @@
 
     <artifactId>openvpp-common</artifactId>
     <name>openvpp-common</name>
-    <description>公共模块：统一返回、异常、枚举常量，不依赖任何业务</description>
+    <description>公共模块：统一返回、异常、枚举常量、身份与租户上下文，不依赖任何业务</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 </project>
