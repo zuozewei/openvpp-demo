@@ -33,3 +33,6 @@ openvpp:
   db:
     # 持久化方言：auto（默认，按连接元数据探测 H2/MySQL）/ mysql / h2（测试显式指定用）
     dialect: auto
+  charge:
+    # 能力快照有效期（分钟）：评估时间 + 有效期起过期，申报引用过期版本即拒（见 SnapshotRegistry）
+    snapshot-ttl-minutes: 480
