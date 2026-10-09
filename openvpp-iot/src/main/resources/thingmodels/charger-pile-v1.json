@@ -1,0 +1,16 @@
+{
+  "modelId": "charger-pile-v1",
+  "name": "直流充电桩物模型 v1",
+  "properties": [
+    { "identifier": "power",       "name": "当前充电功率",     "dataType": "DOUBLE", "unit": "kW", "min": 0,   "max": 120, "writable": false },
+    { "identifier": "targetPower", "name": "目标充电功率设定", "dataType": "DOUBLE", "unit": "kW", "min": 0,   "max": 120, "writable": true },
+    { "identifier": "temp",        "name": "枪线温度",        "dataType": "DOUBLE", "unit": "°C", "min": -20, "max": 80,  "writable": false }
+  ],
+  "events": [
+    { "identifier": "offline", "name": "通信失联" },
+    { "identifier": "fault",   "name": "设备故障" }
+  ],
+  "services": [
+    { "identifier": "setPower", "name": "设定充电功率", "outputProperty": "targetPower" }
+  ]
+}

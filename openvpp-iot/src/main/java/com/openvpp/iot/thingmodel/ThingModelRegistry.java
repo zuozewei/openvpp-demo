@@ -15,7 +15,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ThingModelRegistry {
 
     private static final String[] BUILTIN_MODELS = {
-            "storage-pcs-v1"
+            "storage-pcs-v1",
+            "charger-pile-v1"
     };
 
     private final Map<String, ThingModel> models = new ConcurrentHashMap<>();
