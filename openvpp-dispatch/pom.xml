@@ -18,6 +18,11 @@
             <groupId>com.openvpp</groupId>
             <artifactId>openvpp-common</artifactId>
         </dependency>
+        <!-- 充电桩需求响应专题（第 54 篇）：单桩指令经模拟设备下行通道下发与回执留痕 -->
+        <dependency>
+            <groupId>com.openvpp</groupId>
+            <artifactId>openvpp-iot</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>

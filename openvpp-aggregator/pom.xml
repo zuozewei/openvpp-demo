@@ -18,6 +18,11 @@
             <groupId>com.openvpp</groupId>
             <artifactId>openvpp-common</artifactId>
         </dependency>
+        <!-- 充电桩需求响应专题（第 54 篇）：分级计划读取事件/申报/能力快照契约 -->
+        <dependency>
+            <groupId>com.openvpp</groupId>
+            <artifactId>openvpp-market</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
