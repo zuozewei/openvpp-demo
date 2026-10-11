@@ -16,33 +16,43 @@ const workspaceChildren = [
   },
   {
     path: 'events',
-    component: () => import('../views/workspace/PlaceholderView.vue'),
+    component: () => import('../views/workspace/EventsView.vue'),
     meta: { title: '事件管理' }
   },
   {
+    path: 'events/:eventId',
+    component: () => import('../views/workspace/EventDetailView.vue'),
+    meta: { title: '事件详情' }
+  },
+  {
     path: 'declarations',
-    component: () => import('../views/workspace/PlaceholderView.vue'),
+    component: () => import('../views/workspace/DeclarationsView.vue'),
     meta: { title: '申报管理' }
   },
   {
     path: 'dispatch',
-    component: () => import('../views/workspace/PlaceholderView.vue'),
+    component: () => import('../views/workspace/DispatchView.vue'),
     meta: { title: '派单管理' }
   },
   {
     path: 'monitor',
-    component: () => import('../views/workspace/PlaceholderView.vue'),
+    component: () => import('../views/workspace/MonitorView.vue'),
     meta: { title: '运行监测' }
   },
   {
     path: 'assessment',
-    component: () => import('../views/workspace/PlaceholderView.vue'),
+    component: () => import('../views/workspace/AssessmentView.vue'),
     meta: { title: '效果评估' }
   },
   {
     path: 'settlement',
-    component: () => import('../views/workspace/PlaceholderView.vue'),
+    component: () => import('../views/workspace/SettlementView.vue'),
     meta: { title: '结算管理' }
+  },
+  {
+    path: 'audit',
+    component: () => import('../views/workspace/AuditView.vue'),
+    meta: { title: '操作审计', roles: ['platform'] }
   }
 ]
 
@@ -96,9 +106,11 @@ router.beforeEach((to) => {
     return { path: '/login', query: { redirect: to.fullPath } }
   }
 
+  // 页面级角色提示：业务页（含事件详情）三方角色均可访问，数据范围由服务端会话收窄；
+  // 带 roles 元信息的路由（如操作审计）在页面层做角色拦截提示
   const rolesRecord = to.matched.find((record) => record.meta.roles)
   if (rolesRecord && !rolesRecord.meta.roles.includes(session.role)) {
-    ElMessage.warning('当前角色无权访问该工作台')
+    ElMessage.warning('当前角色无权访问该页面（服务端同为硬边界）')
     return ROLE_HOME[session.role]
   }
 

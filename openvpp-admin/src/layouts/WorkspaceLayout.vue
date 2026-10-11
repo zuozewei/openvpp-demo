@@ -19,8 +19,13 @@ const menuItems = [
   { index: 'dispatch', title: '派单管理', icon: 'Position' },
   { index: 'monitor', title: '运行监测', icon: 'Odometer' },
   { index: 'assessment', title: '效果评估', icon: 'DataAnalysis' },
-  { index: 'settlement', title: '结算管理', icon: 'Wallet' }
+  { index: 'settlement', title: '结算管理', icon: 'Wallet' },
+  { index: 'audit', title: '操作审计', icon: 'Lock', roles: ['platform'] }
 ]
+
+const visibleMenuItems = computed(() =>
+  menuItems.filter((item) => !item.roles || item.roles.includes(session.role))
+)
 
 const basePath = computed(() => `/${route.path.split('/')[1]}`)
 const activeMenu = computed(() => route.path)
@@ -50,7 +55,7 @@ async function handleLogout() {
           <el-icon><HomeFilled /></el-icon>
           <span>工作台</span>
         </el-menu-item>
-        <el-menu-item v-for="item in menuItems" :key="item.index" :index="resolveMenuPath(item.index)">
+        <el-menu-item v-for="item in visibleMenuItems" :key="item.index" :index="resolveMenuPath(item.index)">
           <el-icon><component :is="item.icon" /></el-icon>
           <span>{{ item.title }}</span>
         </el-menu-item>
@@ -72,6 +77,10 @@ async function handleLogout() {
         </el-dropdown>
       </el-header>
       <el-main class="workspace-main">
+        <el-alert type="info" :closable="false" class="workspace-tip">
+          演示环境：页面操作入口按角色提示显隐仅为前端便利，授权与数据范围一律以服务端会话校验为准；
+          「已下发」不等于「设备已执行」，指令回执与达标判定见各页证据列。
+        </el-alert>
         <router-view />
       </el-main>
     </el-container>
@@ -134,5 +143,9 @@ async function handleLogout() {
 
 .workspace-main {
   padding: 16px;
+}
+
+.workspace-tip {
+  margin-bottom: 12px;
 }
 </style>
