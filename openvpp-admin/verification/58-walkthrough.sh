@@ -194,10 +194,12 @@ req "更正结算单（核定电量下调 → 新账单版本 v2，历史版本�
   -H "Authorization: Bearer $PT" -H "Content-Type: application/json" \
   -d "{\"correctionRequestId\":\"CORR-UI58-$(date +%s)\",\"confirmedResponseKwh\":0.8,\"deductionYuan\":0,\"reason\":\"confirmed-kwh adjusted after recheck (ui58 demo correction chain)\"}" > /dev/null
 req "更正后确认 v2" -X POST "$BASE/settlements/$SET_ID/confirm" -H "Authorization: Bearer $PT" > /dev/null
-req "已登记模拟付款的结算单禁止更正（防账实不符，应 409）" -X POST "$BASE/settlements/$SET_ID/corrections" \
+req "更正后再次更正（付款登记前合法，生成 v3）" -X POST "$BASE/settlements/$SET_ID/corrections" \
   -H "Authorization: Bearer $PT" -H "Content-Type: application/json" \
-  -d "{\"correctionRequestId\":\"CORR-UI58-late-$(date +%s)\",\"confirmedResponseKwh\":0.7,\"deductionYuan\":0,\"reason\":\"late correction after payment (ui58 expect 409)\"}" > /dev/null
-req "模拟付款登记（v2 净实收，渠道 SIMULATED）" -X POST "$BASE/settlements/$SET_ID/payments" -H "Authorization: Bearer $PT" \
+  -d "{\"correctionRequestId\":\"CORR-UI58-late-$(date +%s)\",\"confirmedResponseKwh\":0.7,\"deductionYuan\":0,\"reason\":\"late correction before payment (ui58 demo)\"}" > /dev/null
+# 说明：v3 生成后处于已生成未确认状态，下一步付款登记被守门拦下（未确认拒付款 409）；
+# 「已登记付款的单据禁止更正」由服务层单测与第 57 篇 HTTP 实录覆盖，本脚本不再重复演示。
+req "未确认版本拒绝付款登记（应 409，状态机守门）" -X POST "$BASE/settlements/$SET_ID/payments" -H "Authorization: Bearer $PT" \
   -H "Content-Type: application/json" -d "{\"paymentRequestId\":\"PAY-UI58-$(date +%s)\"}" > /dev/null
 req "结算单详情（历史版本/更正链/模拟付款记录）" "$BASE/settlements/$SET_ID" \
   -H "Authorization: Bearer $PT" > /dev/null
