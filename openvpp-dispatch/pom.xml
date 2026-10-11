@@ -23,6 +23,11 @@
             <groupId>com.openvpp</groupId>
             <artifactId>openvpp-iot</artifactId>
         </dependency>
+        <!-- 充电桩需求响应专题（第 55 篇）：执行监测的方向口径复用事件调节方向枚举 -->
+        <dependency>
+            <groupId>com.openvpp</groupId>
+            <artifactId>openvpp-market</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
