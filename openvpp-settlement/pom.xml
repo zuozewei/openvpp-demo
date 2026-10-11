@@ -18,6 +18,11 @@
             <groupId>com.openvpp</groupId>
             <artifactId>openvpp-common</artifactId>
         </dependency>
+        <!-- 第 56 篇效果评估：事件模型（方向/生命周期）取 market 域，结算域单向依赖，无环 -->
+        <dependency>
+            <groupId>com.openvpp</groupId>
+            <artifactId>openvpp-market</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
