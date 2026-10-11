@@ -23,6 +23,11 @@
             <groupId>com.openvpp</groupId>
             <artifactId>openvpp-market</artifactId>
         </dependency>
+        <!-- 第 57 篇多级分账：场站→运营主体归属链解析分账三方标识，resource 不依赖 settlement，无环 -->
+        <dependency>
+            <groupId>com.openvpp</groupId>
+            <artifactId>openvpp-resource</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
