@@ -34,7 +34,9 @@ services:
       MYSQL_ROOT_PASSWORD: openvpp-demo
       MYSQL_DATABASE: openvpp_demo
     ports:
-      - "3306:3306"
+      # 宿主侧端口可覆盖：宿主 3306 被占时以 MYSQL_HOST_PORT=13306 docker compose up -d mysql
+      # 启动，并以 MYSQL_PORT=13306 注入应用/验收脚本（应用侧 application-docker.yml 已变量化）
+      - "${MYSQL_HOST_PORT:-3306}:3306"
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD"]
       interval: 5s
@@ -55,7 +57,9 @@ services:
     image: emqx:5
     ports:
       - "1883:1883"     # MQTT
-      - "18083:18083"   # 控制台
+      # 控制台宿主端口可覆盖：Windows 可能把 18083 纳入动态保留段（winnat excludedportrange），
+      # 起不来时以 EMQX_DASHBOARD_HOST_PORT=28083 docker compose up -d emqx
+      - "${EMQX_DASHBOARD_HOST_PORT:-18083}:18083"   # 控制台
     environment:
       EMQX_DASHBOARD__DEFAULT_USERNAME: admin
       EMQX_DASHBOARD__DEFAULT_PASSWORD: openvpp

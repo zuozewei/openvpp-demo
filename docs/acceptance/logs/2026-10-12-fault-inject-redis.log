@@ -1,0 +1,47 @@
+
+== 0. 启动容器中间件：docker compose up -d mysql redis
+ Container openvpp-demo-redis-1 Running 
+ Container openvpp-demo-mysql-1 Running 
+
+== 0.1 启动应用（docker profile，连容器 MySQL/Redis）
+应用已启动 pid=18352 → 日志 /tmp/openvpp-fault-app.log
+health={"code":0,"message":"success","data":{"status":"UP","components":{"db":{"status":"UP","detail":"MySQL 8.0.46"},"redis":{"status":"UP","detail":"PING PONG"},"idempotencyGuard":{"type":"RedisIdempotencyGuard"},"gateway":{"mode":"local"}},"fixtures":{"demoAccounts":3,"demoStations":2,"capabilitySnapshots":2},"profile":"docker"}}
+
+== 1. 基线：run 键A=fault-a-005300 闭环（Redis 可用）
+[PASS] 键A 净实收
+[PASS] 结果缓存已写 Redis（键存在）
+
+== 2. 故障注入：docker compose stop redis
+ Container openvpp-demo-redis-1 Stopping 
+ Container openvpp-demo-redis-1 Stopped 
+health={"code":0,"message":"success","data":{"status":"DEGRADED","components":{"db":{"status":"UP","detail":"MySQL 8.0.46"},"redis":{"status":"DOWN","detail":"Redis command timed out; nested exception is io.lettuce.core.RedisCommandTimeoutException: Command timed out after 2 second(s)"},"idempotencyGuard":{"type":"RedisIdempotencyGuard"},"gateway":{"mode":"local"}},"fixtures":{"demoAccounts":3,"demoStations":2,"capabilitySnapshots":2},"profile":"docker"}}
+
+== 3. Redis 不可用下新业务（键B=fault-b-005300）不 500、落库兜底
+[PASS] 键B 净实收（数据库兜底路径）
+
+== 4. Redis 不可用下同键重放（键A）不重复出账
+[PASS] 键A 重放标记
+[PASS] 键A 重放金额一致
+[PASS] 键A 账单条数不变（V1 五条）
+
+== 5. 故障恢复：docker compose start redis
+ Container openvpp-demo-redis-1 Starting 
+ Container openvpp-demo-redis-1 Started 
+health={"code":0,"message":"success","data":{"status":"UP","components":{"db":{"status":"UP","detail":"MySQL 8.0.46"},"redis":{"status":"UP","detail":"PING PONG"},"idempotencyGuard":{"type":"RedisIdempotencyGuard"},"gateway":{"mode":"local"}},"fixtures":{"demoAccounts":3,"demoStations":2,"capabilitySnapshots":2},"profile":"docker"}}
+
+== 6. 进程中断：kill -9 应用 → 重启 → 同键重放（幂等键与版本化仓库状态一致性）
+�ɹ�: ����ֹ PID Ϊ 65128 �Ľ��̡�
+进程已 kill -9，重启应用…
+应用已启动 pid=18471 → 日志 /tmp/openvpp-fault-app.log
+tools/acceptance/fault-inject-redis.sh: line 55: 18352 Killed                  MYSQL_HOST=127.0.0.1 MYSQL_PORT=$MYSQL_PORT MYSQL_DATABASE=openvpp_demo MYSQL_USER=root MYSQL_PASSWORD=openvpp-demo REDIS_HOST=127.0.0.1 REDIS_PORT=6379 SPRING_PROFILES_ACTIVE=docker nohup java -jar "$JAR" > "$APP_LOG" 2>&1
+[PASS] 重启后键A 重放标记
+[PASS] 重启后键A 金额一致
+[PASS] 重启后键A 账单条数不增
+
+== 7. 重置后干净复跑：POST /demo/reset → 同键全新执行
+[PASS] 重置后键A 为全新执行
+[PASS] 重置后键A 净实收
+[PASS] 演示数据已复位
+
+FAULT INJECTION OK：Redis 降级 / 进程中断恢复 / 重置复跑全部通过（KEY_A=fault-a-005300 KEY_B=fault-b-005300）
+�ɹ�: ����ֹ PID Ϊ 25420 �Ľ��̡�

@@ -1,0 +1,56 @@
+
+== 1. 健康检查 GET http://127.0.0.1:8080/api/v1/system/health
+{"code":0,"message":"success","data":{"status":"UP","components":{"db":{"status":"UP","detail":"MySQL 8.0.46"},"redis":{"status":"UP","detail":"PING PONG"},"idempotencyGuard":{"type":"RedisIdempotencyGuard"},"gateway":{"mode":"local"}},"fixtures":{"demoAccounts":3,"demoStations":2,"capabilitySnapshots":2},"profile":"docker"}}
+[PASS] 整体状态
+[PASS] 数据源组件
+
+== 2. 触发闭环 POST http://127.0.0.1:8080/api/v1/demo/run?responseId=smoke-005617
+(trace 步骤日志略，共 14 个步骤标记)
+[PASS] 默认案例净实收
+[PASS] 首次执行为非重放
+
+== 3. 账单核对 GET http://127.0.0.1:8080/api/v1/bills?responseId=smoke-005617
+[{"response_id":"smoke-005617","subject":"PLATFORM","amount_yuan":60.00,"bill_type":"PLATFORM_CUT","bill_version":"V1","memo":"平台服务费10%[V1]","created_ms":1791737778062},{"response_id":"smoke-005617","subject":"PLATFORM","amount_yuan":1200.00,"bill_type":"SETTLE","bill_version":"V1","memo":"平台实收净额[V1][毛额 1200.00 − 考核 0.00]","created_ms":1791737778055},{"response_id":"smoke-005617","subject":"user-ac","amount_yuan":380.00,"bill_type":"SHARE","bill_version":"V1","memo":"保底+分成[V1]","created_ms":1791737778068},{"response_id":"smoke-005617","subject":"user-ev","amount_yuan":285.00,"bill_type":"SHARE","bill_version":"V1","memo":"保底+分成[V1]","created_ms":1791737778070},{"response_id":"smoke-005617","subject":"user-storage","amount_yuan":475.00,"bill_type":"SHARE","bill_version":"V1","memo":"保底+分成[V1]","created_ms":1791737778065}]
+[PASS] V1 账单条数（SETTLE+PLATFORM_CUT+SHARE×3）
+
+== 4. 同键幂等重放 POST http://127.0.0.1:8080/api/v1/demo/run?responseId=smoke-005617（不重复出账）
+[PASS] 同键重放标记
+[PASS] 重放金额一致
+[PASS] 任务表唯一行
+
+== 5. 争议更正 POST http://127.0.0.1:8080/api/v1/demo/dispute?responseId=smoke-005617
+[PASS] 更正版本
+[PASS] 默认案例更正差额（封顶口径为 0）
+
+== 6. 重置后同键复跑 POST http://127.0.0.1:8080/api/v1/demo/reset → demo/run?responseId=smoke-005617
+reset cleared=20 行
+[PASS] 重置后同键为全新执行
+[PASS] 复跑净实收
+
+== 7. 复位演示数据（保留运行后干净态）
+[PASS] 复位完成
+
+SMOKE OK: smoke-005617 全步骤通过（base=http://127.0.0.1:8080）
+smoke_exit=0
+
+== 应用内重置 POST http://127.0.0.1:8080/api/v1/demo/reset（库表 + 内存运行态 + Redis 命名空间同清）
+{"cleared":0,"note":"演示数据与运行状态已清理，可再次运行"}
+== 重置验证：任务/账单应清零，健康检查应 UP，演示账号应保持
+[PASS] 任务表已清零
+[PASS] 账单表已清零
+[PASS] 健康检查 UP
+[PASS] 演示账号保持 3 个（种入物不受重置影响）
+RESET OK
+reset_app_exit=0
+
+== 直清容器数据（应用须已停止或重启，进程内运行态随重启清零）
+mysql: [Warning] Using a password on the command line interface can be insecure.
+MySQL 业务表已清空（sys_account 演示账号与 operation_audit 审计留痕保留）
+Redis 幂等缓存命名空间已清空
+== 重置验证：任务/账单应清零，健康检查应 UP，演示账号应保持
+[PASS] 任务表已清零
+[PASS] 账单表已清零
+[PASS] 健康检查 UP
+[PASS] 演示账号保持 3 个（种入物不受重置影响）
+RESET OK
+reset_direct_exit=0

@@ -1,0 +1,24 @@
+== docker compose up --build（app 镜像内 maven 构建；MySQL 宿主侧 13306、EMQX 控制台 28083——宿主端口冲突的参数化覆盖，默认值不变）
+ Container openvpp-demo-emqx-1 Waiting 
+ Container openvpp-demo-mysql-1 Healthy 
+ Container openvpp-demo-redis-1 Healthy 
+ Container openvpp-demo-emqx-1 Healthy 
+ Container openvpp-demo-app-1 Starting 
+ Container openvpp-demo-app-1 Started 
+== 等待 app 就绪
+health status=UP
+health={"code":0,"message":"success","data":{"status":"UP","components":{"db":{"status":"UP","detail":"MySQL 8.0.46"},"redis":{"status":"UP","detail":"PING PONG"},"idempotencyGuard":{"type":"RedisIdempotencyGuard"},"gateway":{"mode":"remote"}},"fixtures":{"demoAccounts":3,"demoStations":2,"capabilitySnapshots":2},"profile":"docker"}}
+
+== 容器链路冒烟
+settleYuan=1200.00
+replay=true
+bills=5
+guard_key_in_redis=openvpp:idempotency:run:stack-010806
+emqx_console=200
+
+== 收尾 docker compose down
+ Container openvpp-demo-emqx-1 Removing 
+ Container openvpp-demo-emqx-1 Removed 
+ Network openvpp-demo_default Removing 
+ Network openvpp-demo_default Removed 
+FULLSTACK OK

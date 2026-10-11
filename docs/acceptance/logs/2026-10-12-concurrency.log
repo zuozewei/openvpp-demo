@@ -1,0 +1,374 @@
+
+== ç”³æŠ¥å¹¶å‘å ç”¨å®ˆæ’ï¼ˆChargeDeclarationConcurrencyTestï¼‰
+å‘½ä»¤: mvn -s settings-openvpp.xml -pl openvpp-market test -Dtest=ChargeDeclarationConcurrencyTest
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< com.openvpp:openvpp-market >---------------------
+[INFO] Building openvpp-market 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ openvpp-market ---
+[INFO] skip non existing resourceDirectory C:\GitProject\zuozewei\openvpp-demo\openvpp-market\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ openvpp-market ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ openvpp-market ---
+[INFO] skip non existing resourceDirectory C:\GitProject\zuozewei\openvpp-demo\openvpp-market\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ openvpp-market ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ openvpp-market ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.openvpp.market.charge.ChargeDeclarationConcurrencyTest
+01:03:11.961 [main] INFO com.openvpp.market.charge.ChargeDrEventService - ÊÂ¼ş½¨Á¢: EV-5501 ×éÖ¯·½ T-1001 Ï÷·å 2026-10-08T14:00 ~ 2026-10-08T16:00 Ä¿±ê 800 kW ½ØÖ¹ 2026-10-08T13:30
+01:03:11.977 [main] INFO com.openvpp.market.charge.ChargeDrEventService - ÊÂ¼ş·¢²¼: EV-5501 °æ±¾ 1 ½ØÖ¹ 2026-10-08T13:30
+01:03:11.979 [main] INFO com.openvpp.market.charge.ChargeDrEventService - ÊÂ¼ş²ÎÓëÊÚÈ¨: EV-5501 °æ±¾ 2 ³¡Õ¾ [S-11101] ÊÚÈ¨ÈË platform-acc
+01:03:12.581 [pool-2-thread-1] INFO com.openvpp.market.charge.ChargeDeclarationService - Éê±¨Ìá½»: f151a459-8fde-42c6-b076-5246142a61a3 ÊÂ¼ş EV-5501 ³¡Õ¾ S-11101 ÈİÁ¿ 40 kW ¿ìÕÕ°æ±¾ V1 ÇëÇó±êÊ¶ REQ-SAME
+01:03:12.582 [pool-2-thread-10] INFO com.openvpp.market.charge.ChargeDeclarationService - Éê±¨ÃİµÈÃüÖĞ: requestId REQ-SAME ·µ»ØÔ­Éê±¨µ¥ f151a459-8fde-42c6-b076-5246142a61a3
+01:03:12.582 [pool-2-thread-9] INFO com.openvpp.market.charge.ChargeDeclarationService - Éê±¨ÃİµÈÃüÖĞ: requestId REQ-SAME ·µ»ØÔ­Éê±¨µ¥ f151a459-8fde-42c6-b076-5246142a61a3
+01:03:12.583 [pool-2-thread-8] INFO com.openvpp.market.charge.ChargeDeclarationService - Éê±¨ÃİµÈÃüÖĞ: requestId REQ-SAME ·µ»ØÔ­Éê±¨µ¥ f151a459-8fde-42c6-b076-5246142a61a3
+01:03:12.583 [pool-2-thread-7] INFO com.openvpp.market.charge.ChargeDeclarationService - Éê±¨ÃİµÈÃüÖĞ: requestId REQ-SAME ·µ»ØÔ­Éê±¨µ¥ f151a459-8fde-42c6-b076-5246142a61a3
+01:03:12.584 [pool-2-thread-6] INFO com.openvpp.market.charge.ChargeDeclarationService - Éê±¨ÃİµÈÃüÖĞ: requestId REQ-SAME ·µ»ØÔ­Éê±¨µ¥ f151a459-8fde-42c6-b076-5246142a61a3
+01:03:12.584 [pool-2-thread-5] INFO com.openvpp.market.charge.ChargeDeclarationService - Éê±¨ÃİµÈÃüÖĞ: requestId REQ-SAME ·µ»ØÔ­Éê±¨µ¥ f151a459-8fde-42c6-b076-5246142a61a3
+01:03:12.584 [pool-2-thread-4] INFO com.openvpp.market.charge.ChargeDeclarationService - Éê±¨ÃİµÈÃüÖĞ: requestId REQ-SAME ·µ»ØÔ­Éê±¨µ¥ f151a459-8fde-42c6-b076-5246142a61a3
+01:03:12.584 [pool-2-thread-2] INFO com.openvpp.market.charge.ChargeDeclarationService - Éê±¨ÃİµÈÃüÖĞ: requestId REQ-SAME ·µ»ØÔ­Éê±¨µ¥ f151a459-8fde-42c6-b076-5246142a61a3
+01:03:12.585 [pool-2-thread-3] INFO com.openvpp.market.charge.ChargeDeclarationService - Éê±¨ÃİµÈÃüÖĞ: requestId REQ-SAME ·µ»ØÔ­Éê±¨µ¥ f151a459-8fde-42c6-b076-5246142a61a3
+01:03:12.614 [main] INFO com.openvpp.market.charge.ChargeDrEventService - ÊÂ¼ş½¨Á¢: EV-5501 ×éÖ¯·½ T-1001 Ï÷·å 2026-10-08T14:00 ~ 2026-10-08T16:00 Ä¿±ê 800 kW ½ØÖ¹ 2026-10-08T13:30
+01:03:12.615 [main] INFO com.openvpp.market.charge.ChargeDrEventService - ÊÂ¼ş·¢²¼: EV-5501 °æ±¾ 1 ½ØÖ¹ 2026-10-08T13:30
+01:03:12.615 [main] INFO com.openvpp.market.charge.ChargeDrEventService - ÊÂ¼ş²ÎÓëÊÚÈ¨: EV-5501 °æ±¾ 2 ³¡Õ¾ [S-11101] ÊÚÈ¨ÈË platform-acc
+01:03:12.636 [pool-3-thread-6] INFO com.openvpp.market.charge.ChargeDeclarationService - Éê±¨Ìá½»: 6046d98e-9ac7-4976-9ee9-e313091d2128 ÊÂ¼ş EV-5501 ³¡Õ¾ S-11101 ÈİÁ¿ 30 kW ¿ìÕÕ°æ±¾ V1 ÇëÇó±êÊ¶ REQ-C-5
+01:03:12.636 [pool-3-thread-9] INFO com.openvpp.market.charge.ChargeDeclarationService - Éê±¨Ìá½»: 1c84a6d5-bd8e-4292-9580-899014913af7 ÊÂ¼ş EV-5501 ³¡Õ¾ S-11101 ÈİÁ¿ 30 kW ¿ìÕÕ°æ±¾ V1 ÇëÇó±êÊ¶ REQ-C-8
+01:03:12.638 [pool-3-thread-7] INFO com.openvpp.market.charge.ChargeDeclarationService - Éê±¨Ìá½»: 1eedf3c3-9b4b-4adf-8900-7f7bf639221e ÊÂ¼ş EV-5501 ³¡Õ¾ S-11101 ÈİÁ¿ 30 kW ¿ìÕÕ°æ±¾ V1 ÇëÇó±êÊ¶ REQ-C-6
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.951 s -- in com.openvpp.market.charge.ChargeDeclarationConcurrencyTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  9.310 s
+[INFO] Finished at: 2026-10-12T01:03:12+08:00
+[INFO] ------------------------------------------------------------------------
+[PASS] ç”³æŠ¥å¹¶å‘å ç”¨å®ˆæ’ï¼ˆChargeDeclarationConcurrencyTestï¼‰
+
+== ç»“ç®—å¹¶å‘ç¡®è®¤å¹‚ç­‰ï¼ˆSettlementServiceTest#å¹¶å‘ç¡®è®¤å¹‚ç­‰_é¦–æ¡ç•™ç—•ä¸ºå‡†ï¼‰
+å‘½ä»¤: mvn -s settings-openvpp.xml -pl openvpp-settlement test -Dtest=SettlementServiceTest#å¹¶å‘ç¡®è®¤å¹‚ç­‰_é¦–æ¡ç•™ç—•ä¸ºå‡†
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -------------------< com.openvpp:openvpp-settlement >-------------------
+[INFO] Building openvpp-settlement 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ openvpp-settlement ---
+[INFO] skip non existing resourceDirectory C:\GitProject\zuozewei\openvpp-demo\openvpp-settlement\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ openvpp-settlement ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ openvpp-settlement ---
+[INFO] skip non existing resourceDirectory C:\GitProject\zuozewei\openvpp-demo\openvpp-settlement\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ openvpp-settlement ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ openvpp-settlement ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.openvpp.settlement.SettlementServiceTest
+01:03:27.974 [main] INFO com.openvpp.settlement.assess.BaselineFreezeRegistry - »ùÏß¶³½áÍê³É: EVT-settle-1|cs-station-01|pile-cs01-001 ·½Ïò Ï÷·å ¶³½áÊ±¿Ì 2026-10-11T12:01 ´°¿Ú 2026-10-11T12:02 ~ 2026-10-11T12:04 Ñù±¾À´Ô´ CONFIRMED_DECLARATION_BASELINE ¹æÔò°æ±¾ TEACH-ASSESS-2026.1 »ùÏß°æ±¾ BL-v1 Ñù±¾ 1 µã
+01:03:28.922 [main] INFO com.openvpp.settlement.assess.AssessmentService - ÆÀ¹ÀÉú³É: ASM-9f127c4a ÊÂ¼ş EVT-settle-1 pile-cs01-001@cs-station-01 ·½Ïò Ï÷·å ºË¶¨ 0.9999999999999999 kWh ÍêÕû¶È 1.0 ½áÂÛ CONFIRMED£¨Ô­Òò []£©
+01:03:28.941 [main] INFO com.openvpp.settlement.charge.SettlementService - ½áËãµ¥Éú³É: STL-aa0527ef v1 ÊÂ¼ş EVT-settle-1 pile-cs01-001@cs-station-01 ÆÀ¹À ASM-9f127c4a ºË¶¨ 0.9999999999999999 kWh ¡Á 2.50 Ôª/kWh = Ã«¶î 2.50 ? ¿Û¿î 0.00 = ¾»ÊµÊÕ 2.50£¨¹æÔò¿ìÕÕ TEACH-SHARE-2026.1£¬ÇëÇó±êÊ¶ REQ-confirm£©
+01:03:28.959 [pool-2-thread-1] INFO com.openvpp.settlement.charge.SettlementService - ½áËãµ¥È·ÈÏ: STL-aa0527ef v1 ¾»ÊµÊÕ 2.50 È·ÈÏÈË platform_admin Ê±¿Ì 2026-10-11T12:11
+01:03:28.959 [pool-2-thread-8] INFO com.openvpp.settlement.charge.SettlementService - ½áËãÈ·ÈÏÃİµÈÃüÖĞ: STL-aa0527ef v1 ×´Ì¬ CONFIRMED£¬Ê×ÌõÁôºÛÎª×¼£¨platform_admin 2026-10-11T12:11£©
+01:03:28.961 [pool-2-thread-7] INFO com.openvpp.settlement.charge.SettlementService - ½áËãÈ·ÈÏÃİµÈÃüÖĞ: STL-aa0527ef v1 ×´Ì¬ CONFIRMED£¬Ê×ÌõÁôºÛÎª×¼£¨platform_admin 2026-10-11T12:11£©
+01:03:28.962 [pool-2-thread-6] INFO com.openvpp.settlement.charge.SettlementService - ½áËãÈ·ÈÏÃİµÈÃüÖĞ: STL-aa0527ef v1 ×´Ì¬ CONFIRMED£¬Ê×ÌõÁôºÛÎª×¼£¨platform_admin 2026-10-11T12:11£©
+01:03:28.963 [pool-2-thread-5] INFO com.openvpp.settlement.charge.SettlementService - ½áËãÈ·ÈÏÃİµÈÃüÖĞ: STL-aa0527ef v1 ×´Ì¬ CONFIRMED£¬Ê×ÌõÁôºÛÎª×¼£¨platform_admin 2026-10-11T12:11£©
+01:03:28.964 [pool-2-thread-4] INFO com.openvpp.settlement.charge.SettlementService - ½áËãÈ·ÈÏÃİµÈÃüÖĞ: STL-aa0527ef v1 ×´Ì¬ CONFIRMED£¬Ê×ÌõÁôºÛÎª×¼£¨platform_admin 2026-10-11T12:11£©
+01:03:28.964 [pool-2-thread-3] INFO com.openvpp.settlement.charge.SettlementService - ½áËãÈ·ÈÏÃİµÈÃüÖĞ: STL-aa0527ef v1 ×´Ì¬ CONFIRMED£¬Ê×ÌõÁôºÛÎª×¼£¨platform_admin 2026-10-11T12:11£©
+01:03:28.964 [pool-2-thread-2] INFO com.openvpp.settlement.charge.SettlementService - ½áËãÈ·ÈÏÃİµÈÃüÖĞ: STL-aa0527ef v1 ×´Ì¬ CONFIRMED£¬Ê×ÌõÁôºÛÎª×¼£¨platform_admin 2026-10-11T12:11£©
+01:03:28.973 [main] INFO com.openvpp.settlement.charge.SettlementService - ½áËãÈ·ÈÏÃİµÈÃüÖĞ: STL-aa0527ef v1 ×´Ì¬ CONFIRMED£¬Ê×ÌõÁôºÛÎª×¼£¨platform_admin 2026-10-11T12:11£©
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.416 s -- in com.openvpp.settlement.SettlementServiceTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  10.871 s
+[INFO] Finished at: 2026-10-12T01:03:29+08:00
+[INFO] ------------------------------------------------------------------------
+[PASS] ç»“ç®—å¹¶å‘ç¡®è®¤å¹‚ç­‰ï¼ˆSettlementServiceTest#å¹¶å‘ç¡®è®¤å¹‚ç­‰_é¦–æ¡ç•™ç—•ä¸ºå‡†ï¼‰
+
+== è´¯ç©¿æ¡ˆä¾‹å¹¶å‘å¹‚ç­‰ä¸ç‰ˆæœ¬åŒ–ï¼ˆParkResponseConcurrencyTestï¼‰
+å‘½ä»¤: mvn -s settings-openvpp.xml -pl openvpp-app test -Dtest=ParkResponseConcurrencyTest
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------------< com.openvpp:openvpp-app >-----------------------
+[INFO] Building openvpp-app 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ openvpp-app ---
+[INFO] Copying 3 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ openvpp-app ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ openvpp-app ---
+[INFO] skip non existing resourceDirectory C:\GitProject\zuozewei\openvpp-demo\openvpp-app\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ openvpp-app ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ openvpp-app ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.openvpp.app.ParkResponseConcurrencyTest
+01:03:47.564 [main] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating CacheAwareContextLoaderDelegate from class [org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate]
+01:03:47.585 [main] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating BootstrapContext using constructor [public org.springframework.test.context.support.DefaultBootstrapContext(java.lang.Class,org.springframework.test.context.CacheAwareContextLoaderDelegate)]
+01:03:47.680 [main] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating TestContextBootstrapper for test class [com.openvpp.app.ParkResponseConcurrencyTest] from class [org.springframework.boot.test.context.SpringBootTestContextBootstrapper]
+01:03:47.711 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Neither @ContextConfiguration nor @ContextHierarchy found for test class [com.openvpp.app.ParkResponseConcurrencyTest], using SpringBootContextLoader
+01:03:47.724 [main] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [com.openvpp.app.ParkResponseConcurrencyTest]: class path resource [com/openvpp/app/ParkResponseConcurrencyTest-context.xml] does not exist
+01:03:47.726 [main] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [com.openvpp.app.ParkResponseConcurrencyTest]: class path resource [com/openvpp/app/ParkResponseConcurrencyTestContext.groovy] does not exist
+01:03:47.726 [main] INFO org.springframework.test.context.support.AbstractContextLoader - Could not detect default resource locations for test class [com.openvpp.app.ParkResponseConcurrencyTest]: no resource found for suffixes {-context.xml, Context.groovy}.
+01:03:47.727 [main] DEBUG org.springframework.test.context.support.AnnotationConfigContextLoaderUtils - Ignoring class [com.openvpp.app.ParkResponseConcurrencyTest$Task]; it must be static, non-private, non-final, and annotated with @Configuration to be considered a default configuration class.
+01:03:47.727 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.openvpp.app.ParkResponseConcurrencyTest]: ParkResponseConcurrencyTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+01:03:47.849 [main] DEBUG org.springframework.test.context.support.ActiveProfilesUtils - Could not find an 'annotation declaring class' for annotation type [org.springframework.test.context.ActiveProfiles] and class [com.openvpp.app.ParkResponseConcurrencyTest]
+01:03:48.097 [main] DEBUG org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\GitProject\zuozewei\openvpp-demo\openvpp-app\target\classes\com\openvpp\app\OpenVppApplication.class]
+01:03:48.102 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.openvpp.app.OpenVppApplication for test class com.openvpp.app.ParkResponseConcurrencyTest
+01:03:48.485 [main] DEBUG org.springframework.boot.test.context.SpringBootTestContextBootstrapper - @TestExecutionListeners is not present for class [com.openvpp.app.ParkResponseConcurrencyTest]: using defaults.
+01:03:48.487 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.event.ApplicationEventsTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.test.context.event.EventPublishingTestExecutionListener]
+01:03:48.593 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@4982cc36, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@691939c9, org.springframework.test.context.event.ApplicationEventsTestExecutionListener@4f1bfe23, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@e19bb76, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@512535ff, org.springframework.test.context.support.DirtiesContextTestExecutionListener@71529963, org.springframework.test.context.transaction.TransactionalTestExecutionListener@61a88b8c, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@22295ec4, org.springframework.test.context.event.EventPublishingTestExecutionListener@5adb0db3, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@3f270e0a, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@1a760689, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@7241a47d, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@70f59913, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@77258e59, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener@5dcd8c7a]
+01:03:48.615 [main] DEBUG org.springframework.test.context.support.AbstractDirtiesContextTestExecutionListener - Before test class: context [DefaultTestContext@79c7532f testClass = ParkResponseConcurrencyTest, testInstance = [null], testMethod = [null], testException = [null], mergedContextConfiguration = [WebMergedContextConfiguration@2a448449 testClass = ParkResponseConcurrencyTest, locations = '{}', classes = '{class com.openvpp.app.OpenVppApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{spring.datasource.url=jdbc:h2:file:${java.io.tmpdir}/openvpp-conc-test-${random.uuid};AUTO_SERVER=TRUE;LOCK_TIMEOUT=30000, spring.datasource.hikari.maximum-pool-size=25, org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@3a7442c7, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@cb0755b, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@18271936, org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@6caf0677, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@0, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@2b40ff9c, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@140e5a13], resourceBasePath = 'src/main/webapp', contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.web.ServletTestExecutionListener.activateListener' -> true]], class annotated with @DirtiesContext [false] with mode [null].
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::               (v2.7.18)
+
+2026-10-12 01:03:49.995  INFO 64600 --- [           main] c.o.app.ParkResponseConcurrencyTest      : Starting ParkResponseConcurrencyTest using Java 17.0.14 on zuozewei with PID 64600 (started by 123 in C:\GitProject\zuozewei\openvpp-demo\openvpp-app)
+2026-10-12 01:03:49.999  INFO 64600 --- [           main] c.o.app.ParkResponseConcurrencyTest      : No active profile set, falling back to 1 default profile: "default"
+2026-10-12 01:03:53.125  INFO 64600 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2026-10-12 01:03:53.146  INFO 64600 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-10-12 01:03:53.288  INFO 64600 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 75 ms. Found 0 Redis repository interfaces.
+2026-10-12 01:03:56.289  INFO 64600 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-10-12 01:03:59.006  INFO 64600 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-10-12 01:04:00.805  INFO 64600 --- [           main] c.o.a.o.ChargeMonitoringDemoOrchestrator : Ö´ĞĞ¼à²âÑİÊ¾ÔËĞĞ: MON-fb3f98e1 ³¡¾° HEALTHY ·½Ïò PEAK_SHAVE
+2026-10-12 01:04:00.824  INFO 64600 --- [           main] c.o.a.o.ChargeMonitoringDemoOrchestrator : ÑİÊ¾¼Æ»®ÒÑÈ·ÈÏ: MON-fb3f98e1-PLAN v1 ·½Ïò PEAK_SHAVE µ÷½ÚÁ¿ 120 kW£¨2 ĞĞ£¬½¡¿µÉè±¸È«Á´Â·´ï±ê£©
+2026-10-12 01:04:00.860  INFO 64600 --- [           main] c.o.i.s.SimulatedChargePileChannel       : Ä£Äâ×® pile-cs01-001 ÊÜÀíÄ¿±ê 45.0 kW£¨Ö¸Áî MON-fb3f98e1-C1£¬»ØÖ´Ê±±ê 1791738255829£©¡ª¡ªÊÜÀí¡Ùµ½Î»£¬µ½Î»ÒÔÒ£²â´ï±êÎª×¼
+2026-10-12 01:04:00.869  INFO 64600 --- [           main] c.o.d.command.ChargePileCommandService   : Ö¸ÁîÊÜÀí: MON-fb3f98e1-C1 ¡ú pile-cs01-001 Ä¿±ê 45 kW£¨ÊÜÀí¡Ùµ½Î»£¬´ï±êÒÔÒ£²âÅĞ¶¨Îª×¼£©
+2026-10-12 01:04:00.871  INFO 64600 --- [           main] c.o.d.monitor.ChargeExecutionMonitor     : ¼à²â¹ØÁª½¨Á¢: Ö¸Áî MON-fb3f98e1-C1 ¡ú pile-cs01-001@cs-station-01£¨ÊÂ¼ş MON-fb3f98e1£¬·½Ïò PEAK_SHAVE£¬·¢ËÍÊ±½ç 1791738255829 ms£©
+2026-10-12 01:04:00.872  INFO 64600 --- [           main] c.o.i.s.SimulatedChargePileChannel       : Ä£Äâ×® pile-cs01-002 ÊÜÀíÄ¿±ê 35.0 kW£¨Ö¸Áî MON-fb3f98e1-C2£¬»ØÖ´Ê±±ê 1791738255829£©¡ª¡ªÊÜÀí¡Ùµ½Î»£¬µ½Î»ÒÔÒ£²â´ï±êÎª×¼
+2026-10-12 01:04:00.872  INFO 64600 --- [           main] c.o.d.command.ChargePileCommandService   : Ö¸ÁîÊÜÀí: MON-fb3f98e1-C2 ¡ú pile-cs01-002 Ä¿±ê 35 kW£¨ÊÜÀí¡Ùµ½Î»£¬´ï±êÒÔÒ£²âÅĞ¶¨Îª×¼£©
+2026-10-12 01:04:00.872  INFO 64600 --- [           main] c.o.d.monitor.ChargeExecutionMonitor     : ¼à²â¹ØÁª½¨Á¢: Ö¸Áî MON-fb3f98e1-C2 ¡ú pile-cs01-002@cs-station-01£¨ÊÂ¼ş MON-fb3f98e1£¬·½Ïò PEAK_SHAVE£¬·¢ËÍÊ±½ç 1791738255829 ms£©
+2026-10-12 01:04:00.907  INFO 64600 --- [           main] c.o.a.o.ChargeMonitoringDemoOrchestrator : Ö´ĞĞ¼à²âÑİÊ¾Íê³É: MON-fb3f98e1 Ñùµã 26 È±¿Ú 0 ¸æ¾¯ 0 Ìõ
+2026-10-12 01:04:00.907  INFO 64600 --- [           main] c.o.app.config.MonitoringDemoFixture     : Ö´ĞĞ¼à²âÑİÊ¾Êı¾İÒÑ×°Åä: ÔËĞĞ MON-fb3f98e1 ÊÂ¼ş MON-fb3f98e1 Ñùµã 26 ¸æ¾¯ 0 Ìõ
+2026-10-12 01:04:01.195  INFO 64600 --- [           main] c.o.a.o.ChargePlanDemoOrchestrator       : ·Ö¼¶ÅÉµ¥ÑİÊ¾ÔËĞĞ: PLAN-1cd7ee7c ³¡¾° HEALTHY ·½Ïò PEAK_SHAVE
+2026-10-12 01:04:01.200  INFO 64600 --- [           main] c.o.market.charge.ChargeDrEventService   : ÊÂ¼ş½¨Á¢: PLAN-1cd7ee7c ×éÖ¯·½ tenant-openvpp Ï÷·å 2026-10-12T01:07:01.196728900 ~ 2026-10-12T01:14:01.196728900 Ä¿±ê 780 kW ½ØÖ¹ 2026-10-12T01:04:31.196728900
+2026-10-12 01:04:01.207  INFO 64600 --- [           main] c.o.market.charge.ChargeDrEventService   : ÊÂ¼ş·¢²¼: PLAN-1cd7ee7c °æ±¾ 1 ½ØÖ¹ 2026-10-12T01:04:31.196728900
+2026-10-12 01:04:01.209  INFO 64600 --- [           main] c.o.market.charge.ChargeDrEventService   : ÊÂ¼ş²ÎÓëÊÚÈ¨: PLAN-1cd7ee7c °æ±¾ 2 ³¡Õ¾ [cs-station-01,cs-station-02] ÊÚÈ¨ÈË plan-demo
+2026-10-12 01:04:01.213  INFO 64600 --- [           main] c.o.m.charge.ChargeDeclarationService    : Éê±¨Ìá½»: 008470e9-c588-4e01-a741-a344c36253b4 ÊÂ¼ş PLAN-1cd7ee7c ³¡Õ¾ cs-station-01 ÈİÁ¿ 600 kW ¿ìÕÕ°æ±¾ demo-v1 ÇëÇó±êÊ¶ PLAN-1cd7ee7c-R1
+2026-10-12 01:04:01.215  INFO 64600 --- [           main] c.o.m.charge.ChargeDeclarationService    : Éê±¨È·ÈÏ: 008470e9-c588-4e01-a741-a344c36253b4 ÊÂ¼ş PLAN-1cd7ee7c ³¡Õ¾ cs-station-01 ÈİÁ¿ 600 kW
+2026-10-12 01:04:01.215  INFO 64600 --- [           main] c.o.m.charge.ChargeDeclarationService    : Éê±¨Ìá½»: 5202a677-9f37-4a63-83b6-ff137aa1fd44 ÊÂ¼ş PLAN-1cd7ee7c ³¡Õ¾ cs-station-02 ÈİÁ¿ 180 kW ¿ìÕÕ°æ±¾ demo-v1 ÇëÇó±êÊ¶ PLAN-1cd7ee7c-R2
+2026-10-12 01:04:01.216  INFO 64600 --- [           main] c.o.m.charge.ChargeDeclarationService    : Éê±¨È·ÈÏ: 5202a677-9f37-4a63-83b6-ff137aa1fd44 ÊÂ¼ş PLAN-1cd7ee7c ³¡Õ¾ cs-station-02 ÈİÁ¿ 180 kW
+2026-10-12 01:04:01.220  INFO 64600 --- [           main] c.o.s.assess.BaselineFreezeRegistry      : »ùÏß¶³½áÍê³É: PLAN-1cd7ee7c|cs-station-01|ev-cs-station-01 ·½Ïò Ï÷·å ¶³½áÊ±¿Ì 2026-10-12T01:04:01.218429300 ´°¿Ú 2026-10-12T01:07:01.196728900 ~ 2026-10-12T01:14:01.196728900 Ñù±¾À´Ô´ CONFIRMED_DECLARATION_BASELINE ¹æÔò°æ±¾ TEACH-ASSESS-2026.1 »ùÏß°æ±¾ PLAN-1cd7ee7c-BL-v1 Ñù±¾ 1 µã
+2026-10-12 01:04:01.221  INFO 64600 --- [           main] c.o.s.assess.BaselineFreezeRegistry      : »ùÏß¶³½áÍê³É: PLAN-1cd7ee7c|cs-station-02|ev-cs-station-02 ·½Ïò Ï÷·å ¶³½áÊ±¿Ì 2026-10-12T01:04:01.221532100 ´°¿Ú 2026-10-12T01:07:01.196728900 ~ 2026-10-12T01:14:01.196728900 Ñù±¾À´Ô´ CONFIRMED_DECLARATION_BASELINE ¹æÔò°æ±¾ TEACH-ASSESS-2026.1 »ùÏß°æ±¾ PLAN-1cd7ee7c-BL-v1 Ñù±¾ 1 µã
+2026-10-12 01:04:01.237  INFO 64600 --- [           main] c.o.a.plan.AggregatePlanService          : ·Ö¼¶¼Æ»®½¨Á¢: affa9ed8-6d74-4250-9b12-1de0a61085d3 ÊÂ¼ş PLAN-1cd7ee7c Ï÷·å Ä¿±ê 780 kW È±¿Ú 0.0 kW£¨1 ¸öÔËÓªÉÌ×Ó¼Æ»®£©
+2026-10-12 01:04:01.239  INFO 64600 --- [           main] c.o.a.plan.AggregatePlanService          : ¼Æ»®ÈË¹¤È·ÈÏ: affa9ed8-6d74-4250-9b12-1de0a61085d3 v1 È·ÈÏÈË plan-demo Ê±¿Ì 2026-10-12T01:04:01.239279800
+2026-10-12 01:04:01.240  INFO 64600 --- [           main] c.o.a.plan.AggregatePlanService          : ¼Æ»®ÈË¹¤È·ÈÏ: 85f16c72-98fd-49dc-80b1-34d2e82f1c34 v1 È·ÈÏÈË plan-demo Ê±¿Ì 2026-10-12T01:04:01.239279800
+2026-10-12 01:04:01.253  INFO 64600 --- [           main] c.o.i.s.SimulatedChargePileChannel       : Ä£Äâ×® ev-cs-station-01 ÊÜÀíÄ¿±ê 300.0 kW£¨Ö¸Áî 85f16c72-98fd-49dc-80b1-34d2e82f1c34-v1-ev-cs-station-01£¬»ØÖ´Ê±±ê 1791738241253£©¡ª¡ªÊÜÀí¡Ùµ½Î»£¬µ½Î»ÒÔÒ£²â´ï±êÎª×¼
+2026-10-12 01:04:01.254  INFO 64600 --- [           main] c.o.d.command.ChargePileCommandService   : Ö¸ÁîÊÜÀí: 85f16c72-98fd-49dc-80b1-34d2e82f1c34-v1-ev-cs-station-01 ¡ú ev-cs-station-01 Ä¿±ê 300.0 kW£¨ÊÜÀí¡Ùµ½Î»£¬´ï±êÒÔÒ£²âÅĞ¶¨Îª×¼£©
+2026-10-12 01:04:01.255  INFO 64600 --- [           main] c.o.i.s.SimulatedChargePileChannel       : Ä£Äâ×® ev-cs-station-02 ÊÜÀíÄ¿±ê 120.0 kW£¨Ö¸Áî 85f16c72-98fd-49dc-80b1-34d2e82f1c34-v1-ev-cs-station-02£¬»ØÖ´Ê±±ê 1791738241255£©¡ª¡ªÊÜÀí¡Ùµ½Î»£¬µ½Î»ÒÔÒ£²â´ï±êÎª×¼
+2026-10-12 01:04:01.256  INFO 64600 --- [           main] c.o.d.command.ChargePileCommandService   : Ö¸ÁîÊÜÀí: 85f16c72-98fd-49dc-80b1-34d2e82f1c34-v1-ev-cs-station-02 ¡ú ev-cs-station-02 Ä¿±ê 120.0 kW£¨ÊÜÀí¡Ùµ½Î»£¬´ï±êÒÔÒ£²âÅĞ¶¨Îª×¼£©
+2026-10-12 01:04:01.257  INFO 64600 --- [           main] c.o.a.plan.AggregatePlanService          : ¼Æ»®·¢ËÍÁôºÛ: 85f16c72-98fd-49dc-80b1-34d2e82f1c34 v1 Ê±¿Ì 2026-10-12T01:04:01.240301900
+2026-10-12 01:04:01.261  INFO 64600 --- [           main] c.o.a.plan.AggregatePlanService          : ¼Æ»®»ØÖ´ÁôºÛ: 85f16c72-98fd-49dc-80b1-34d2e82f1c34 v1 Ê±¿Ì 2026-10-12T01:04:01.240301900
+2026-10-12 01:04:01.265  INFO 64600 --- [           main] c.o.a.o.ChargePlanDemoOrchestrator       : ·Ö¼¶ÅÉµ¥ÑİÊ¾Íê³É: PLAN-1cd7ee7c ¼Æ»® affa9ed8-6d74-4250-9b12-1de0a61085d3 ×Ó¼Æ»® 1 Ìõ Ö¸Áî 2 Ìõ£¨Ê§Áª 0 Ìõ£©
+2026-10-12 01:04:01.267  INFO 64600 --- [           main] c.o.i.s.SimulatedChargePileChannel       : Ä£Äâ×® ev-cs-station-01 ¹ÊÕÏ×¢Èëµµ°¸ÒÑÇĞ»»: FaultInjectionProfile{offline=false, duplicateEveryN=0, lateDelayMs=0, missingSeqs=[], outOfOrder=false, biasKw=0.0}
+2026-10-12 01:04:01.296  INFO 64600 --- [           main] c.o.i.s.SimulatedChargePileChannel       : Ä£Äâ×® ev-cs-station-02 ¹ÊÕÏ×¢Èëµµ°¸ÒÑÇĞ»»: FaultInjectionProfile{offline=false, duplicateEveryN=0, lateDelayMs=0, missingSeqs=[], outOfOrder=false, biasKw=0.0}
+2026-10-12 01:04:01.296  INFO 64600 --- [           main] c.o.app.config.PlanDispatchDemoFixture   : ·Ö¼¶ÅÉµ¥ÑİÊ¾Êı¾İÒÑ×°Åä: ÔËĞĞ PLAN-1cd7ee7c ÊÂ¼ş PLAN-1cd7ee7c ¼Æ»® affa9ed8-6d74-4250-9b12-1de0a61085d3 Ö¸Áî 2 Ìõ
+2026-10-12 01:04:04.607  INFO 64600 --- [           main] com.openvpp.app.config.GatewayConfig     : Íø¹Ø±¾µØÄ£ÄâÄ£Ê½£¨openvpp.gateway.mode=local£©£ºÎ´ÆôÓÃÕæÊµĞ­Òé½ÓÈë£¬Ò£²â/¼ÆÁ¿ÓÉÄÚÖÃÄ£ÄâÔ´Çı¶¯
+2026-10-12 01:04:07.405  INFO 64600 --- [           main] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:file:C:\Users\123\AppData\Local\Temp\/openvpp-conc-test-45c789ac-ff08-4ccd-bf54-75709e56dd68'
+2026-10-12 01:04:10.645  INFO 64600 --- [           main] c.o.app.ParkResponseConcurrencyTest      : Started ParkResponseConcurrencyTest in 21.841 seconds (JVM running for 24.912)
+2026-10-12 01:04:13.265  INFO 64600 --- [           main] c.o.a.o.ParkResponseOrchestrator         : ÑİÊ¾ÔËĞĞ×´Ì¬ÒÑÖØÖÃ£ºÈİÁ¿Ô¤Õ¼Ì¨ÕË + ÄÚ´æÖ¸Áî²Ö¿â + ÃİµÈ»º´æÃüÃû¿Õ¼äÒÑÇå¿Õ
+2026-10-12 01:04:13.471  INFO 64600 --- [ool-3-thread-40] com.openvpp.app.config.DispatchConfig    : [DOWNLINK-LOOP] Ö¸ÁîÍ¶µİ±¾µØÄ£ÄâÉè±¸: conc-50-ins-1 ¡ú ess-001 392.203kW
+2026-10-12 01:04:13.476  INFO 64600 --- [ool-3-thread-40] c.o.d.instruction.InstructionService     : Ö¸ÁîÒÑÏÂ·¢: conc-50-ins-1 ¡ú ess-001 392.203kW
+2026-10-12 01:04:13.493  INFO 64600 --- [ool-3-thread-40] c.o.d.instruction.InstructionService     : Ö¸ÁîÒÑÈ·ÈÏ: conc-50-ins-1 Í¨ĞÅºÄÊ± 21ms£¨½öÍ¨ĞÅÖ¸±ê£¬²»×÷¹¦ÂÊÏìÓ¦ÒÀ¾İ£©
+2026-10-12 01:04:13.494  INFO 64600 --- [ool-3-thread-40] c.o.d.instruction.InstructionService     : Éè±¸¿ªÊ¼¶¯×÷: conc-50-ins-1
+2026-10-12 01:04:13.495  INFO 64600 --- [ool-3-thread-40] c.o.d.instruction.InstructionService     : Ò£²âÁ¬ĞøÎÈ¶¨´ï±ê: conc-50-ins-1 ×ÊÔ´µ½Î»Ê±ÑÓ 5016ms
+2026-10-12 01:04:13.507  INFO 64600 --- [ool-3-thread-40] com.openvpp.app.config.DispatchConfig    : [DOWNLINK-LOOP] Ö¸ÁîÍ¶µİ±¾µØÄ£ÄâÉè±¸: conc-50-ins-2 ¡ú ac-001 297.247kW
+2026-10-12 01:04:13.509  INFO 64600 --- [ool-3-thread-40] c.o.d.instruction.InstructionService     : Ö¸ÁîÒÑÏÂ·¢: conc-50-ins-2 ¡ú ac-001 297.247kW
+2026-10-12 01:04:13.512  INFO 64600 --- [ool-3-thread-40] c.o.d.instruction.InstructionService     : Ö¸ÁîÒÑÈ·ÈÏ: conc-50-ins-2 Í¨ĞÅºÄÊ± 5ms£¨½öÍ¨ĞÅÖ¸±ê£¬²»×÷¹¦ÂÊÏìÓ¦ÒÀ¾İ£©
+2026-10-12 01:04:13.512  INFO 64600 --- [ool-3-thread-40] c.o.d.instruction.InstructionService     : Éè±¸¿ªÊ¼¶¯×÷: conc-50-ins-2
+2026-10-12 01:04:13.513  INFO 64600 --- [ool-3-thread-40] c.o.d.instruction.InstructionService     : Ò£²âÁ¬ĞøÎÈ¶¨´ï±ê: conc-50-ins-2 ×ÊÔ´µ½Î»Ê±ÑÓ 5005ms
+2026-10-12 01:04:13.519  INFO 64600 --- [ool-3-thread-40] com.openvpp.app.config.DispatchConfig    : [DOWNLINK-LOOP] Ö¸ÁîÍ¶µİ±¾µØÄ£ÄâÉè±¸: conc-50-ins-3 ¡ú ev-001 210.550kW
+2026-10-12 01:04:13.533  INFO 64600 --- [ool-3-thread-40] c.o.d.instruction.InstructionService     : Ö¸ÁîÒÑÏÂ·¢: conc-50-ins-3 ¡ú ev-001 210.550kW
+2026-10-12 01:04:13.535  INFO 64600 --- [ool-3-thread-40] c.o.d.instruction.InstructionService     : Ö¸ÁîÒÑÈ·ÈÏ: conc-50-ins-3 Í¨ĞÅºÄÊ± 16ms£¨½öÍ¨ĞÅÖ¸±ê£¬²»×÷¹¦ÂÊÏìÓ¦ÒÀ¾İ£©
+2026-10-12 01:04:13.536  INFO 64600 --- [ool-3-thread-40] c.o.d.instruction.InstructionService     : Éè±¸¿ªÊ¼¶¯×÷: conc-50-ins-3
+2026-10-12 01:04:13.541  INFO 64600 --- [ool-3-thread-40] c.o.d.instruction.InstructionService     : Ò£²âÁ¬ĞøÎÈ¶¨´ï±ê: conc-50-ins-3 ×ÊÔ´µ½Î»Ê±ÑÓ 5016ms
+2026-10-12 01:04:14.738  INFO 64600 --- [ool-3-thread-40] c.o.a.o.ParkResponseOrchestrator         : ±Õ»·Íê³É: conc-50 Â·¾¶ NORMAL ¾»ÊµÊÕ 1200.00Ôª
+2026-10-12 01:04:15.777  WARN 64600 --- [ool-3-thread-10] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.777  WARN 64600 --- [ool-3-thread-44] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.780  WARN 64600 --- [pool-3-thread-5] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.781  WARN 64600 --- [ool-3-thread-20] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.777  WARN 64600 --- [ool-3-thread-49] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.788  WARN 64600 --- [ool-3-thread-26] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.784  WARN 64600 --- [ool-3-thread-23] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.784  WARN 64600 --- [ool-3-thread-43] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.781  WARN 64600 --- [ool-3-thread-50] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.781  WARN 64600 --- [ool-3-thread-35] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.780  WARN 64600 --- [ool-3-thread-22] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.783  WARN 64600 --- [ool-3-thread-12] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.784  WARN 64600 --- [ool-3-thread-29] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.785  WARN 64600 --- [ool-3-thread-37] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.785  WARN 64600 --- [ool-3-thread-48] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.785  WARN 64600 --- [ool-3-thread-19] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.785  WARN 64600 --- [pool-3-thread-9] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.777  WARN 64600 --- [ool-3-thread-28] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.777  WARN 64600 --- [pool-3-thread-4] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.786  WARN 64600 --- [ool-3-thread-14] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.779  WARN 64600 --- [pool-3-thread-6] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.780  WARN 64600 --- [ool-3-thread-32] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.788  WARN 64600 --- [ool-3-thread-24] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.788  WARN 64600 --- [ool-3-thread-47] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.789  WARN 64600 --- [pool-3-thread-3] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.838  WARN 64600 --- [pool-3-thread-2] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.842  WARN 64600 --- [ool-3-thread-39] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.844  WARN 64600 --- [ool-3-thread-36] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.855  WARN 64600 --- [ool-3-thread-11] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.855  WARN 64600 --- [ool-3-thread-16] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.857  WARN 64600 --- [pool-3-thread-1] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.857  WARN 64600 --- [ool-3-thread-33] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.857  WARN 64600 --- [pool-3-thread-8] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.857  WARN 64600 --- [ool-3-thread-25] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.857  WARN 64600 --- [ool-3-thread-42] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.858  WARN 64600 --- [ool-3-thread-27] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.860  WARN 64600 --- [pool-3-thread-7] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.866  WARN 64600 --- [ool-3-thread-34] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.866  WARN 64600 --- [ool-3-thread-41] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.867  WARN 64600 --- [ool-3-thread-31] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.871  WARN 64600 --- [ool-3-thread-18] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.860  WARN 64600 --- [ool-3-thread-17] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.868  WARN 64600 --- [ool-3-thread-15] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.867  WARN 64600 --- [ool-3-thread-45] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.871  WARN 64600 --- [ool-3-thread-21] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.865  WARN 64600 --- [ool-3-thread-46] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.871  WARN 64600 --- [ool-3-thread-30] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.877  WARN 64600 --- [ool-3-thread-38] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:15.877  WARN 64600 --- [ool-3-thread-13] c.o.a.o.ParkResponseOrchestrator         : ÃİµÈÀ¹½Ø: conc-50 ÒÑ½áËã£¬Ìø¹ıÖØ¸´Ö´ĞĞ£¬·µ»ØÊı¾İ¿âÖØ½¨µÄ¼ÈÓĞ½á¹û
+2026-10-12 01:04:16.353  INFO 64600 --- [           main] c.o.a.o.ParkResponseOrchestrator         : ÑİÊ¾ÔËĞĞ×´Ì¬ÒÑÖØÖÃ£ºÈİÁ¿Ô¤Õ¼Ì¨ÕË + ÄÚ´æÖ¸Áî²Ö¿â + ÃİµÈ»º´æÃüÃû¿Õ¼äÒÑÇå¿Õ
+2026-10-12 01:04:16.365  INFO 64600 --- [           main] com.openvpp.app.config.DispatchConfig    : [DOWNLINK-LOOP] Ö¸ÁîÍ¶µİ±¾µØÄ£ÄâÉè±¸: corr-same-ins-1 ¡ú ess-001 392.203kW
+2026-10-12 01:04:16.366  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Ö¸ÁîÒÑÏÂ·¢: corr-same-ins-1 ¡ú ess-001 392.203kW
+2026-10-12 01:04:16.370  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Ö¸ÁîÒÑÈ·ÈÏ: corr-same-ins-1 Í¨ĞÅºÄÊ± 4ms£¨½öÍ¨ĞÅÖ¸±ê£¬²»×÷¹¦ÂÊÏìÓ¦ÒÀ¾İ£©
+2026-10-12 01:04:16.371  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Éè±¸¿ªÊ¼¶¯×÷: corr-same-ins-1
+2026-10-12 01:04:16.371  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Ò£²âÁ¬ĞøÎÈ¶¨´ï±ê: corr-same-ins-1 ×ÊÔ´µ½Î»Ê±ÑÓ 5004ms
+2026-10-12 01:04:16.374  INFO 64600 --- [           main] com.openvpp.app.config.DispatchConfig    : [DOWNLINK-LOOP] Ö¸ÁîÍ¶µİ±¾µØÄ£ÄâÉè±¸: corr-same-ins-2 ¡ú ac-001 297.247kW
+2026-10-12 01:04:16.374  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Ö¸ÁîÒÑÏÂ·¢: corr-same-ins-2 ¡ú ac-001 297.247kW
+2026-10-12 01:04:16.374  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Ö¸ÁîÒÑÈ·ÈÏ: corr-same-ins-2 Í¨ĞÅºÄÊ± 0ms£¨½öÍ¨ĞÅÖ¸±ê£¬²»×÷¹¦ÂÊÏìÓ¦ÒÀ¾İ£©
+2026-10-12 01:04:16.376  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Éè±¸¿ªÊ¼¶¯×÷: corr-same-ins-2
+2026-10-12 01:04:16.376  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Ò£²âÁ¬ĞøÎÈ¶¨´ï±ê: corr-same-ins-2 ×ÊÔ´µ½Î»Ê±ÑÓ 5000ms
+2026-10-12 01:04:16.377  INFO 64600 --- [           main] com.openvpp.app.config.DispatchConfig    : [DOWNLINK-LOOP] Ö¸ÁîÍ¶µİ±¾µØÄ£ÄâÉè±¸: corr-same-ins-3 ¡ú ev-001 210.550kW
+2026-10-12 01:04:16.378  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Ö¸ÁîÒÑÏÂ·¢: corr-same-ins-3 ¡ú ev-001 210.550kW
+2026-10-12 01:04:16.380  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Ö¸ÁîÒÑÈ·ÈÏ: corr-same-ins-3 Í¨ĞÅºÄÊ± 3ms£¨½öÍ¨ĞÅÖ¸±ê£¬²»×÷¹¦ÂÊÏìÓ¦ÒÀ¾İ£©
+2026-10-12 01:04:16.381  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Éè±¸¿ªÊ¼¶¯×÷: corr-same-ins-3
+2026-10-12 01:04:16.382  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Ò£²âÁ¬ĞøÎÈ¶¨´ï±ê: corr-same-ins-3 ×ÊÔ´µ½Î»Ê±ÑÓ 5003ms
+2026-10-12 01:04:16.412  INFO 64600 --- [           main] c.o.a.o.ParkResponseOrchestrator         : ±Õ»·Íê³É: corr-same Â·¾¶ NORMAL ¾»ÊµÊÕ 1200.00Ôª
+2026-10-12 01:04:16.510  INFO 64600 --- [pool-4-thread-7] c.o.a.o.ParkResponseOrchestrator         : ÕùÒé¸üÕıÍê³É: corr-same ÇëÇó same-req °æ±¾ V2 ¸üÕı¾»ÊµÊÕ 1210.00 ²î¶î 10.00
+2026-10-12 01:04:16.528  INFO 64600 --- [pool-4-thread-1] c.o.a.o.ParkResponseOrchestrator         : ÕùÒé¸üÕıÃİµÈÖØ·Å: corr-same °æ±¾ V2
+2026-10-12 01:04:16.569  INFO 64600 --- [pool-4-thread-4] c.o.a.o.ParkResponseOrchestrator         : ÕùÒé¸üÕıÃİµÈÖØ·Å: corr-same °æ±¾ V2
+2026-10-12 01:04:16.584  INFO 64600 --- [pool-4-thread-6] c.o.a.o.ParkResponseOrchestrator         : ÕùÒé¸üÕıÃİµÈÖØ·Å: corr-same °æ±¾ V2
+2026-10-12 01:04:16.592  INFO 64600 --- [pool-4-thread-3] c.o.a.o.ParkResponseOrchestrator         : ÕùÒé¸üÕıÃİµÈÖØ·Å: corr-same °æ±¾ V2
+2026-10-12 01:04:16.598  INFO 64600 --- [pool-4-thread-5] c.o.a.o.ParkResponseOrchestrator         : ÕùÒé¸üÕıÃİµÈÖØ·Å: corr-same °æ±¾ V2
+2026-10-12 01:04:16.603  INFO 64600 --- [pool-4-thread-2] c.o.a.o.ParkResponseOrchestrator         : ÕùÒé¸üÕıÃİµÈÖØ·Å: corr-same °æ±¾ V2
+2026-10-12 01:04:16.607  INFO 64600 --- [pool-4-thread-8] c.o.a.o.ParkResponseOrchestrator         : ÕùÒé¸üÕıÃİµÈÖØ·Å: corr-same °æ±¾ V2
+2026-10-12 01:04:16.640  INFO 64600 --- [           main] c.o.a.o.ParkResponseOrchestrator         : ÑİÊ¾ÔËĞĞ×´Ì¬ÒÑÖØÖÃ£ºÈİÁ¿Ô¤Õ¼Ì¨ÕË + ÄÚ´æÖ¸Áî²Ö¿â + ÃİµÈ»º´æÃüÃû¿Õ¼äÒÑÇå¿Õ
+2026-10-12 01:04:16.642  INFO 64600 --- [           main] com.openvpp.app.config.DispatchConfig    : [DOWNLINK-LOOP] Ö¸ÁîÍ¶µİ±¾µØÄ£ÄâÉè±¸: corr-idem-ins-1 ¡ú ess-001 392.203kW
+2026-10-12 01:04:16.643  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Ö¸ÁîÒÑÏÂ·¢: corr-idem-ins-1 ¡ú ess-001 392.203kW
+2026-10-12 01:04:16.643  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Ö¸ÁîÒÑÈ·ÈÏ: corr-idem-ins-1 Í¨ĞÅºÄÊ± 1ms£¨½öÍ¨ĞÅÖ¸±ê£¬²»×÷¹¦ÂÊÏìÓ¦ÒÀ¾İ£©
+2026-10-12 01:04:16.644  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Éè±¸¿ªÊ¼¶¯×÷: corr-idem-ins-1
+2026-10-12 01:04:16.644  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Ò£²âÁ¬ĞøÎÈ¶¨´ï±ê: corr-idem-ins-1 ×ÊÔ´µ½Î»Ê±ÑÓ 5001ms
+2026-10-12 01:04:16.645  INFO 64600 --- [           main] com.openvpp.app.config.DispatchConfig    : [DOWNLINK-LOOP] Ö¸ÁîÍ¶µİ±¾µØÄ£ÄâÉè±¸: corr-idem-ins-2 ¡ú ac-001 297.247kW
+2026-10-12 01:04:16.646  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Ö¸ÁîÒÑÏÂ·¢: corr-idem-ins-2 ¡ú ac-001 297.247kW
+2026-10-12 01:04:16.647  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Ö¸ÁîÒÑÈ·ÈÏ: corr-idem-ins-2 Í¨ĞÅºÄÊ± 1ms£¨½öÍ¨ĞÅÖ¸±ê£¬²»×÷¹¦ÂÊÏìÓ¦ÒÀ¾İ£©
+2026-10-12 01:04:16.647  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Éè±¸¿ªÊ¼¶¯×÷: corr-idem-ins-2
+2026-10-12 01:04:16.648  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Ò£²âÁ¬ĞøÎÈ¶¨´ï±ê: corr-idem-ins-2 ×ÊÔ´µ½Î»Ê±ÑÓ 5001ms
+2026-10-12 01:04:16.649  INFO 64600 --- [           main] com.openvpp.app.config.DispatchConfig    : [DOWNLINK-LOOP] Ö¸ÁîÍ¶µİ±¾µØÄ£ÄâÉè±¸: corr-idem-ins-3 ¡ú ev-001 210.550kW
+2026-10-12 01:04:16.649  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Ö¸ÁîÒÑÏÂ·¢: corr-idem-ins-3 ¡ú ev-001 210.550kW
+2026-10-12 01:04:16.650  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Ö¸ÁîÒÑÈ·ÈÏ: corr-idem-ins-3 Í¨ĞÅºÄÊ± 1ms£¨½öÍ¨ĞÅÖ¸±ê£¬²»×÷¹¦ÂÊÏìÓ¦ÒÀ¾İ£©
+2026-10-12 01:04:16.650  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Éè±¸¿ªÊ¼¶¯×÷: corr-idem-ins-3
+2026-10-12 01:04:16.651  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Ò£²âÁ¬ĞøÎÈ¶¨´ï±ê: corr-idem-ins-3 ×ÊÔ´µ½Î»Ê±ÑÓ 5001ms
+2026-10-12 01:04:16.660  INFO 64600 --- [           main] c.o.a.o.ParkResponseOrchestrator         : ±Õ»·Íê³É: corr-idem Â·¾¶ NORMAL ¾»ÊµÊÕ 1200.00Ôª
+2026-10-12 01:04:16.676  INFO 64600 --- [           main] c.o.a.o.ParkResponseOrchestrator         : ÕùÒé¸üÕıÍê³É: corr-idem ÇëÇó req-001 °æ±¾ V2 ¸üÕı¾»ÊµÊÕ 1210.00 ²î¶î 10.00
+2026-10-12 01:04:16.690  INFO 64600 --- [           main] c.o.a.o.ParkResponseOrchestrator         : ÕùÒé¸üÕıÃİµÈÖØ·Å: corr-idem °æ±¾ V2
+2026-10-12 01:04:16.715  INFO 64600 --- [           main] c.o.a.o.ParkResponseOrchestrator         : ÑİÊ¾ÔËĞĞ×´Ì¬ÒÑÖØÖÃ£ºÈİÁ¿Ô¤Õ¼Ì¨ÕË + ÄÚ´æÖ¸Áî²Ö¿â + ÃİµÈ»º´æÃüÃû¿Õ¼äÒÑÇå¿Õ
+2026-10-12 01:04:16.718  INFO 64600 --- [           main] com.openvpp.app.config.DispatchConfig    : [DOWNLINK-LOOP] Ö¸ÁîÍ¶µİ±¾µØÄ£ÄâÉè±¸: conc-corr-ins-1 ¡ú ess-001 392.203kW
+2026-10-12 01:04:16.718  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Ö¸ÁîÒÑÏÂ·¢: conc-corr-ins-1 ¡ú ess-001 392.203kW
+2026-10-12 01:04:16.720  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Ö¸ÁîÒÑÈ·ÈÏ: conc-corr-ins-1 Í¨ĞÅºÄÊ± 2ms£¨½öÍ¨ĞÅÖ¸±ê£¬²»×÷¹¦ÂÊÏìÓ¦ÒÀ¾İ£©
+2026-10-12 01:04:16.721  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Éè±¸¿ªÊ¼¶¯×÷: conc-corr-ins-1
+2026-10-12 01:04:16.721  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Ò£²âÁ¬ĞøÎÈ¶¨´ï±ê: conc-corr-ins-1 ×ÊÔ´µ½Î»Ê±ÑÓ 5001ms
+2026-10-12 01:04:16.722  INFO 64600 --- [           main] com.openvpp.app.config.DispatchConfig    : [DOWNLINK-LOOP] Ö¸ÁîÍ¶µİ±¾µØÄ£ÄâÉè±¸: conc-corr-ins-2 ¡ú ac-001 297.247kW
+2026-10-12 01:04:16.722  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Ö¸ÁîÒÑÏÂ·¢: conc-corr-ins-2 ¡ú ac-001 297.247kW
+2026-10-12 01:04:16.723  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Ö¸ÁîÒÑÈ·ÈÏ: conc-corr-ins-2 Í¨ĞÅºÄÊ± 1ms£¨½öÍ¨ĞÅÖ¸±ê£¬²»×÷¹¦ÂÊÏìÓ¦ÒÀ¾İ£©
+2026-10-12 01:04:16.723  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Éè±¸¿ªÊ¼¶¯×÷: conc-corr-ins-2
+2026-10-12 01:04:16.723  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Ò£²âÁ¬ĞøÎÈ¶¨´ï±ê: conc-corr-ins-2 ×ÊÔ´µ½Î»Ê±ÑÓ 5001ms
+2026-10-12 01:04:16.724  INFO 64600 --- [           main] com.openvpp.app.config.DispatchConfig    : [DOWNLINK-LOOP] Ö¸ÁîÍ¶µİ±¾µØÄ£ÄâÉè±¸: conc-corr-ins-3 ¡ú ev-001 210.550kW
+2026-10-12 01:04:16.726  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Ö¸ÁîÒÑÏÂ·¢: conc-corr-ins-3 ¡ú ev-001 210.550kW
+2026-10-12 01:04:16.726  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Ö¸ÁîÒÑÈ·ÈÏ: conc-corr-ins-3 Í¨ĞÅºÄÊ± 1ms£¨½öÍ¨ĞÅÖ¸±ê£¬²»×÷¹¦ÂÊÏìÓ¦ÒÀ¾İ£©
+2026-10-12 01:04:16.728  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Éè±¸¿ªÊ¼¶¯×÷: conc-corr-ins-3
+2026-10-12 01:04:16.729  INFO 64600 --- [           main] c.o.d.instruction.InstructionService     : Ò£²âÁ¬ĞøÎÈ¶¨´ï±ê: conc-corr-ins-3 ×ÊÔ´µ½Î»Ê±ÑÓ 5001ms
+2026-10-12 01:04:16.746  INFO 64600 --- [           main] c.o.a.o.ParkResponseOrchestrator         : ±Õ»·Íê³É: conc-corr Â·¾¶ NORMAL ¾»ÊµÊÕ 1200.00Ôª
+2026-10-12 01:04:16.792  INFO 64600 --- [pool-5-thread-6] c.o.a.o.ParkResponseOrchestrator         : ÕùÒé¸üÕıÍê³É: conc-corr ÇëÇó corr-req-5 °æ±¾ V2 ¸üÕı¾»ÊµÊÕ 1210.00 ²î¶î 10.00
+2026-10-12 01:04:16.802  INFO 64600 --- [pool-5-thread-7] c.o.a.o.ParkResponseOrchestrator         : ÕùÒé¸üÕıÍê³É: conc-corr ÇëÇó corr-req-6 °æ±¾ V3 ¸üÕı¾»ÊµÊÕ 1210.00 ²î¶î 0.00
+2026-10-12 01:04:16.818  INFO 64600 --- [ool-5-thread-12] c.o.a.o.ParkResponseOrchestrator         : ÕùÒé¸üÕıÍê³É: conc-corr ÇëÇó corr-req-11 °æ±¾ V4 ¸üÕı¾»ÊµÊÕ 1210.00 ²î¶î 0.00
+2026-10-12 01:04:16.831  INFO 64600 --- [pool-5-thread-4] c.o.a.o.ParkResponseOrchestrator         : ÕùÒé¸üÕıÍê³É: conc-corr ÇëÇó corr-req-3 °æ±¾ V5 ¸üÕı¾»ÊµÊÕ 1210.00 ²î¶î 0.00
+2026-10-12 01:04:16.843  INFO 64600 --- [pool-5-thread-1] c.o.a.o.ParkResponseOrchestrator         : ÕùÒé¸üÕıÍê³É: conc-corr ÇëÇó corr-req-0 °æ±¾ V6 ¸üÕı¾»ÊµÊÕ 1210.00 ²î¶î 0.00
+2026-10-12 01:04:16.858  INFO 64600 --- [pool-5-thread-3] c.o.a.o.ParkResponseOrchestrator         : ÕùÒé¸üÕıÍê³É: conc-corr ÇëÇó corr-req-2 °æ±¾ V7 ¸üÕı¾»ÊµÊÕ 1210.00 ²î¶î 0.00
+2026-10-12 01:04:16.865  INFO 64600 --- [pool-5-thread-2] c.o.a.o.ParkResponseOrchestrator         : ÕùÒé¸üÕıÍê³É: conc-corr ÇëÇó corr-req-1 °æ±¾ V8 ¸üÕı¾»ÊµÊÕ 1210.00 ²î¶î 0.00
+2026-10-12 01:04:16.876  INFO 64600 --- [pool-5-thread-8] c.o.a.o.ParkResponseOrchestrator         : ÕùÒé¸üÕıÍê³É: conc-corr ÇëÇó corr-req-7 °æ±¾ V9 ¸üÕı¾»ÊµÊÕ 1210.00 ²î¶î 0.00
+2026-10-12 01:04:16.917  INFO 64600 --- [pool-5-thread-5] c.o.a.o.ParkResponseOrchestrator         : ÕùÒé¸üÕıÍê³É: conc-corr ÇëÇó corr-req-4 °æ±¾ V10 ¸üÕı¾»ÊµÊÕ 1210.00 ²î¶î 0.00
+2026-10-12 01:04:16.931  INFO 64600 --- [ool-5-thread-11] c.o.a.o.ParkResponseOrchestrator         : ÕùÒé¸üÕıÍê³É: conc-corr ÇëÇó corr-req-10 °æ±¾ V11 ¸üÕı¾»ÊµÊÕ 1210.00 ²î¶î 0.00
+2026-10-12 01:04:16.971  INFO 64600 --- [pool-5-thread-9] c.o.a.o.ParkResponseOrchestrator         : ÕùÒé¸üÕıÍê³É: conc-corr ÇëÇó corr-req-8 °æ±¾ V12 ¸üÕı¾»ÊµÊÕ 1210.00 ²î¶î 0.00
+2026-10-12 01:04:16.982  INFO 64600 --- [ool-5-thread-10] c.o.a.o.ParkResponseOrchestrator         : ÕùÒé¸üÕıÍê³É: conc-corr ÇëÇó corr-req-9 °æ±¾ V13 ¸üÕı¾»ÊµÊÕ 1210.00 ²î¶î 0.00
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 29.68 s -- in com.openvpp.app.ParkResponseConcurrencyTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  41.372 s
+[INFO] Finished at: 2026-10-12T01:04:17+08:00
+[INFO] ------------------------------------------------------------------------
+[PASS] è´¯ç©¿æ¡ˆä¾‹å¹¶å‘å¹‚ç­‰ä¸ç‰ˆæœ¬åŒ–ï¼ˆParkResponseConcurrencyTestï¼‰
+
+== çœŸå®å®¹å™¨å¹¶å‘ï¼ˆMySqlComposeITï¼Œéœ€ MySQL 127.0.0.1:3306 + Redis 127.0.0.1:6379ï¼‰
+
+== çœŸå®å®¹å™¨å¹¶å‘ï¼ˆMySqlComposeITï¼‰
+å‘½ä»¤: mvn -s settings-openvpp.xml -pl openvpp-app test -Dtest=MySqlComposeIT -DfailIfNoTests=false
+[WARNING] Tests run: 4, Failures: 0, Errors: 0, Skipped: 4, Time elapsed: 0.011 s -- in com.openvpp.app.MySqlComposeIT
+[WARNING] Tests run: 4, Failures: 0, Errors: 0, Skipped: 4
+[SKIP] MySqlComposeIT æŒ‰é—¨æ§è·³è¿‡ï¼ˆ127.0.0.1:3306 å£ä»¤ä¸ç¬¦æˆ–ä¸å¯è¾¾ï¼‰ï¼šæœ¬æ ¼æ ‡æœªè¦†ç›–ï¼Œä¸è®¡å¤±è´¥
+
+CONCURRENCY REGRESSION OK

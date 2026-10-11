@@ -1,0 +1,42 @@
+# 命令: mvn -s settings-openvpp.xml -pl openvpp-app -am test
+# 日期: 2026-10-12
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.014 s -- in com.openvpp.aggregator.plan.DirectionalTargetConverterTest
+[INFO] Tests run: 38, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Building openvpp-dispatch 1.0.0                                   [9/12]
+[INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.231 s -- in com.openvpp.dispatch.command.ChargePileCommandServiceTest
+[INFO] Tests run: 17, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.854 s -- in com.openvpp.dispatch.DispatchInstructionTest
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.034 s -- in com.openvpp.dispatch.EvalLoopTest
+[INFO] Tests run: 17, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.823 s -- in com.openvpp.dispatch.monitor.ChargeExecutionMonitorTest
+[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.029 s -- in com.openvpp.dispatch.MpcSchedulerTest
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.017 s -- in com.openvpp.dispatch.StrategyEngineTest
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.030 s -- in com.openvpp.dispatch.TargetDecomposeTest
+[INFO] Tests run: 77, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Building openvpp-settlement 1.0.0                                [10/12]
+[INFO] Tests run: 24, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.781 s -- in com.openvpp.settlement.AssessmentTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.010 s -- in com.openvpp.settlement.ProfitAllocatorTest
+[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.032 s -- in com.openvpp.settlement.RegionalSettlementTest
+[INFO] Tests run: 21, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.448 s -- in com.openvpp.settlement.SettlementServiceTest
+[INFO] Tests run: 14, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.049 s -- in com.openvpp.settlement.SettlementTest
+[INFO] Tests run: 72, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Building openvpp-edge 1.0.0                                      [11/12]
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.210 s -- in com.openvpp.edge.EdgeResendTest
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Building openvpp-app 1.0.0                                       [12/12]
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.756 s -- in com.openvpp.app.auth.AuthTokenInterceptorTest
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.068 s -- in com.openvpp.app.auth.PasswordDigestTest
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.017 s -- in com.openvpp.app.auth.SessionStoreTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.597 s -- in com.openvpp.app.idempotency.RedisIdempotencyGuardFaultTest
+[INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 36.36 s -- in com.openvpp.app.OperationsAssessmentApiTest
+[INFO] Tests run: 15, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.989 s -- in com.openvpp.app.OperationsAuthApiTest
+[INFO] Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 11.85 s -- in com.openvpp.app.OperationsChargeDrApiTest
+[INFO] Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.570 s -- in com.openvpp.app.OperationsMonitoringApiTest
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.404 s -- in com.openvpp.app.OperationsPlanApiTest
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.489 s -- in com.openvpp.app.OperationsSettlementApiTest
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 9.462 s -- in com.openvpp.app.ParkResponseConcurrencyTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 8.573 s -- in com.openvpp.app.ParkResponseGuardDyingTest
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.656 s -- in com.openvpp.app.ParkResponseOrchestrationGuardTest
+[INFO] Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.006 s -- in com.openvpp.app.ParkResponseOrchestratorTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 27.52 s -- in com.openvpp.app.ResponseRepositoryDialectTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 10.33 s -- in com.openvpp.app.SystemHealthControllerTest
+[INFO] Tests run: 98, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS
