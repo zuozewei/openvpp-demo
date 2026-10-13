@@ -142,10 +142,13 @@ class ProfitAllocatorTest {
         declared.put("B", BigDecimal.ZERO);
         Map<String, BigDecimal> actual = new LinkedHashMap<>();
         actual.put("A", new BigDecimal("1"));
+        actual.put("B", BigDecimal.ZERO);
 
-        assertThrows(IllegalArgumentException.class,
+        // 主体集合一致，先过键集校验、再命中容量守卫本身
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> allocator.allocate(new BigDecimal("1200"), new BigDecimal("600"), declared, actual),
                 "容量总和为零（除零）应拒绝");
+        assertTrue(ex.getMessage().contains("申报容量"), "应命中容量守卫: " + ex.getMessage());
     }
 
     @Test
@@ -160,5 +163,58 @@ class ProfitAllocatorTest {
         assertThrows(IllegalArgumentException.class,
                 () -> allocator.allocate(new BigDecimal("1200.015"), new BigDecimal("600"), declared, actual),
                 "超过分位精度的实收应拒绝");
+    }
+
+    @Test
+    void 半分临界服务费按半入计提() {
+        // 实收 1200.05：服务费 600.05 × 10% = 60.005 → 半入 60.01（与正文 Python ROUND_HALF_UP 同口径）
+        Map<String, BigDecimal> declared = new LinkedHashMap<>();
+        declared.put("A", new BigDecimal("300"));
+        declared.put("B", new BigDecimal("200"));
+        declared.put("C", new BigDecimal("100"));
+        Map<String, BigDecimal> actual = new LinkedHashMap<>();
+        actual.put("A", new BigDecimal("600"));
+        actual.put("B", new BigDecimal("300"));
+        actual.put("C", BigDecimal.ZERO);
+
+        Map<String, BigDecimal> result = allocator.allocate(
+                new BigDecimal("1200.05"), new BigDecimal("600.00"), declared, actual);
+
+        assertEquals(0, result.get("A").compareTo(new BigDecimal("660.03")), "A=保底300+分成360.02+残差0.01");
+        assertEquals(0, result.get("B").compareTo(new BigDecimal("380.01")), "B=保底200+分成180.01");
+        assertEquals(0, result.get("C").compareTo(new BigDecimal("100.00")), "零贡献只拿保底");
+        BigDecimal sum = result.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+        // 1140.04 + 服务费 60.01 = 1200.05，半分边界与正文口径一致
+        assertEquals(0, sum.compareTo(new BigDecimal("1140.04")), "半分临界须守恒到分位: " + sum);
+    }
+
+    @Test
+    void 单户负容量或负响应拒绝() {
+        Map<String, BigDecimal> badDeclared = new LinkedHashMap<>();
+        badDeclared.put("A", new BigDecimal("-100"));
+        badDeclared.put("B", new BigDecimal("200"));
+        Map<String, BigDecimal> actual = new LinkedHashMap<>();
+        actual.put("A", new BigDecimal("100"));
+        actual.put("B", new BigDecimal("100"));
+
+        // 负容量会产生反向账单，拒绝普通分摊；负考核须另立扣款科目，不作贡献权重
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> allocator.allocate(new BigDecimal("1200"), new BigDecimal("600"), badDeclared, actual),
+                "负申报容量应拒绝");
+        assertTrue(ex.getMessage().contains("申报容量"), ex.getMessage());
+
+        Map<String, BigDecimal> declared = new LinkedHashMap<>();
+        declared.put("A", new BigDecimal("300"));
+        declared.put("B", new BigDecimal("200"));
+        declared.put("C", new BigDecimal("100"));
+        Map<String, BigDecimal> badActual = new LinkedHashMap<>();
+        badActual.put("A", new BigDecimal("-100"));
+        badActual.put("B", new BigDecimal("200"));
+        badActual.put("C", BigDecimal.ZERO);
+
+        ex = assertThrows(IllegalArgumentException.class,
+                () -> allocator.allocate(new BigDecimal("1200"), new BigDecimal("600"), declared, badActual),
+                "负响应量应拒绝");
+        assertTrue(ex.getMessage().contains("响应量"), ex.getMessage());
     }
 }

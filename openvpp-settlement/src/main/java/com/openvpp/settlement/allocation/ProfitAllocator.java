@@ -13,9 +13,9 @@ import java.util.Map;
  * 3. 平台服务费：从分成部分按比例计提，先四舍五入到分位，再分配余额。
  * 守恒底线：分配总额 + 服务费 = 平台实收，分毫不差（分位残差归并最大贡献者）。
  * 输入契约（违反即抛 IllegalArgumentException，异常场次走合同处置流程，不做普通分摊）：
- * 金额非负且不超过分位精度；服务费率在 [0,1)；申报容量总和为正；
- * 申报与响应的主体集合一致；保底总额不超过实收；总响应量大于零
- * （全员零贡献时分成池无从按贡献分配，整池留待异常处置，不进入本方法）。
+ * 金额非负且不超过分位精度；服务费率在 [0,1)；申报与响应逐户非负、主体集合一致、
+ * 申报容量总和为正、总响应量大于零（负容量/负响应会产生反向账单，负考核须另立扣款科目，
+ * 不作为本分摊器的贡献权重）；保底总额不超过实收（预估实收的合同比例上限不在本器校验）。
  */
 public class ProfitAllocator {
 
@@ -54,6 +54,16 @@ public class ProfitAllocator {
         }
         if (!declaredKw.keySet().equals(actualKwh.keySet())) {
             throw new IllegalArgumentException("申报与响应的主体集合必须一致");
+        }
+        for (Map.Entry<String, BigDecimal> e : declaredKw.entrySet()) {
+            if (e.getValue() == null || e.getValue().signum() < 0) {
+                throw new IllegalArgumentException("申报容量必须逐户非负: " + e.getKey());
+            }
+        }
+        for (Map.Entry<String, BigDecimal> e : actualKwh.entrySet()) {
+            if (e.getValue() == null || e.getValue().signum() < 0) {
+                throw new IllegalArgumentException("响应量必须逐户非负: " + e.getKey());
+            }
         }
         if (guaranteedYuan.compareTo(totalSettleYuan) > 0) {
             throw new IllegalArgumentException("保底总额超过实收，须按合同走垫资/处置流程，不做普通分摊");
