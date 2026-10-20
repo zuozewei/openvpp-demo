@@ -33,9 +33,9 @@ curl -X POST "http://localhost:8080/api/v1/demo/run?responseId=run-001&path=NORM
 curl "http://localhost:8080/api/v1/bills?responseId=run-001"   # 账单真实落 MySQL
 ```
 
-数据落在 MySQL 容器（库名 `openvpp_demo`），可 `docker compose exec mysql mysql -uroot -popenvpp-demo openvpp_demo -e "select * from demo_bill;"` 直接核对。
+数据落在 MySQL 容器（库名 `openvpp_demo`，账单表为 `bill`），可 `docker compose exec mysql mysql -uroot -popenvpp-demo openvpp_demo -e "select * from bill where response_id='run-001';"` 核对本次任务的账单（按任务号过滤，避免把历史账单当本轮结果）。
 
-宿主 3306 已被其他 MySQL 占用时，以 `MYSQL_HOST_PORT=13306 docker compose up -d mysql` 把宿主侧映射改为 13306（容器内仍是 3306），应用侧以 `MYSQL_PORT=13306` 注入（中间件验收脚本同口径，见 `tools/acceptance/fault-inject-redis.sh`）。
+宿主 3306 已被其他 MySQL 占用时，以 `MYSQL_HOST_PORT=13306 docker compose up -d mysql` 把宿主侧映射改为 13306——容器内应用仍连 `mysql:3306` 不变；仅宿主运行的应用或验收脚本经 `127.0.0.1:13306` 访问、以 `MYSQL_PORT=13306` 注入（验收脚本同口径，见 `tools/acceptance/fault-inject-redis.sh`）。
 
 ## 真实环境回归（MySqlComposeIT，4 项）
 

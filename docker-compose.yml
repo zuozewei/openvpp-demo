@@ -34,8 +34,9 @@ services:
       MYSQL_ROOT_PASSWORD: openvpp-demo
       MYSQL_DATABASE: openvpp_demo
     ports:
-      # 宿主侧端口可覆盖：宿主 3306 被占时以 MYSQL_HOST_PORT=13306 docker compose up -d mysql
-      # 启动，并以 MYSQL_PORT=13306 注入应用/验收脚本（应用侧 application-docker.yml 已变量化）
+      # 宿主侧端口可覆盖：宿主 3306 被占时以 MYSQL_HOST_PORT=13306 docker compose up -d mysql 启动；
+      # 容器内应用仍连 mysql:3306 不变，仅宿主运行的应用/验收脚本经 127.0.0.1:13306 访问
+      # （应用侧 application-docker.yml 已变量化）
       - "${MYSQL_HOST_PORT:-3306}:3306"
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD"]
